@@ -11,187 +11,168 @@
     <style>
         body {
             background: #070707;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
         }
 
-        .admin-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px 100px;
-        }
-
-        .admin-top {
+        .admin-header {
+            padding: 22px 20px;
+            border-bottom: 1px solid #222;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 35px;
         }
 
-        .admin-top h1 {
-            font-size: 42px;
-        }
-
-        .back-link {
-            border: 1px solid #333;
-            padding: 10px 14px;
-            border-radius: 6px;
-            color: #aaa;
-        }
-
-        .admin-card {
-            background: #111;
-            border: 1px solid #252525;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 25px;
-        }
-
-        .admin-card h2 {
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-
-        .admin-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-
-        .admin-form .full {
-            grid-column: 1 / -1;
-        }
-
-        .admin-form label {
-            display: block;
-            margin-bottom: 6px;
-            color: #aaa;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .admin-form input,
-        .admin-form select,
-        .admin-form textarea {
-            width: 100%;
-            background: #181818;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 13px;
-            border-radius: 6px;
-        }
-
-        .admin-form textarea {
-            min-height: 100px;
-        }
-
-        .admin-submit {
-            background: #ffb800;
-            color: #000;
-            border: none;
-            padding: 14px;
-            border-radius: 6px;
+        .admin-logo {
+            font-size: 22px;
             font-weight: 900;
         }
 
-        .cancel-edit {
-            background: transparent;
-            color: #fff;
-            border: 1px solid #444;
-            padding: 14px;
-            border-radius: 6px;
-        }
-
-        .admin-event {
-            background: #171717;
-            border: 1px solid #2b2b2b;
-            border-radius: 10px;
-            padding: 18px;
-            margin-bottom: 12px;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .admin-event p {
-            color: #888;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        .event-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .edit-btn,
-        .delete-btn {
-            border: none;
-            padding: 10px 12px;
-            border-radius: 6px;
-            font-weight: 800;
-        }
-
-        .edit-btn {
-            background: #fff;
-            color: #000;
-        }
-
-        .delete-btn {
-            background: #9d1c1c;
-            color: #fff;
-        }
-
-        .reservations-wrap {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 850px;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #292929;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        th {
+        .admin-logo span {
             color: #ffb800;
         }
 
-        .status {
-            display: inline-block;
-            background: #ffb800;
-            color: #000;
-            padding: 4px 7px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 900;
+        .admin-container {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px 18px 80px;
         }
 
-        @media (max-width: 700px) {
-            .admin-form {
+        .admin-title {
+            margin-bottom: 30px;
+        }
+
+        .admin-title p {
+            color: #ffb800;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .admin-title h1 {
+            margin: 8px 0;
+            font-size: 32px;
+        }
+
+        .admin-stats {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .admin-stats strong {
+            display: block;
+            color: #ffb800;
+            font-size: 32px;
+            margin-top: 5px;
+        }
+
+        .reservation-card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .reservation-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .reservation-club {
+            color: #ffb800;
+            font-weight: 900;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+
+        .reservation-date {
+            color: #aaa;
+        }
+
+        .status {
+            background: #ffb800;
+            color: #000;
+            padding: 7px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 900;
+            height: fit-content;
+        }
+
+        .reservation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #090909;
+            padding: 13px;
+            border-radius: 9px;
+        }
+
+        .info-box span {
+            display: block;
+            color: #777;
+            font-size: 11px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .info-box strong {
+            font-size: 15px;
+        }
+
+        .condition-box {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #ffb800;
+            border-radius: 9px;
+        }
+
+        .condition-box span {
+            color: #888;
+            font-size: 11px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .condition-box strong {
+            color: #ffb800;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #777;
+        }
+
+        .refresh-button {
+            width: 100%;
+            padding: 15px;
+            background: #ffb800;
+            color: black;
+            border: 0;
+            border-radius: 9px;
+            font-weight: 900;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        @media(max-width: 600px) {
+            .reservation-grid {
                 grid-template-columns: 1fr;
             }
 
-            .admin-form .full {
-                grid-column: auto;
-            }
-
-            .admin-event {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .admin-top {
-                flex-direction: column;
-                align-items: flex-start;
+            .admin-title h1 {
+                font-size: 27px;
             }
         }
     </style>
@@ -199,170 +180,67 @@
 
 <body>
 
-<div class="admin-wrapper">
+<header class="admin-header">
 
-    <div class="admin-top">
-        <div>
-            <p class="section-label">ADMIN PANEL</p>
-            <h1>NIGHT<span style="color:#ffb800;">BOOK</span></h1>
-        </div>
+    <div class="admin-logo">
+        NIGHT<span>BOOK</span>
+    </div>
 
-        <a href="/" class="back-link">
-            ← Nazad na sajt
-        </a>
+    <div>
+        ADMIN
+    </div>
+
+</header>
+
+
+<main class="admin-container">
+
+    <div class="admin-title">
+
+        <p>NIGHTBOOK ADMIN</p>
+
+        <h1>
+            REZERVACIJE
+        </h1>
+
+        <span>
+            Sve rezervacije na jednom mestu.
+        </span>
+
     </div>
 
 
-    <section class="admin-card">
+    <div class="admin-stats">
 
-        <h2 id="formTitle">
-            Dodaj događaj
-        </h2>
+        <span>
+            UKUPNO REZERVACIJA
+        </span>
 
-        <form id="eventForm" class="admin-form">
+        <strong id="reservationCount">
+            0
+        </strong>
 
-            <input type="hidden" id="editId">
-
-            <div>
-                <label for="club">Klub</label>
-
-                <select id="club" required>
-                    <option value="">Izaberi klub</option>
-                    <option value="Lasta">Lasta</option>
-                    <option value="Freestyler">Freestyler</option>
-                    <option value="Tranzit">Tranzit</option>
-                    <option value="Remiks">Remiks</option>
-                </select>
-            </div>
-
-            <div>
-                <label for="date">Datum</label>
-                <input type="date" id="date" required>
-            </div>
-
-            <div>
-                <label for="title">Naziv događaja</label>
-
-                <input
-                    type="text"
-                    id="title"
-                    placeholder="Friday Night"
-                    required
-                >
-            </div>
-
-            <div>
-                <label for="dj">DJ / Program</label>
-
-                <input
-                    type="text"
-                    id="dj"
-                    placeholder="DJ Marko"
-                >
-            </div>
-
-            <div>
-                <label for="time">Vreme</label>
-
-                <input
-                    type="text"
-                    id="time"
-                    placeholder="23:00"
-                >
-            </div>
-
-            <div>
-                <label for="price">Cena / Ulaz</label>
-
-                <input
-                    type="text"
-                    id="price"
-                    placeholder="500 RSD"
-                >
-            </div>
-
-            <div class="full">
-                <label for="description">Opis</label>
-
-                <textarea
-                    id="description"
-                    placeholder="Informacije o događaju..."
-                ></textarea>
-            </div>
-
-            <div class="full">
-                <label for="image">Link slike / postera</label>
-
-                <input
-                    type="text"
-                    id="image"
-                    placeholder="https://..."
-                >
-            </div>
-
-            <button
-                type="submit"
-                class="admin-submit"
-            >
-                SAČUVAJ DOGAĐAJ
-            </button>
-
-            <button
-                type="button"
-                id="cancelEdit"
-                class="cancel-edit"
-                style="display:none;"
-            >
-                OTKAŽI IZMENU
-            </button>
-
-        </form>
-
-    </section>
+    </div>
 
 
-    <section class="admin-card">
+    <button
+        class="refresh-button"
+        id="refreshReservations"
+    >
+        OSVEŽI REZERVACIJE
+    </button>
 
-        <h2>Događaji</h2>
 
-        <div id="adminEvents">
-            Učitavanje...
+    <div id="reservationsList">
+
+        <div class="empty">
+            Učitavanje rezervacija...
         </div>
 
-    </section>
+    </div>
 
+</main>
 
-    <section class="admin-card">
-
-        <h2>Rezervacije</h2>
-
-        <div class="reservations-wrap">
-
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Ime</th>
-                        <th>Klub</th>
-                        <th>Datum</th>
-                        <th>Osobe</th>
-                        <th>Telefon</th>
-                        <th>Instagram</th>
-                        <th>Napomena</th>
-                        <th>Status</th>
-                        <th>Akcija</th>
-                    </tr>
-                </thead>
-
-                <tbody id="reservationsBody"></tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-</div>
 
 <script src="js/admin.js"></script>
 
