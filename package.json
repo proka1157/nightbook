@@ -1,0 +1,12 @@
+{
+  "name": "nightbook",
+  "version": "1.0.0",
+  "description": "NightBook - rezervacije klubova u Beogradu",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
