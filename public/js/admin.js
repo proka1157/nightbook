@@ -1,449 +1,356 @@
-let events = [];
+const reservationsList =
+    document.getElementById("reservationsList");
 
-const eventForm = document.getElementById("eventForm");
-const adminEvents = document.getElementById("adminEvents");
-const reservationsBody = document.getElementById("reservationsBody");
+const reservationCount =
+    document.getElementById("reservationCount");
 
-const editId = document.getElementById("editId");
-const formTitle = document.getElementById("formTitle");
-const cancelEdit = document.getElementById("cancelEdit");
+const refreshButton =
+    document.getElementById("refreshReservations");
 
-async function loadAll() {
-    await loadEvents();
-    await loadReservations();
+
+// ========================================
+// FORMAT DATUMA
+// ========================================
+
+function formatDate(dateString) {
+    if (!dateString) return "-";
+
+    const parts = dateString.split("-");
+
+    if (parts.length !== 3) {
+        return dateString;
+    }
+
+    return `${parts[2]}.${parts[1]}.${parts[0]}.`;
 }
 
-// =========================
-// DOGAĐAJI
-// =========================
 
-async function loadEvents() {
-    try {
-        const response = await fetch("/api/events");
+// ========================================
+// FORMAT VREMENA REZERVACIJE
+// ========================================
 
-        if (!response.ok) {
-            throw new Error("Greška pri učitavanju događaja.");
-        }
+function formatCreatedAt(value) {
+    if (!value) return "-";
 
-        events = await response.json();
+    const date = new Date(value);
 
-        renderEvents();
-    } catch (error) {
-        console.error(error);
-
-        adminEvents.innerHTML = `
-            <p style="color:#777;">
-                Greška pri učitavanju događaja.
-            </p>
-        `;
-    }
-}
-
-function renderEvents() {
-    if (!events.length) {
-        adminEvents.innerHTML = `
-            <p style="color:#777;">
-                Trenutno nema događaja.
-            </p>
-        `;
-        return;
+    if (Number.isNaN(date.getTime())) {
+        return "-";
     }
 
-    adminEvents.innerHTML = events.map((event) => {
-        return `
-            <div class="admin-event">
-
-                <div>
-                    <strong style="color:#ffb800;">
-                        ${escapeHTML(event.club)}
-                    </strong>
-
-                    <h3>
-                        ${escapeHTML(event.title)}
-                    </h3>
-
-                    <p>
-                        ${formatDate(event.date)}
-                        • ${escapeHTML(event.time || "-")}
-                        • ${escapeHTML(event.dj || "-")}
-                    </p>
-                </div>
-
-                <div class="event-actions">
-
-                    <button
-                        type="button"
-                        class="edit-btn"
-                        onclick="editEvent(${event.id})"
-                    >
-                        IZMENI
-                    </button>
-
-                    <button
-                        type="button"
-                        class="delete-btn"
-                        onclick="deleteEvent(${event.id})"
-                    >
-                        OBRIŠI
-                    </button>
-
-                </div>
-
-            </div>
-        `;
-    }).join("");
-}
-
-// =========================
-// DODAJ / IZMENI DOGAĐAJ
-// =========================
-
-eventForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const currentEditId = editId.value;
-
-    const data = {
-        club: document.getElementById("club").value,
-        date: document.getElementById("date").value,
-        title: document.getElementById("title").value.trim(),
-        dj: document.getElementById("dj").value.trim(),
-        time: document.getElementById("time").value.trim(),
-        price: document.getElementById("price").value.trim(),
-        description:
-            document.getElementById("description").value.trim(),
-        image:
-            document.getElementById("image").value.trim()
-    };
-
-    const url = currentEditId
-        ? `/api/events/${currentEditId}`
-        : "/api/events";
-
-    const method = currentEditId
-        ? "PUT"
-        : "POST";
-
-    try {
-        const response = await fetch(url, {
-            method,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-            throw new Error(
-                result.message || "Greška pri čuvanju događaja."
-            );
-        }
-
-        alert(
-            currentEditId
-                ? "Događaj je uspešno izmenjen."
-                : "Događaj je uspešno dodat."
-        );
-
-        resetForm();
-
-        await loadEvents();
-
-    } catch (error) {
-        console.error(error);
-
-        alert("Došlo je do greške.");
-    }
-});
-
-// =========================
-// IZMENI
-// =========================
-
-function editEvent(id) {
-    const event = events.find(
-        (item) => item.id === id
-    );
-
-    if (!event) {
-        return;
-    }
-
-    editId.value = event.id;
-
-    document.getElementById("club").value =
-        event.club || "";
-
-    document.getElementById("date").value =
-        event.date || "";
-
-    document.getElementById("title").value =
-        event.title || "";
-
-    document.getElementById("dj").value =
-        event.dj || "";
-
-    document.getElementById("time").value =
-        event.time || "";
-
-    document.getElementById("price").value =
-        event.price || "";
-
-    document.getElementById("description").value =
-        event.description || "";
-
-    document.getElementById("image").value =
-        event.image || "";
-
-    formTitle.textContent = "Izmeni događaj";
-
-    cancelEdit.style.display = "block";
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+    return date.toLocaleString("sr-RS", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
     });
 }
 
-// =========================
-// OBRIŠI DOGAĐAJ
-// =========================
 
-async function deleteEvent(id) {
-    const shouldDelete = confirm(
-        "Da li sigurno želiš da obrišeš ovaj događaj?"
-    );
+// ========================================
+// NAZIV KLUBA
+// ========================================
 
-    if (!shouldDelete) {
-        return;
-    }
+function clubName(club) {
+    const clubs = {
+        lasta: "Lasta",
+        freestyler: "Freestyler",
+        remiks: "Remiks",
+        tranzit: "Tranzit"
+    };
 
-    try {
-        const response = await fetch(
-            `/api/events/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
-
-        const result = await response.json();
-
-        if (!response.ok || !result.success) {
-            throw new Error("Brisanje nije uspelo.");
-        }
-
-        await loadEvents();
-
-    } catch (error) {
-        console.error(error);
-
-        alert("Došlo je do greške pri brisanju.");
-    }
+    return clubs[club] || club || "-";
 }
 
-// =========================
-// RESET FORME
-// =========================
 
-function resetForm() {
-    eventForm.reset();
+// ========================================
+// ZAŠTITA HTML-a
+// ========================================
 
-    editId.value = "";
-
-    formTitle.textContent =
-        "Dodaj događaj";
-
-    cancelEdit.style.display =
-        "none";
+function escapeHTML(value) {
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-cancelEdit.addEventListener(
-    "click",
-    resetForm
-);
 
-// =========================
-// REZERVACIJE
-// =========================
+// ========================================
+// TELEFON LINK
+// ========================================
+
+function phoneLink(phone) {
+    if (!phone) return "-";
+
+    const safePhone = escapeHTML(phone);
+
+    const tel =
+        String(phone)
+            .replace(/[^\d+]/g, "");
+
+    return `
+        <a
+            href="tel:${tel}"
+            style="
+                color:white;
+                text-decoration:none;
+            "
+        >
+            ${safePhone}
+        </a>
+    `;
+}
+
+
+// ========================================
+// INSTAGRAM
+// ========================================
+
+function instagramText(instagram) {
+    if (!instagram) {
+        return "-";
+    }
+
+    let username =
+        String(instagram).trim();
+
+    username =
+        username.replace(/^@/, "");
+
+    return `@${escapeHTML(username)}`;
+}
+
+
+// ========================================
+// UČITAJ REZERVACIJE
+// ========================================
 
 async function loadReservations() {
+    reservationsList.innerHTML = `
+        <div class="empty">
+            Učitavanje rezervacija...
+        </div>
+    `;
+
     try {
-        const response = await fetch(
-            "/api/reservations"
-        );
+        const response =
+            await fetch("/api/reservations", {
+                cache: "no-store"
+            });
 
         if (!response.ok) {
             throw new Error(
-                "Greška pri učitavanju rezervacija."
+                "Nije moguće učitati rezervacije."
             );
         }
 
         const reservations =
             await response.json();
 
+        reservationCount.textContent =
+            reservations.length;
+
+        if (!reservations.length) {
+            reservationsList.innerHTML = `
+                <div class="empty">
+                    Trenutno nema rezervacija.
+                </div>
+            `;
+
+            return;
+        }
+
         renderReservations(reservations);
 
     } catch (error) {
         console.error(error);
 
-        reservationsBody.innerHTML = `
-            <tr>
-                <td colspan="9">
-                    Greška pri učitavanju rezervacija.
-                </td>
-            </tr>
+        reservationCount.textContent = "0";
+
+        reservationsList.innerHTML = `
+            <div class="empty">
+                Greška pri učitavanju rezervacija.
+                <br><br>
+                Pokušaj ponovo.
+            </div>
         `;
     }
 }
 
+
+// ========================================
+// PRIKAŽI REZERVACIJE
+// ========================================
+
 function renderReservations(reservations) {
-    if (!reservations.length) {
-        reservationsBody.innerHTML = `
-            <tr>
-                <td colspan="9">
-                    Trenutno nema rezervacija.
-                </td>
-            </tr>
-        `;
+    reservationsList.innerHTML =
+        reservations.map(reservation => {
 
-        return;
-    }
+            const status =
+                reservation.status || "nova";
 
-    reservationsBody.innerHTML =
-        reservations.map((reservation) => {
             return `
-                <tr>
+                <div class="reservation-card">
 
-                    <td>
-                        ${escapeHTML(reservation.name)}
-                    </td>
+                    <div class="reservation-top">
 
-                    <td>
-                        ${escapeHTML(reservation.club)}
-                    </td>
+                        <div>
+                            <div class="reservation-club">
+                                ${escapeHTML(
+                                    clubName(reservation.club)
+                                )}
+                            </div>
 
-                    <td>
-                        ${formatDate(reservation.date)}
-                    </td>
+                            <div class="reservation-date">
+                                ${formatDate(
+                                    reservation.date
+                                )}
+                            </div>
+                        </div>
 
-                    <td>
-                        ${reservation.people}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(reservation.phone)}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            reservation.instagram || "-"
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeHTML(
-                            reservation.note || "-"
-                        )}
-                    </td>
-
-                    <td>
-                        <span class="status">
+                        <div class="status">
                             ${escapeHTML(
-                                reservation.status || "Nova"
+                                status.toUpperCase()
                             )}
+                        </div>
+
+                    </div>
+
+
+                    <div class="reservation-grid">
+
+                        <div class="info-box">
+
+                            <span>
+                                IME I PREZIME
+                            </span>
+
+                            <strong>
+                                ${escapeHTML(
+                                    reservation.name
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                TELEFON
+                            </span>
+
+                            <strong>
+                                ${phoneLink(
+                                    reservation.phone
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                INSTAGRAM
+                            </span>
+
+                            <strong>
+                                ${instagramText(
+                                    reservation.instagram
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                BROJ OSOBA
+                            </span>
+
+                            <strong>
+                                ${escapeHTML(
+                                    reservation.guests
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                TIP STOLA
+                            </span>
+
+                            <strong>
+                                ${escapeHTML(
+                                    reservation.tableType ||
+                                    "-"
+                                )}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <span>
+                                PRIMLJENO
+                            </span>
+
+                            <strong>
+                                ${escapeHTML(
+                                    formatCreatedAt(
+                                        reservation.createdAt
+                                    )
+                                )}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="condition-box">
+
+                        <span>
+                            USLOV REZERVACIJE
                         </span>
-                    </td>
 
-                    <td>
-                        <button
-                            type="button"
-                            class="delete-btn"
-                            onclick="deleteReservation(${reservation.id})"
-                        >
-                            OBRIŠI
-                        </button>
-                    </td>
+                        <strong>
+                            ${escapeHTML(
+                                reservation.condition ||
+                                "Nije naveden"
+                            )}
+                        </strong>
 
-                </tr>
+                    </div>
+
+                </div>
             `;
+
         }).join("");
 }
 
-// =========================
-// OBRIŠI REZERVACIJU
-// =========================
 
-async function deleteReservation(id) {
-    const shouldDelete = confirm(
-        "Da li želiš da obrišeš ovu rezervaciju?"
-    );
+// ========================================
+// OSVEŽI
+// ========================================
 
-    if (!shouldDelete) {
-        return;
-    }
+refreshButton.addEventListener(
+    "click",
+    loadReservations
+);
 
-    try {
-        const response = await fetch(
-            `/api/reservations/${id}`,
-            {
-                method: "DELETE"
-            }
-        );
 
-        const result = await response.json();
+// ========================================
+// AUTOMATSKI UČITAJ
+// ========================================
 
-        if (!response.ok || !result.success) {
-            throw new Error(
-                "Brisanje rezervacije nije uspelo."
-            );
-        }
-
-        await loadReservations();
-
-    } catch (error) {
-        console.error(error);
-
-        alert(
-            "Došlo je do greške pri brisanju."
-        );
-    }
-}
-
-// =========================
-// POMOĆNE FUNKCIJE
-// =========================
-
-function formatDate(dateString) {
-    if (!dateString) {
-        return "-";
-    }
-
-    const date = new Date(
-        `${dateString}T00:00:00`
-    );
-
-    return new Intl.DateTimeFormat(
-        "sr-RS",
-        {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }
-    ).format(date);
-}
-
-function escapeHTML(value) {
-    const div = document.createElement("div");
-
-    div.textContent = value ?? "";
-
-    return div.innerHTML;
-}
-
-// =========================
-// START
-// =========================
-
-loadAll();
+loadReservations();
