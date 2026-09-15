@@ -184,7 +184,7 @@ clubCards.forEach(card => {
 
         programContent.innerHTML = `
             <p>
-                Učitavanje programa sa Beograd Noću...
+                Učitavanje programa...
             </p>
         `;
 
@@ -252,9 +252,6 @@ clubCards.forEach(card => {
                         ${escapeHTML(data.program)}
                     </h3>
 
-                    <p style="margin-top:15px;">
-                        Izvor: Beograd Noću
-                    </p>
 
                     <button
                         type="button"
