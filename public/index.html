@@ -79,18 +79,44 @@
 
         <!-- DATUM -->
 
-        <div class="date-section">
+    
 
-            <label for="eventDate">
-                IZABERI DATUM
-            </label>
+<div class="date-section">
 
-            <input
-                type="date"
-                id="eventDate"
-            >
+    <div class="date-title">
+        <span>01</span>
 
+        <div>
+            <label>IZABERI DATUM</label>
+            <p>Kada izlaziš?</p>
         </div>
+    </div>
+
+    <div
+        class="quick-dates"
+        id="quickDates"
+    ></div>
+
+    <button
+        type="button"
+        class="other-date-button"
+        id="otherDateButton"
+    >
+        <span>＋</span>
+        DRUGI DATUM
+    </button>
+
+    <div
+        class="custom-date-wrapper hidden"
+        id="customDateWrapper"
+    >
+        <input
+            type="date"
+            id="eventDate"
+        >
+    </div>
+
+</div>
 
 
         <!-- KLUBOVI -->
