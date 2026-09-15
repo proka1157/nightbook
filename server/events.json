@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "club": "Lasta",
+    "date": "2026-09-18",
+    "title": "Friday Night",
+    "dj": "DJ Marko",
+    "time": "23:00",
+    "price": "500 RSD",
+    "description": "Petak na Lasti. Rezervacije su otvorene.",
+    "image": ""
+  },
+  {
+    "id": 2,
+    "club": "Freestyler",
+    "date": "2026-09-19",
+    "title": "Saturday Night",
+    "dj": "Special Guest",
+    "time": "23:00",
+    "price": "700 RSD",
+    "description": "Subota na Freestyleru. Rezerviši svoje mesto.",
+    "image": ""
+  },
+  {
+    "id": 3,
+    "club": "Tranzit",
+    "date": "2026-09-19",
+    "title": "Saturday",
+    "dj": "DJ Team",
+    "time": "23:00",
+    "price": "500 RSD",
+    "description": "Subota u Tranzitu. Rezervacije su otvorene.",
+    "image": ""
+  },
+  {
+    "id": 4,
+    "club": "Remiks",
+    "date": "2026-09-19",
+    "title": "Weekend Party",
+    "dj": "DJ Team",
+    "time": "23:00",
+    "price": "500 RSD",
+    "description": "Vikend u Remiksu. Rezerviši svoje mesto.",
+    "image": ""
+  }
+]
