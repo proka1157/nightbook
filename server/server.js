@@ -126,7 +126,6 @@ function escapeRegex(text) {
 }
 
 function extractProgram(html, selectedDate) {
-
     const date = new Date(selectedDate + "T12:00:00");
 
     if (Number.isNaN(date.getTime())) {
@@ -139,7 +138,7 @@ function extractProgram(html, selectedDate) {
 
     const text = htmlToText(html);
 
-    // Primer koji tražimo:
+    // Primer na Beograd Noću:
     // PETAK 18. Septembar
 
     const exactDateRegex = new RegExp(
@@ -157,7 +156,7 @@ function extractProgram(html, selectedDate) {
         .slice(match.index + match[0].length)
         .trim();
 
-    // Pronađi sledeći datum da ne uzmemo program drugog dana
+    // Zaustavljamo se kada počne program sledećeg datuma
     const nextDateRegex =
         /(?:PONEDELJAK|UTORAK|SREDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s+\d{1,2}\.\s*(?:Januar|Februar|Mart|April|Maj|Jun|Jul|Avgust|Septembar|Oktobar|Novembar|Decembar)/i;
 
@@ -167,11 +166,9 @@ function extractProgram(html, selectedDate) {
         afterDate = afterDate.slice(0, nextDate);
     }
 
-    // Ukloni nepotrebne delove
     afterDate = afterDate
         .replace(/rezerviši online/gi, "\n")
         .replace(/rezervisi online/gi, "\n")
-        .replace(/rezervacija/gi, "\n")
         .trim();
 
     const lines = afterDate
@@ -184,10 +181,8 @@ function extractProgram(html, selectedDate) {
         return null;
     }
 
-    // Prvih nekoliko relevantnih linija
-    const usefulLines = lines.slice(0, 5);
-
-    return usefulLines.join(" • ");
+    // Uzimamo nekoliko prvih relevantnih redova
+    return lines.slice(0, 5).join(" • ");
 }
 
 // ========================================
@@ -195,7 +190,6 @@ function extractProgram(html, selectedDate) {
 // ========================================
 
 app.get("/api/program", async (req, res) => {
-
     const { club: clubKey, date } = req.query;
 
     if (!clubKey || !date) {
@@ -213,13 +207,14 @@ app.get("/api/program", async (req, res) => {
     }
 
     try {
-
         const response = await fetch(club.url, {
             headers: {
                 "User-Agent":
                     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+
                 "Accept":
                     "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+
                 "Accept-Language":
                     "sr-RS,sr;q=0.9,en-US;q=0.8,en;q=0.7"
             }
@@ -227,7 +222,7 @@ app.get("/api/program", async (req, res) => {
 
         if (!response.ok) {
             throw new Error(
-                `Beograd Nocu status: ${response.status}`
+                `Beograd Noću status: ${response.status}`
             );
         }
 
@@ -255,7 +250,6 @@ app.get("/api/program", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error(
             "Greška pri preuzimanju programa:",
             error
@@ -269,23 +263,30 @@ app.get("/api/program", async (req, res) => {
 });
 
 // ========================================
-// POST REZERVACIJA
+// POST - NOVA REZERVACIJA
 // ========================================
 
 app.post("/api/reservations", (req, res) => {
-
     try {
-
         const {
             club,
             date,
             name,
             phone,
             instagram,
-            guests
+            guests,
+            tableType,
+            condition
         } = req.body;
 
-        if (!club || !date || !name || !phone || !guests) {
+        if (
+            !club ||
+            !date ||
+            !name ||
+            !phone ||
+            !guests ||
+            !tableType
+        ) {
             return res.status(400).json({
                 error: "Popuni sva obavezna polja."
             });
@@ -303,12 +304,24 @@ app.post("/api/reservations", (req, res) => {
 
         const reservation = {
             id: Date.now(),
+
             club,
             date,
+
             name,
             phone,
+
             instagram: instagram || "",
+
             guests: Number(guests),
+
+            // NOVO
+            tableType: tableType || "",
+            condition: condition || "",
+
+            // NOVO
+            status: "nova",
+
             createdAt: new Date().toISOString()
         };
 
@@ -326,8 +339,10 @@ app.post("/api/reservations", (req, res) => {
         });
 
     } catch (error) {
-
-        console.error(error);
+        console.error(
+            "Greška pri čuvanju rezervacije:",
+            error
+        );
 
         return res.status(500).json({
             error: "Greška pri čuvanju rezervacije."
@@ -336,31 +351,38 @@ app.post("/api/reservations", (req, res) => {
 });
 
 // ========================================
-// GET REZERVACIJE - ADMIN
+// GET - SVE REZERVACIJE
 // ========================================
 
 app.get("/api/reservations", (req, res) => {
-
     try {
-
         const reservations = JSON.parse(
             fs.readFileSync(reservationsFile, "utf8")
         );
 
-        res.json(reservations);
+        // Najnovije rezervacije prve
+        reservations.sort((a, b) => {
+            return new Date(b.createdAt) -
+                   new Date(a.createdAt);
+        });
 
-    } catch {
-        res.json([]);
+        return res.json(reservations);
+
+    } catch (error) {
+        return res.json([]);
     }
 });
 
 // ========================================
-// ADMIN
+// ADMIN STRANICA
 // ========================================
 
 app.get("/admin", (req, res) => {
     res.sendFile(
-        path.join(__dirname, "../public/admin.html")
+        path.join(
+            __dirname,
+            "../public/admin.html"
+        )
     );
 });
 
@@ -370,14 +392,19 @@ app.get("/admin", (req, res) => {
 
 app.use((req, res) => {
     res.sendFile(
-        path.join(__dirname, "../public/index.html")
+        path.join(
+            __dirname,
+            "../public/index.html"
+        )
     );
 });
 
 // ========================================
-// START
+// POKRETANJE SERVERA
 // ========================================
 
 app.listen(PORT, "0.0.0.0", () => {
-    console.log(`NightBook radi na portu ${PORT}`);
+    console.log(
+        `NightBook radi na portu ${PORT}`
+    );
 });
