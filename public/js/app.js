@@ -22,78 +22,36 @@ const reservationMessage = document.getElementById("reservationMessage");
 const TABLES = {
 
     freestyler: [
-        {
-            name: "Barski sto",
-            condition: "1 obična flaša"
-        },
-        {
-            name: "Mali separe",
-            condition: "1 premium flaša"
-        },
-        {
-            name: "Veliki separe",
-            condition: "2 premium flaše"
-        },
-        {
-            name: "Centralni separe",
-            condition: "3 premium flaše"
-        }
+        { name: "Barski sto", condition: "1 obična flaša" },
+        { name: "Mali separe", condition: "1 premium flaša" },
+        { name: "Veliki separe", condition: "2 premium flaše" },
+        { name: "Centralni separe", condition: "3 premium flaše" }
     ],
 
     lasta: [
-        {
-            name: "Barski sto",
-            condition: "1 obična flaša"
-        },
-        {
-            name: "Visoko sedenje",
-            condition: "1 premium flaša"
-        },
-        {
-            name: "Separe",
-            condition: "2 premium flaše"
-        },
-        {
-            name: "Veliki separe",
-            condition: "3 premium flaše"
-        }
+        { name: "Barski sto", condition: "1 obična flaša" },
+        { name: "Visoko sedenje", condition: "1 premium flaša" },
+        { name: "Separe", condition: "2 premium flaše" },
+        { name: "Veliki separe", condition: "3 premium flaše" }
     ],
 
     remiks: [
-        {
-            name: "Barski sto",
-            condition: "Bez uslova"
-        },
-        {
-            name: "Visoko sedenje",
-            condition: "1 obična flaša"
-        },
-        {
-            name: "Separe",
-            condition: "1 premium flaša"
-        }
+        { name: "Barski sto", condition: "Bez uslova" },
+        { name: "Visoko sedenje", condition: "1 obična flaša" },
+        { name: "Separe", condition: "1 premium flaša" }
     ],
 
     tranzit: [
-        {
-            name: "Barski sto",
-            condition: "50 €"
-        },
-        {
-            name: "Visoko sedenje",
-            condition: "100 € / 1 obična flaša"
-        },
-        {
-            name: "Separe",
-            condition: "1 premium flaša"
-        }
+        { name: "Barski sto", condition: "50 €" },
+        { name: "Visoko sedenje", condition: "100 € / 1 obična flaša" },
+        { name: "Separe", condition: "1 premium flaša" }
     ]
 
 };
 
 
 // ========================================
-// MINIMALNI DATUM = DANAS
+// DATUM
 // ========================================
 
 const today = new Date();
@@ -109,6 +67,215 @@ eventDate.min = minDate;
 
 
 // ========================================
+// BRZI DATUMI
+// ========================================
+
+const quickDates = document.getElementById("quickDates");
+const otherDateButton = document.getElementById("otherDateButton");
+const customDateWrapper = document.getElementById("customDateWrapper");
+
+const DAY_NAMES = [
+    "NED",
+    "PON",
+    "UTO",
+    "SRE",
+    "ČET",
+    "PET",
+    "SUB"
+];
+
+const MONTH_NAMES = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAJ",
+    "JUN",
+    "JUL",
+    "AVG",
+    "SEP",
+    "OKT",
+    "NOV",
+    "DEC"
+];
+
+
+function toLocalDateString(date) {
+
+    return (
+        date.getFullYear() +
+        "-" +
+        String(date.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(date.getDate()).padStart(2, "0")
+    );
+
+}
+
+
+function getNextWeekendDates() {
+
+    const dates = [];
+
+    const start = new Date();
+    start.setHours(12, 0, 0, 0);
+
+    for (let i = 0; i < 14; i++) {
+
+        const date = new Date(start);
+
+        date.setDate(
+            start.getDate() + i
+        );
+
+        const day = date.getDay();
+
+        // PETAK / SUBOTA / NEDELJA
+
+        if (
+            day === 5 ||
+            day === 6 ||
+            day === 0
+        ) {
+            dates.push(date);
+        }
+
+        if (dates.length === 3) {
+            break;
+        }
+    }
+
+    return dates;
+}
+
+
+function renderQuickDates() {
+
+    if (!quickDates) return;
+
+    const dates = getNextWeekendDates();
+
+    quickDates.innerHTML =
+        dates.map(date => {
+
+            const value =
+                toLocalDateString(date);
+
+            return `
+
+                <button
+                    type="button"
+                    class="quick-date"
+                    data-date="${value}"
+                >
+
+                    <span class="quick-date-day">
+                        ${DAY_NAMES[date.getDay()]}
+                    </span>
+
+                    <span class="quick-date-number">
+                        ${date.getDate()}
+                    </span>
+
+                    <span class="quick-date-month">
+                        ${MONTH_NAMES[date.getMonth()]}
+                    </span>
+
+                </button>
+
+            `;
+
+        }).join("");
+
+
+    document
+        .querySelectorAll(".quick-date")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(".quick-date")
+                        .forEach(item => {
+                            item.classList.remove("active");
+                        });
+
+                    button.classList.add("active");
+
+                    eventDate.value =
+                        button.dataset.date;
+
+                    if (customDateWrapper) {
+                        customDateWrapper
+                            .classList
+                            .add("hidden");
+                    }
+
+                    // Resetuj prethodni rezultat
+                    programResult.classList.add("hidden");
+                    reservationSection.classList.add("hidden");
+
+                    clubCards.forEach(card => {
+                        card.classList.remove("active");
+                    });
+
+                }
+            );
+
+        });
+
+}
+
+
+if (otherDateButton) {
+
+    otherDateButton.addEventListener(
+        "click",
+        () => {
+
+            customDateWrapper
+                .classList
+                .toggle("hidden");
+
+        }
+    );
+
+}
+
+
+eventDate.addEventListener(
+    "change",
+    () => {
+
+        document
+            .querySelectorAll(".quick-date")
+            .forEach(button => {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.date ===
+                    eventDate.value
+                );
+
+            });
+
+        programResult.classList.add("hidden");
+        reservationSection.classList.add("hidden");
+
+        clubCards.forEach(card => {
+            card.classList.remove("active");
+        });
+
+    }
+);
+
+
+renderQuickDates();
+
+
+// ========================================
 // FORMAT DATUMA
 // ========================================
 
@@ -121,6 +288,7 @@ function formatDate(value) {
     }
 
     return `${parts[2]}.${parts[1]}.${parts[0]}.`;
+
 }
 
 
@@ -136,6 +304,7 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+
 }
 
 
@@ -154,13 +323,10 @@ clubCards.forEach(card => {
 
             alert("Prvo izaberi datum.");
 
-            eventDate.focus();
-
             return;
+
         }
 
-
-        // Aktivni klub
 
         clubCards.forEach(button => {
             button.classList.remove("active");
@@ -169,15 +335,14 @@ clubCards.forEach(card => {
         card.classList.add("active");
 
 
-        // Prikaži program sekciju
-
         programResult.classList.remove("hidden");
-
         reservationSection.classList.add("hidden");
 
 
         programClub.textContent =
-            card.querySelector("strong").textContent.trim();
+            card.querySelector("strong")
+                .textContent
+                .trim();
 
         programDate.textContent =
             formatDate(date);
@@ -215,6 +380,7 @@ clubCards.forEach(card => {
             if (!data.found) {
 
                 programContent.innerHTML = `
+
                     <div class="program-info">
 
                         <strong>
@@ -222,16 +388,16 @@ clubCards.forEach(card => {
                         </strong>
 
                         <p>
-                            ${escapeHTML(
-                                data.message ||
-                                "Program za ovaj datum još nije objavljen."
-                            )}
+                            Program za ovaj datum
+                            trenutno nije dostupan.
                         </p>
 
                     </div>
+
                 `;
 
                 return;
+
             }
 
 
@@ -239,9 +405,11 @@ clubCards.forEach(card => {
             // PROGRAM PRONAĐEN
             // ========================================
 
-            programClub.textContent = data.club;
+            programClub.textContent =
+                data.club;
 
             programContent.innerHTML = `
+
                 <div class="program-info">
 
                     <p class="program-label">
@@ -251,7 +419,6 @@ clubCards.forEach(card => {
                     <h3>
                         ${escapeHTML(data.program)}
                     </h3>
-
 
                     <button
                         type="button"
@@ -263,6 +430,7 @@ clubCards.forEach(card => {
                     </button>
 
                 </div>
+
             `;
 
 
@@ -275,16 +443,22 @@ clubCards.forEach(card => {
 
             document
                 .getElementById("openReservation")
-                .addEventListener("click", () => {
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    reservationSection.classList.remove("hidden");
+                        reservationSection
+                            .classList
+                            .remove("hidden");
 
-                    reservationSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+                        reservationSection
+                            .scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                            });
 
-                });
+                    }
+                );
 
 
         } catch (error) {
@@ -292,17 +466,19 @@ clubCards.forEach(card => {
             console.error(error);
 
             programContent.innerHTML = `
+
                 <div class="program-info">
 
                     <strong>
-                        Greška pri učitavanju programa.
+                        Program trenutno nije dostupan.
                     </strong>
 
                     <p>
-                        ${escapeHTML(error.message)}
+                        Pokušaj ponovo za nekoliko trenutaka.
                     </p>
 
                 </div>
+
             `;
 
         }
@@ -313,7 +489,7 @@ clubCards.forEach(card => {
 
 
 // ========================================
-// TIP STOLA
+// TIP STOLA + USLOV
 // ========================================
 
 function createTableSelector(club) {
@@ -328,10 +504,11 @@ function createTableSelector(club) {
 
     const tables = TABLES[club] || [];
 
-
-    const wrapper = document.createElement("div");
+    const wrapper =
+        document.createElement("div");
 
     wrapper.id = "tableSelection";
+
 
     wrapper.innerHTML = `
 
@@ -405,6 +582,7 @@ function createTableSelector(club) {
             type="hidden"
             id="reservationCondition"
         >
+
     `;
 
 
@@ -424,48 +602,56 @@ function createTableSelector(club) {
         document.getElementById("tableType");
 
     const conditionDisplay =
-        document.getElementById("conditionDisplay");
+        document.getElementById(
+            "conditionDisplay"
+        );
 
     const conditionText =
-        document.getElementById("conditionText");
+        document.getElementById(
+            "conditionText"
+        );
 
     const reservationCondition =
-        document.getElementById("reservationCondition");
+        document.getElementById(
+            "reservationCondition"
+        );
 
 
-    tableType.addEventListener("change", () => {
+    tableType.addEventListener(
+        "change",
+        () => {
 
-        const option =
-            tableType.options[
-                tableType.selectedIndex
-            ];
+            const option =
+                tableType.options[
+                    tableType.selectedIndex
+                ];
 
-
-        const condition =
-            option.dataset.condition || "";
-
-
-        reservationCondition.value =
-            condition;
+            const condition =
+                option.dataset.condition || "";
 
 
-        if (!condition) {
+            reservationCondition.value =
+                condition;
+
+
+            if (!condition) {
+
+                conditionDisplay.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            conditionText.textContent =
+                condition;
 
             conditionDisplay.style.display =
-                "none";
-
-            return;
+                "block";
 
         }
-
-
-        conditionText.textContent =
-            condition;
-
-        conditionDisplay.style.display =
-            "block";
-
-    });
+    );
 
 }
 
@@ -482,7 +668,9 @@ reservationForm.addEventListener(
 
 
         const tableType =
-            document.getElementById("tableType");
+            document.getElementById(
+                "tableType"
+            );
 
         const reservationCondition =
             document.getElementById(
@@ -495,14 +683,17 @@ reservationForm.addEventListener(
             alert("Izaberi tip stola.");
 
             return;
+
         }
 
 
         const reservation = {
 
-            club: selectedClub.value,
+            club:
+                selectedClub.value,
 
-            date: selectedDate.value,
+            date:
+                selectedDate.value,
 
             name:
                 document
@@ -554,7 +745,9 @@ reservationForm.addEventListener(
                     },
 
                     body:
-                        JSON.stringify(reservation)
+                        JSON.stringify(
+                            reservation
+                        )
 
                 }
             );
@@ -586,7 +779,7 @@ reservationForm.addEventListener(
             console.error(error);
 
             reservationMessage.textContent =
-                "Greška: " + error.message;
+                "Greška pri slanju rezervacije.";
 
         }
 
