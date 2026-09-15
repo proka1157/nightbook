@@ -207,43 +207,149 @@ input {
    DATUM
 ========================= */
 
+/* ===================================
+   NIGHTBOOK DATE SELECTOR
+=================================== */
+
 .date-section {
-    margin-bottom: 34px;
+    margin: 35px 0;
 }
 
-.date-section label,
-.form-group label {
-    display: block;
+.date-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
 
-    color: #888;
-
-    font-size: 11px;
+.date-title > span {
+    color: #ffb800;
+    font-size: 12px;
     font-weight: 900;
-
-    letter-spacing: 1.5px;
-
-    margin-bottom: 10px;
+    letter-spacing: 2px;
 }
 
-#eventDate {
-    width: 100%;
-    max-width: 420px;
+.date-title label {
+    color: #ffb800;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
 
-    padding: 18px;
-
-    background: #111;
+.date-title p {
     color: white;
+    font-size: 22px;
+    font-weight: 800;
+    margin: 4px 0 0;
+}
 
+.quick-dates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.quick-date {
+    appearance: none;
+    background: #0d0d0d;
     border: 1px solid #292929;
-    border-radius: 10px;
+    border-radius: 14px;
+    color: white;
+    padding: 18px 8px;
+    cursor: pointer;
+    transition:
+        border-color .2s ease,
+        transform .2s ease,
+        background .2s ease;
+}
 
-    outline: none;
+.quick-date:hover {
+    border-color: #ffb800;
+    transform: translateY(-2px);
+}
 
+.quick-date.active {
+    background: #ffb800;
+    border-color: #ffb800;
+    color: #050505;
+}
+
+.quick-date-day {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    opacity: .7;
+    margin-bottom: 7px;
+}
+
+.quick-date-number {
+    display: block;
+    font-size: 25px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.quick-date-month {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    margin-top: 6px;
+}
+
+.other-date-button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px;
+    background: transparent;
+    border: 1px solid #292929;
+    border-radius: 12px;
+    color: #999;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.other-date-button:hover {
+    color: #ffb800;
+    border-color: #ffb800;
+}
+
+.other-date-button span {
+    color: #ffb800;
+    margin-right: 5px;
+}
+
+.custom-date-wrapper {
+    margin-top: 12px;
+}
+
+.custom-date-wrapper input {
+    width: 100%;
+    box-sizing: border-box;
+    background: #0d0d0d;
+    color: white;
+    border: 1px solid #ffb800;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
     color-scheme: dark;
 }
 
-#eventDate:focus {
-    border-color: #ffb800;
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 500px) {
+
+    .quick-date {
+        padding: 16px 5px;
+    }
+
+    .quick-date-number {
+        font-size: 22px;
+    }
+
 }
 
 
