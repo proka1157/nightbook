@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta name="description" content="NightBook - rezervacije klubova u Beogradu. Izaberi datum, klub i rezerviši sto.">
+
     <title>NightBook | Rezervacije klubova Beograd</title>
 
     <link rel="stylesheet" href="css/style.css">
@@ -12,6 +14,7 @@
 <body>
 
 <header class="navbar">
+
     <div class="logo">
         NIGHT<span>BOOK</span>
     </div>
@@ -19,14 +22,19 @@
     <a href="#booking" class="nav-button">
         REZERVIŠI
     </a>
+
 </header>
 
 
 <main>
 
-    <!-- HERO -->
+    <!-- =========================
+         HERO
+    ========================== -->
 
     <section class="hero">
+
+        <div class="hero-overlay"></div>
 
         <div class="hero-content">
 
@@ -41,7 +49,7 @@
 
             <p class="hero-subtitle">
                 Izaberi datum i klub.
-                Mi ćemo ti pokazati šta se dešava te večeri.
+                Pronađi događaj i rezerviši sto za nekoliko sekundi.
             </p>
 
             <a href="#booking" class="hero-button">
@@ -53,7 +61,9 @@
     </section>
 
 
-    <!-- BOOKING -->
+    <!-- =========================
+         BOOKING
+    ========================== -->
 
     <section
         class="booking-section"
@@ -71,133 +81,171 @@
             </h2>
 
             <p>
-                Izaberi datum, zatim klub.
+                Prvo izaberi datum, zatim klub.
             </p>
 
         </div>
 
 
-        <!-- DATUM -->
+        <!-- =========================
+             DATUM
+        ========================== -->
 
-    
+        <div class="date-section">
 
-<div class="date-section">
+            <label for="eventDate">
+                IZABERI DATUM
+            </label>
 
-    <div class="date-title">
-        <span>01</span>
+            <div class="date-input-wrapper">
 
-        <div>
-            <label>IZABERI DATUM</label>
-            <p>Kada izlaziš?</p>
+                <span class="date-icon">
+                    ◷
+                </span>
+
+                <input
+                    type="date"
+                    id="eventDate"
+                    required
+                >
+
+            </div>
+
+            <p class="date-help">
+                Odaberi veče za koje želiš rezervaciju.
+            </p>
+
         </div>
-    </div>
-
-    <div
-        class="quick-dates"
-        id="quickDates"
-    ></div>
-
-    <button
-        type="button"
-        class="other-date-button"
-        id="otherDateButton"
-    >
-        <span>＋</span>
-        DRUGI DATUM
-    </button>
-
-    <div
-        class="custom-date-wrapper hidden"
-        id="customDateWrapper"
-    >
-        <input
-            type="date"
-            id="eventDate"
-        >
-    </div>
-
-</div>
 
 
-        <!-- KLUBOVI -->
+        <!-- =========================
+             KLUBOVI
+        ========================== -->
 
         <div class="clubs-grid">
 
+
+            <!-- LASTA -->
+
             <button
-                class="club-card"
+                type="button"
+                class="club-card lasta-card"
                 data-club="lasta"
             >
+
+                <div class="club-dark-overlay"></div>
+
                 <span class="club-number">
                     01
                 </span>
 
-                <strong>
-                    LASTA
-                </strong>
+                <div class="club-info">
 
-                <small>
-                    Beograd
-                </small>
+                    <strong>
+                        LASTA
+                    </strong>
+
+                    <small>
+                        Beograd
+                    </small>
+
+                </div>
+
             </button>
 
 
+            <!-- FREESTYLER -->
+
             <button
-                class="club-card"
+                type="button"
+                class="club-card freestyler-card"
                 data-club="freestyler"
             >
+
+                <div class="club-dark-overlay"></div>
+
                 <span class="club-number">
                     02
                 </span>
 
-                <strong>
-                    FREESTYLER
-                </strong>
+                <div class="club-info">
 
-                <small>
-                    Beograd
-                </small>
+                    <strong>
+                        FREESTYLER
+                    </strong>
+
+                    <small>
+                        Beograd
+                    </small>
+
+                </div>
+
             </button>
 
 
+            <!-- REMIKS -->
+
             <button
-                class="club-card"
+                type="button"
+                class="club-card remiks-card"
                 data-club="remiks"
             >
+
+                <div class="club-dark-overlay"></div>
+
                 <span class="club-number">
                     03
                 </span>
 
-                <strong>
-                    REMIKS
-                </strong>
+                <div class="club-info">
 
-                <small>
-                    Beograd
-                </small>
+                    <strong>
+                        REMIKS
+                    </strong>
+
+                    <small>
+                        Beograd
+                    </small>
+
+                </div>
+
             </button>
 
 
+            <!-- TRANZIT -->
+
             <button
-                class="club-card"
+                type="button"
+                class="club-card tranzit-card"
                 data-club="tranzit"
             >
+
+                <div class="club-dark-overlay"></div>
+
                 <span class="club-number">
                     04
                 </span>
 
-                <strong>
-                    TRANZIT
-                </strong>
+                <div class="club-info">
 
-                <small>
-                    Beograd
-                </small>
+                    <strong>
+                        TRANZIT
+                    </strong>
+
+                    <small>
+                        Beograd
+                    </small>
+
+                </div>
+
             </button>
 
         </div>
 
 
-        <!-- REZULTAT -->
+        <!-- =========================
+             PROGRAM
+        ========================== -->
 
         <div
             id="programResult"
@@ -208,14 +256,14 @@
                 PROGRAM
             </p>
 
-            <h2 id="programClub">
-            </h2>
+            <h2 id="programClub"></h2>
 
             <p
                 id="programDate"
                 class="program-date"
-            >
-            </p>
+            ></p>
+
+            <div class="program-divider"></div>
 
             <div id="programContent">
 
@@ -228,14 +276,16 @@
         </div>
 
 
-        <!-- REZERVACIJA -->
+        <!-- =========================
+             REZERVACIJA
+        ========================== -->
 
         <div
             id="reservationSection"
             class="reservation-section hidden"
         >
 
-            <div class="section-heading">
+            <div class="section-heading reservation-heading">
 
                 <p class="section-label">
                     REZERVACIJA
@@ -244,6 +294,10 @@
                 <h2>
                     REZERVIŠI STO
                 </h2>
+
+                <p>
+                    Unesi podatke za rezervaciju.
+                </p>
 
             </div>
 
@@ -261,25 +315,29 @@
                 >
 
 
+                <!-- IME -->
+
                 <div class="form-group">
 
-                    <label>
+                    <label for="name">
                         IME I PREZIME
                     </label>
 
                     <input
                         type="text"
                         id="name"
-                        placeholder="Tvoje ime"
+                        placeholder="Tvoje ime i prezime"
                         required
                     >
 
                 </div>
 
 
+                <!-- TELEFON -->
+
                 <div class="form-group">
 
-                    <label>
+                    <label for="phone">
                         BROJ TELEFONA
                     </label>
 
@@ -293,9 +351,11 @@
                 </div>
 
 
+                <!-- INSTAGRAM -->
+
                 <div class="form-group">
 
-                    <label>
+                    <label for="instagram">
                         INSTAGRAM
                     </label>
 
@@ -308,9 +368,11 @@
                 </div>
 
 
+                <!-- BROJ OSOBA -->
+
                 <div class="form-group">
 
-                    <label>
+                    <label for="guests">
                         BROJ OSOBA
                     </label>
 
@@ -326,6 +388,12 @@
                 </div>
 
 
+                <!--
+                    TIP STOLA I USLOV
+                    app.js ih automatski ubacuje ovde
+                -->
+
+
                 <button
                     type="submit"
                     class="submit-button"
@@ -337,8 +405,7 @@
                 <p
                     id="reservationMessage"
                     class="reservation-message"
-                >
-                </p>
+                ></p>
 
             </form>
 
@@ -349,15 +416,27 @@
 </main>
 
 
+<!-- =========================
+     FOOTER
+========================== -->
+
 <footer>
 
-    <div class="logo">
-        NIGHT<span>BOOK</span>
-    </div>
+    <div class="footer-inner">
 
-    <p>
-        Beograd noću počinje ovde.
-    </p>
+        <div class="logo">
+            NIGHT<span>BOOK</span>
+        </div>
+
+        <p>
+            Beograd noću počinje ovde.
+        </p>
+
+        <small>
+            © 2026 NightBook
+        </small>
+
+    </div>
 
 </footer>
 
