@@ -8,19 +8,26 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
 
-const reservationsFile = path.join(
-    __dirname,
-    "data",
-    "reservations.json"
-);
+// ========================================
+// REZERVACIJE
+// ========================================
 
+const dataDir = path.join(__dirname, "data");
+const reservationsFile = path.join(dataDir, "reservations.json");
+
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+}
+
+if (!fs.existsSync(reservationsFile)) {
+    fs.writeFileSync(reservationsFile, "[]");
+}
 
 // ========================================
-// KLUBOVI
+// KLUBOVI - BEOGRAD NOĆU
 // ========================================
 
 const CLUBS = {
-
     lasta: {
         name: "Lasta",
         url: "https://www.beogradnocu.com/splavovi-u-beogradu/splav-lasta/"
@@ -37,16 +44,10 @@ const CLUBS = {
     },
 
     tranzit: {
-        name: "Tranzit",
+        name: "Tranzit Bar",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/tranzit-bar/"
     }
-
 };
-
-
-// ========================================
-// MESECI
-// ========================================
 
 const MONTHS = [
     "Januar",
@@ -63,783 +64,320 @@ const MONTHS = [
     "Decembar"
 ];
 
+const DAYS = [
+    "NEDELJA",
+    "PONEDELJAK",
+    "UTORAK",
+    "SREDA",
+    "ČETVRTAK",
+    "PETAK",
+    "SUBOTA"
+];
 
 // ========================================
-// POMOĆNE FUNKCIJE
+// HTML -> ČIST TEKST
 // ========================================
 
-function normalizeText(text) {
-
-    return String(text || "")
-
+function decodeHTML(text) {
+    return text
         .replace(/&nbsp;/gi, " ")
-
         .replace(/&amp;/gi, "&")
-
         .replace(/&quot;/gi, '"')
-
         .replace(/&#039;/gi, "'")
+        .replace(/&apos;/gi, "'")
+        .replace(/&scaron;/gi, "š")
+        .replace(/&Scaron;/gi, "Š")
+        .replace(/&ccaron;/gi, "č")
+        .replace(/&Ccaron;/gi, "Č")
+        .replace(/&cacute;/gi, "ć")
+        .replace(/&Cacute;/gi, "Ć")
+        .replace(/&zcaron;/gi, "ž")
+        .replace(/&Zcaron;/gi, "Ž")
+        .replace(/&dstrok;/gi, "đ")
+        .replace(/&Dstrok;/gi, "Đ")
+        .replace(/&#(\d+);/g, (_, number) =>
+            String.fromCharCode(Number(number))
+        );
+}
 
-        .replace(/&#8217;/gi, "'")
-
-        .replace(/&#8211;/gi, "–")
-
-        .replace(/&#8212;/gi, "—")
-
-        .replace(/<br\s*\/?>/gi, " ")
-
-        .replace(/<\/p>/gi, " ")
-
-        .replace(/<\/div>/gi, " ")
-
-        .replace(/<[^>]*>/g, " ")
-
-        .replace(/\s+/g, " ")
-
+function htmlToText(html) {
+    return decodeHTML(
+        html
+            .replace(/<script[\s\S]*?<\/script>/gi, " ")
+            .replace(/<style[\s\S]*?<\/style>/gi, " ")
+            .replace(
+                /<\/?(h1|h2|h3|h4|h5|p|div|li|br|section|article|tr|td)[^>]*>/gi,
+                "\n"
+            )
+            .replace(/<[^>]+>/g, " ")
+    )
+        .replace(/\r/g, "")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n\s*\n+/g, "\n")
         .trim();
 }
 
+// ========================================
+// PRONALAŽENJE PROGRAMA
+// ========================================
 
-function getDateParts(dateString) {
+function escapeRegex(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 
-    const parts = dateString
-        .split("-")
-        .map(Number);
+function extractProgram(html, selectedDate) {
 
-    const year = parts[0];
-    const month = parts[1];
-    const day = parts[2];
+    const date = new Date(selectedDate + "T12:00:00");
 
-    if (
-        !year ||
-        !month ||
-        !day ||
-        month < 1 ||
-        month > 12
-    ) {
+    if (Number.isNaN(date.getTime())) {
         return null;
     }
 
-    return {
-        year,
-        month,
-        day,
-        monthName: MONTHS[month - 1]
-    };
-}
+    const dayNumber = date.getDate();
+    const month = MONTHS[date.getMonth()];
+    const dayName = DAYS[date.getDay()];
 
+    const text = htmlToText(html);
 
-// ========================================
-// PARSER PROGRAMA
-// ========================================
+    // Primer koji tražimo:
+    // PETAK 18. Septembar
 
-function parseClubPage(html, dateString) {
+    const exactDateRegex = new RegExp(
+        `${escapeRegex(dayName)}\\s+${dayNumber}\\.\\s*${escapeRegex(month)}`,
+        "i"
+    );
 
-    const dateParts = getDateParts(dateString);
+    const match = exactDateRegex.exec(text);
 
-    if (!dateParts) {
+    if (!match) {
         return null;
     }
 
-    const {
-        day,
-        monthName
-    } = dateParts;
+    let afterDate = text
+        .slice(match.index + match[0].length)
+        .trim();
 
+    // Pronađi sledeći datum da ne uzmemo program drugog dana
+    const nextDateRegex =
+        /(?:PONEDELJAK|UTORAK|SREDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s+\d{1,2}\.\s*(?:Januar|Februar|Mart|April|Maj|Jun|Jul|Avgust|Septembar|Oktobar|Novembar|Decembar)/i;
 
-    /*
-        Na Beograd Noću stranici program je
-        organizovan po datumima.
+    const nextDate = afterDate.search(nextDateRegex);
 
-        Primer:
-
-        PETAK 18. Septembar
-
-        DJ's ...
-        od 23h
-        ulaz 500 rsd
-    */
-
-
-    const headingRegex =
-        /<h4[^>]*>([\s\S]*?)<\/h4>/gi;
-
-
-    const headings = [];
-
-    let match;
-
-
-    while (
-        (match = headingRegex.exec(html)) !== null
-    ) {
-
-        headings.push({
-
-            text:
-                normalizeText(match[1]),
-
-            start:
-                match.index,
-
-            end:
-                headingRegex.lastIndex
-
-        });
-
+    if (nextDate !== -1) {
+        afterDate = afterDate.slice(0, nextDate);
     }
 
+    // Ukloni nepotrebne delove
+    afterDate = afterDate
+        .replace(/rezerviši online/gi, "\n")
+        .replace(/rezervisi online/gi, "\n")
+        .replace(/rezervacija/gi, "\n")
+        .trim();
 
-    const wantedDay =
-        String(day);
+    const lines = afterDate
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean)
+        .filter(line => line.length > 2);
 
-    const wantedMonth =
-        monthName.toLowerCase();
-
-
-    for (
-        let i = 0;
-        i < headings.length;
-        i++
-    ) {
-
-        const heading =
-            headings[i];
-
-        const headingText =
-            heading.text.toLowerCase();
-
-
-        const dateRegex =
-            new RegExp(
-                `\\b${wantedDay}\\.\\s*${wantedMonth}\\b`,
-                "i"
-            );
-
-
-        if (!dateRegex.test(headingText)) {
-            continue;
-        }
-
-
-        const contentStart =
-            heading.end;
-
-
-        const contentEnd =
-            headings[i + 1]
-                ? headings[i + 1].start
-                : html.length;
-
-
-        let section =
-            html.slice(
-                contentStart,
-                contentEnd
-            );
-
-
-        /*
-            Ako nakon programa počinje
-            drugi veliki deo stranice,
-            prekidamo čitanje.
-        */
-
-        const stopMarkers = [
-            "<h2",
-            "<h3",
-            "<footer"
-        ];
-
-
-        for (
-            const marker of stopMarkers
-        ) {
-
-            const markerIndex =
-                section
-                    .toLowerCase()
-                    .indexOf(
-                        marker.toLowerCase()
-                    );
-
-
-            if (markerIndex !== -1) {
-
-                section =
-                    section.slice(
-                        0,
-                        markerIndex
-                    );
-
-            }
-
-        }
-
-
-        let program =
-            normalizeText(section);
-
-
-        /*
-            Uklanjamo tekstove koji nam
-            ne trebaju u NightBook programu.
-        */
-
-        program =
-            program
-
-                .replace(
-                    /rezerviši online/gi,
-                    ""
-                )
-
-                .replace(
-                    /rezervisi online/gi,
-                    ""
-                )
-
-                .replace(
-                    /rezerviši/gi,
-                    ""
-                )
-
-                .replace(
-                    /rezervisi/gi,
-                    ""
-                )
-
-                .replace(
-                    /\s+/g,
-                    " "
-                )
-
-                .trim();
-
-
-        if (!program) {
-            return null;
-        }
-
-
-        /*
-            Zaštita da slučajno ne povučemo
-            ogroman deo cele stranice.
-        */
-
-        if (program.length > 500) {
-
-            program =
-                program.slice(
-                    0,
-                    500
-                );
-
-        }
-
-
-        return program;
-
+    if (!lines.length) {
+        return null;
     }
 
+    // Prvih nekoliko relevantnih linija
+    const usefulLines = lines.slice(0, 5);
 
-    return null;
+    return usefulLines.join(" • ");
 }
-
 
 // ========================================
 // API - PROGRAM KLUBA
 // ========================================
 
-app.get(
-    "/api/program",
-    async (req, res) => {
+app.get("/api/program", async (req, res) => {
 
-        try {
+    const { club: clubKey, date } = req.query;
 
-            const clubKey =
-                String(
-                    req.query.club || ""
-                )
-                    .toLowerCase()
-                    .trim();
+    if (!clubKey || !date) {
+        return res.status(400).json({
+            error: "Klub i datum su obavezni."
+        });
+    }
 
+    const club = CLUBS[clubKey];
 
-            const date =
-                String(
-                    req.query.date || ""
-                )
-                    .trim();
+    if (!club) {
+        return res.status(404).json({
+            error: "Klub nije pronađen."
+        });
+    }
 
+    try {
 
-            if (!clubKey || !date) {
-
-                return res
-                    .status(400)
-                    .json({
-
-                        error:
-                            "Klub i datum su obavezni."
-
-                    });
-
+        const response = await fetch(club.url, {
+            headers: {
+                "User-Agent":
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+                "Accept":
+                    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language":
+                    "sr-RS,sr;q=0.9,en-US;q=0.8,en;q=0.7"
             }
+        });
 
+        if (!response.ok) {
+            throw new Error(
+                `Beograd Nocu status: ${response.status}`
+            );
+        }
 
-            const club =
-                CLUBS[clubKey];
+        const html = await response.text();
 
+        const program = extractProgram(html, date);
 
-            if (!club) {
-
-                return res
-                    .status(404)
-                    .json({
-
-                        error:
-                            "Klub nije pronađen."
-
-                    });
-
-            }
-
-
-            if (!getDateParts(date)) {
-
-                return res
-                    .status(400)
-                    .json({
-
-                        error:
-                            "Datum nije ispravan."
-
-                    });
-
-            }
-
-
-            // =================================
-            // PREUZIMANJE BEOGRAD NOĆU STRANICE
-            // =================================
-
-
-            const response =
-                await fetch(
-                    club.url,
-                    {
-
-                        headers: {
-
-                            "User-Agent":
-                                "Mozilla/5.0 (compatible; NightBook/1.0)",
-
-                            "Accept":
-                                "text/html,application/xhtml+xml"
-
-                        }
-
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    `Beograd Noću HTTP ${response.status}`
-                );
-
-            }
-
-
-            const html =
-                await response.text();
-
-
-            // =================================
-            // SVA 4 KLUBA KORISTE ISTI PARSER
-            // =================================
-
-
-            const program =
-                parseClubPage(
-                    html,
-                    date
-                );
-
-
-            // =================================
-            // PROGRAM NIJE OBJAVLJEN
-            // =================================
-
-
-            if (!program) {
-
-                return res.json({
-
-                    found: false,
-
-                    club:
-                        club.name,
-
-                    date,
-
-                    message:
-                        "Program za ovaj datum još nije objavljen."
-
-                });
-
-            }
-
-
-            // =================================
-            // PROGRAM JE PRONAĐEN
-            // =================================
-
-
+        if (!program) {
             return res.json({
-
-                found: true,
-
-                club:
-                    club.name,
-
+                found: false,
+                club: club.name,
                 date,
-
-                title:
-                    program,
-
-                source:
-                    "Beograd Noću"
-
+                message:
+                    "Program za ovaj datum još nije objavljen."
             });
-
-
-        } catch (error) {
-
-            console.error(
-                "Greška pri učitavanju programa:",
-                error
-            );
-
-
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Trenutno nije moguće učitati program."
-
-                });
-
         }
 
+        return res.json({
+            found: true,
+            club: club.name,
+            date,
+            program,
+            source: "Beograd Noću",
+            sourceUrl: club.url
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Greška pri preuzimanju programa:",
+            error
+        );
+
+        return res.status(502).json({
+            error:
+                "Trenutno nije moguće učitati program sa Beograd Noću."
+        });
     }
-);
-
+});
 
 // ========================================
-// GET REZERVACIJE
+// POST REZERVACIJA
 // ========================================
 
-app.get(
-    "/api/reservations",
-    (req, res) => {
+app.post("/api/reservations", (req, res) => {
+
+    try {
+
+        const {
+            club,
+            date,
+            name,
+            phone,
+            instagram,
+            guests
+        } = req.body;
+
+        if (!club || !date || !name || !phone || !guests) {
+            return res.status(400).json({
+                error: "Popuni sva obavezna polja."
+            });
+        }
+
+        let reservations = [];
 
         try {
-
-            if (
-                !fs.existsSync(
-                    reservationsFile
-                )
-            ) {
-
-                return res.json([]);
-
-            }
-
-
-            const reservations =
-                JSON.parse(
-
-                    fs.readFileSync(
-                        reservationsFile,
-                        "utf8"
-                    )
-
-                );
-
-
-            return res.json(
-                reservations
+            reservations = JSON.parse(
+                fs.readFileSync(reservationsFile, "utf8")
             );
-
-
-        } catch (error) {
-
-            console.error(
-                "Greška pri čitanju rezervacija:",
-                error
-            );
-
-
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Greška pri učitavanju rezervacija."
-
-                });
-
+        } catch {
+            reservations = [];
         }
 
-    }
-);
-
-
-// ========================================
-// NOVA REZERVACIJA
-// ========================================
-
-app.post(
-    "/api/reservations",
-    (req, res) => {
-
-        try {
-
-            const {
-                club,
-                date,
-                name,
-                phone,
-                instagram,
-                guests
-            } = req.body;
-
-
-            if (
-                !club ||
-                !date ||
-                !name ||
-                !phone ||
-                !guests
-            ) {
-
-                return res
-                    .status(400)
-                    .json({
-
-                        error:
-                            "Popuni sva obavezna polja."
-
-                    });
-
-            }
-
-
-            if (!CLUBS[club]) {
-
-                return res
-                    .status(400)
-                    .json({
-
-                        error:
-                            "Izabrani klub nije ispravan."
-
-                    });
-
-            }
-
-
-            const guestNumber =
-                Number(guests);
-
-
-            if (
-                !Number.isInteger(
-                    guestNumber
-                ) ||
-                guestNumber < 1 ||
-                guestNumber > 30
-            ) {
-
-                return res
-                    .status(400)
-                    .json({
-
-                        error:
-                            "Broj osoba mora biti između 1 i 30."
-
-                    });
-
-            }
-
-
-            let reservations = [];
-
-
-            if (
-                fs.existsSync(
-                    reservationsFile
-                )
-            ) {
-
-                reservations =
-                    JSON.parse(
-
-                        fs.readFileSync(
-                            reservationsFile,
-                            "utf8"
-                        )
-
-                    );
-
-            }
-
-
-            const reservation = {
-
-                id:
-                    Date.now(),
-
-                club,
-
-                clubName:
-                    CLUBS[club].name,
-
-                date,
-
-                name:
-                    String(name).trim(),
-
-                phone:
-                    String(phone).trim(),
-
-                instagram:
-                    String(
-                        instagram || ""
-                    ).trim(),
-
-                guests:
-                    guestNumber,
-
-                status:
-                    "pending",
-
-                createdAt:
-                    new Date()
-                        .toISOString()
-
-            };
-
-
-            reservations.push(
-                reservation
-            );
-
-
-            fs.writeFileSync(
-
-                reservationsFile,
-
-                JSON.stringify(
-                    reservations,
-                    null,
-                    2
-                )
-
-            );
-
-
-            return res
-                .status(201)
-                .json({
-
-                    success:
-                        true,
-
-                    reservation
-
-                });
-
-
-        } catch (error) {
-
-            console.error(
-                "Greška pri rezervaciji:",
-                error
-            );
-
-
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Rezervacija nije sačuvana."
-
-                });
-
-        }
-
-    }
-);
-
-
-// ========================================
-// ADMIN STRANICA
-// ========================================
-
-app.get(
-    "/admin",
-    (req, res) => {
-
-        res.sendFile(
-
-            path.join(
-                __dirname,
-                "../public/admin.html"
-            )
-
+        const reservation = {
+            id: Date.now(),
+            club,
+            date,
+            name,
+            phone,
+            instagram: instagram || "",
+            guests: Number(guests),
+            createdAt: new Date().toISOString()
+        };
+
+        reservations.push(reservation);
+
+        fs.writeFileSync(
+            reservationsFile,
+            JSON.stringify(reservations, null, 2)
         );
 
+        return res.status(201).json({
+            success: true,
+            message: "Rezervacija je uspešno poslata.",
+            reservation
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+            error: "Greška pri čuvanju rezervacije."
+        });
     }
-);
-
+});
 
 // ========================================
-// POČETNA STRANICA
+// GET REZERVACIJE - ADMIN
 // ========================================
 
-app.get(
-    "/",
-    (req, res) => {
+app.get("/api/reservations", (req, res) => {
 
-        res.sendFile(
+    try {
 
-            path.join(
-                __dirname,
-                "../public/index.html"
-            )
-
+        const reservations = JSON.parse(
+            fs.readFileSync(reservationsFile, "utf8")
         );
 
-    }
-);
+        res.json(reservations);
 
+    } catch {
+        res.json([]);
+    }
+});
 
 // ========================================
-// POKRETANJE SERVERA
+// ADMIN
 // ========================================
 
-app.listen(
-    PORT,
-    "0.0.0.0",
-    () => {
+app.get("/admin", (req, res) => {
+    res.sendFile(
+        path.join(__dirname, "../public/admin.html")
+    );
+});
 
-        console.log(
-            `NightBook radi na portu ${PORT}`
-        );
+// ========================================
+// FRONTEND FALLBACK
+// ========================================
 
-    }
-);
+app.use((req, res) => {
+    res.sendFile(
+        path.join(__dirname, "../public/index.html")
+    );
+});
+
+// ========================================
+// START
+// ========================================
+
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`NightBook radi na portu ${PORT}`);
+});
