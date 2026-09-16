@@ -1,7 +1,3 @@
-/* ========================================
-   RESET
-======================================== */
-
 * {
     margin: 0;
     padding: 0;
@@ -12,9 +8,19 @@ html {
     scroll-behavior: smooth;
 }
 
+:root {
+    --yellow: #ffb800;
+    --black: #070707;
+    --card: #101010;
+    --border: #292929;
+    --gray: #999999;
+    --radius: 24px;
+}
+
 body {
-    background: #070707;
-    color: #ffffff;
+    background: var(--black);
+    color: #fff;
+
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -38,34 +44,10 @@ button {
 }
 
 
-/* ========================================
-   VARIABLES
-======================================== */
-
-:root {
-    --yellow: #ffb800;
-    --yellow-dark: #d99c00;
-
-    --black: #070707;
-    --card: #101010;
-
-    --border: #292929;
-
-    --gray: #999999;
-    --light-gray: #cccccc;
-
-    --radius: 24px;
-}
-
-
-/* ========================================
-   NAVBAR
-======================================== */
+/* NAVBAR */
 
 .navbar {
-    width: 100%;
     height: 88px;
-
     padding: 0 5%;
 
     display: flex;
@@ -80,39 +62,26 @@ button {
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
 
-    border-bottom: 1px solid #1f1f1f;
+    border-bottom: 1px solid #202020;
 
     z-index: 1000;
 }
 
-
-/* ========================================
-   LOGO
-======================================== */
-
 .logo {
     font-size: 27px;
     font-weight: 900;
-
     letter-spacing: 2px;
-
-    color: white;
 }
 
 .logo span {
     color: var(--yellow);
 }
 
-
-/* ========================================
-   NAV BUTTON
-======================================== */
-
 .nav-button {
     text-decoration: none;
 
-    color: #050505;
     background: var(--yellow);
+    color: #050505;
 
     padding: 14px 22px;
 
@@ -120,22 +89,13 @@ button {
 
     font-size: 14px;
     font-weight: 900;
-
-    transition: 0.2s ease;
-}
-
-.nav-button:hover {
-    background: #ffc52e;
-    transform: translateY(-2px);
 }
 
 
-/* ========================================
-   HERO
-======================================== */
+/* HERO */
 
 .hero {
-    min-height: 560px;
+    min-height: 570px;
 
     position: relative;
 
@@ -144,23 +104,20 @@ button {
 
     padding: 80px 6%;
 
-    overflow: hidden;
-
     background:
         linear-gradient(
             90deg,
-            rgba(0, 0, 0, 0.95) 0%,
-            rgba(0, 0, 0, 0.75) 45%,
-            rgba(0, 0, 0, 0.35) 100%
+            rgba(0,0,0,.95),
+            rgba(0,0,0,.65),
+            rgba(0,0,0,.25)
         ),
         url("../freestyler.jpg.jpg");
 
     background-size: cover;
     background-position: center;
+
+    overflow: hidden;
 }
-
-
-/* dodatni fade prema ostatku sajta */
 
 .hero::after {
     content: "";
@@ -171,94 +128,75 @@ button {
     right: 0;
     bottom: 0;
 
-    height: 160px;
+    height: 170px;
 
     background:
         linear-gradient(
             transparent,
-            #070707
+            var(--black)
         );
-
-    pointer-events: none;
 }
-
 
 .hero-content {
     position: relative;
+    z-index: 2;
 
     max-width: 720px;
-
-    z-index: 2;
 }
 
-
-.hero-label {
+.hero-label,
+.section-label,
+.small-label,
+.program-label {
     color: var(--yellow);
 
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 900;
 
-    letter-spacing: 4px;
-
-    margin-bottom: 20px;
+    letter-spacing: 3px;
 }
 
+.hero-label {
+    margin-bottom: 20px;
+}
 
 .hero h1 {
     font-size: clamp(54px, 10vw, 100px);
 
-    line-height: 0.93;
+    line-height: .93;
 
     letter-spacing: -4px;
-
-    font-weight: 950;
 
     margin-bottom: 28px;
 }
 
-
 .hero-subtitle {
-    max-width: 540px;
+    max-width: 520px;
 
     color: #c8c8c8;
 
     font-size: 19px;
 
-    margin-bottom: 35px;
+    margin-bottom: 34px;
 }
-
 
 .hero-button {
     display: inline-block;
 
     text-decoration: none;
 
-    color: #050505;
     background: var(--yellow);
+    color: #050505;
 
     padding: 18px 28px;
 
     border-radius: 14px;
 
-    font-size: 15px;
     font-weight: 900;
-
-    letter-spacing: 0.5px;
-
-    transition: 0.25s ease;
 }
 
 
-.hero-button:hover {
-    transform: translateY(-3px);
-
-    background: #ffc52e;
-}
-
-
-/* ========================================
-   BOOKING SECTION
-======================================== */
+/* BOOKING */
 
 .booking-section {
     max-width: 1180px;
@@ -268,34 +206,23 @@ button {
     padding: 90px 5% 120px;
 }
 
-
 .section-heading {
     margin-bottom: 45px;
 }
 
-
 .section-label {
-    color: var(--yellow);
-
-    font-size: 13px;
-    font-weight: 900;
-
-    letter-spacing: 4px;
-
     margin-bottom: 10px;
 }
-
 
 .section-heading h2 {
     font-size: clamp(38px, 6vw, 64px);
 
     line-height: 1;
 
-    margin-bottom: 15px;
-
     letter-spacing: -2px;
-}
 
+    margin-bottom: 15px;
+}
 
 .section-heading > p:last-child {
     color: var(--gray);
@@ -304,80 +231,276 @@ button {
 }
 
 
-/* ========================================
-   DATE
-======================================== */
+/* DATE BOX */
 
 .date-section {
-    margin-bottom: 45px;
+    background:
+        linear-gradient(
+            145deg,
+            #121212,
+            #0c0c0c
+        );
 
-    max-width: 560px;
+    border: 1px solid var(--border);
+
+    border-radius: 24px;
+
+    padding: 28px;
+
+    margin-bottom: 65px;
+}
+
+.date-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    gap: 20px;
+
+    margin-bottom: 25px;
+}
+
+.date-title-row h3,
+.clubs-heading h3 {
+    margin-top: 5px;
+
+    font-size: 28px;
+
+    letter-spacing: -1px;
+}
+
+.selected-date-badge {
+    padding: 9px 14px;
+
+    border-radius: 100px;
+
+    border: 1px solid #333;
+
+    color: #999;
+
+    background: #0b0b0b;
+
+    font-size: 13px;
+    font-weight: 700;
 }
 
 
-.date-section label {
+/* DANAS / SUTRA */
+
+.main-quick-dates {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 12px;
+
+    margin-bottom: 27px;
+}
+
+.main-date-button {
+    border: 1px solid #303030;
+
+    background: #151515;
+
+    color: white;
+
+    border-radius: 17px;
+
+    padding: 19px;
+
+    text-align: left;
+
+    transition: .2s ease;
+}
+
+.main-date-button:hover,
+.main-date-button.active {
+    border-color: var(--yellow);
+
+    background:
+        rgba(255, 184, 0, .08);
+}
+
+.main-date-title {
     display: block;
 
-    margin-bottom: 12px;
+    color: var(--yellow);
 
-    color: #ffffff;
+    font-size: 12px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 6px;
+}
+
+.main-date-full {
+    display: block;
+
+    font-size: 19px;
+    font-weight: 850;
+}
+
+
+/* QUICK DATES */
+
+.quick-heading {
+    color: #777;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+}
+
+.quick-dates {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 16px;
+}
+
+.quick-date {
+    min-height: 105px;
+
+    border: 1px solid #303030;
+
+    border-radius: 16px;
+
+    background: #121212;
+
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    transition: .2s ease;
+}
+
+.quick-date:hover {
+    border-color: #666;
+    transform: translateY(-2px);
+}
+
+.quick-date.active {
+    border-color: var(--yellow);
+
+    background:
+        rgba(255,184,0,.10);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(255,184,0,.08);
+}
+
+.quick-date-day {
+    color: #888;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+}
+
+.quick-date-number {
+    font-size: 28px;
+    font-weight: 900;
+
+    line-height: 1.2;
+}
+
+.quick-date-month {
+    color: var(--yellow);
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+
+/* OTHER DATE */
+
+.other-date-button {
+    width: 100%;
+
+    border: 1px solid #303030;
+
+    border-radius: 15px;
+
+    background: transparent;
+
+    color: #ddd;
+
+    padding: 16px 18px;
 
     font-size: 13px;
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+}
+
+.other-date-button:hover {
+    border-color: var(--yellow);
+
+    color: var(--yellow);
+}
+
+.calendar-symbol {
+    color: var(--yellow);
+
+    font-size: 19px;
+}
+
+
+/* CUSTOM DATE */
+
+.custom-date-wrapper {
+    margin-top: 20px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid #252525;
+}
+
+.custom-date-wrapper label {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #aaa;
+
+    font-size: 11px;
     font-weight: 900;
 
     letter-spacing: 2px;
 }
 
-
 .date-input-wrapper {
-    position: relative;
+    border: 1px solid #333;
 
-    display: flex;
-    align-items: center;
+    border-radius: 15px;
 
-    border: 1px solid #333333;
-
-    border-radius: 18px;
-
-    background: #101010;
+    background: #151515;
 
     overflow: hidden;
-
-    transition: 0.25s ease;
 }
-
-
-.date-input-wrapper:hover {
-    border-color: var(--yellow);
-}
-
-
-.date-input-wrapper:focus-within {
-    border-color: var(--yellow);
-
-    box-shadow:
-        0 0 0 3px rgba(255, 184, 0, 0.10);
-}
-
-
-.date-icon {
-    position: absolute;
-
-    left: 20px;
-
-    color: var(--yellow);
-
-    font-size: 22px;
-
-    pointer-events: none;
-}
-
 
 #eventDate {
     width: 100%;
-
-    appearance: none;
-    -webkit-appearance: none;
 
     border: none;
     outline: none;
@@ -386,52 +509,39 @@ button {
 
     color: white;
 
-    padding: 20px 20px 20px 58px;
-
-    font-size: 17px;
-    font-weight: 700;
-
     color-scheme: dark;
+
+    padding: 17px;
+
+    font-size: 16px;
+    font-weight: 700;
 }
-
-
-#eventDate::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-
-    opacity: 0.8;
-
-    padding: 10px;
-}
-
 
 .date-help {
-    margin-top: 10px;
+    color: #666;
 
-    color: #707070;
+    font-size: 12px;
 
-    font-size: 13px;
+    margin-top: 8px;
 }
 
 
-/* ========================================
-   CLUB GRID
-======================================== */
+/* CLUBS */
+
+.clubs-heading {
+    margin-bottom: 22px;
+}
 
 .clubs-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+        repeat(2, minmax(0,1fr));
 
     gap: 18px;
 
     margin-bottom: 60px;
 }
-
-
-/* ========================================
-   CLUB CARDS
-======================================== */
 
 .club-card {
     min-height: 310px;
@@ -450,87 +560,67 @@ button {
 
     color: white;
 
-    background-color: #111111;
+    background-color: #111;
 
     background-size: cover;
     background-position: center;
 
-    transition:
-        transform 0.25s ease,
-        border-color 0.25s ease,
-        box-shadow 0.25s ease;
+    transition: .25s ease;
 }
-
 
 .club-card:hover {
     transform: translateY(-5px);
 
     border-color: var(--yellow);
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.5);
 }
-
 
 .club-card.active {
     border: 2px solid var(--yellow);
 
     box-shadow:
-        0 0 0 3px rgba(255, 184, 0, 0.10);
+        0 0 0 3px
+        rgba(255,184,0,.10);
 }
-
-
-/* ========================================
-   CLUB IMAGES
-======================================== */
 
 .lasta-card {
     background-image:
         linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.95),
-            rgba(0, 0, 0, 0.10)
+            rgba(0,0,0,.95),
+            rgba(0,0,0,.10)
         ),
         url("../lasta.jpg.jpg");
 }
-
 
 .freestyler-card {
     background-image:
         linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.95),
-            rgba(0, 0, 0, 0.10)
+            rgba(0,0,0,.95),
+            rgba(0,0,0,.10)
         ),
         url("../freestyler.jpg.jpg");
 }
-
 
 .remiks-card {
     background-image:
         linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.95),
-            rgba(0, 0, 0, 0.10)
+            rgba(0,0,0,.95),
+            rgba(0,0,0,.10)
         ),
         url("../remiks.jpg.jpg");
 }
-
 
 .tranzit-card {
     background-image:
         linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.95),
-            rgba(0, 0, 0, 0.10)
+            rgba(0,0,0,.95),
+            rgba(0,0,0,.10)
         ),
         url("../tranzit.jpg.jpg");
 }
-
-
-/* ========================================
-   CARD CONTENT
-======================================== */
 
 .club-dark-overlay {
     position: absolute;
@@ -540,18 +630,14 @@ button {
     background:
         linear-gradient(
             to bottom,
-            rgba(0, 0, 0, 0.05),
-            rgba(0, 0, 0, 0.10),
-            rgba(0, 0, 0, 0.85)
+            rgba(0,0,0,.05),
+            rgba(0,0,0,.10),
+            rgba(0,0,0,.85)
         );
-
-    pointer-events: none;
 }
-
 
 .club-number {
     position: relative;
-
     z-index: 2;
 
     display: inline-flex;
@@ -564,16 +650,18 @@ button {
 
     border-radius: 50%;
 
-    background: rgba(0, 0, 0, 0.65);
+    background:
+        rgba(0,0,0,.65);
 
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border:
+        1px solid
+        rgba(255,255,255,.25);
 
     color: var(--yellow);
 
     font-size: 12px;
     font-weight: 900;
 }
-
 
 .club-info {
     position: absolute;
@@ -585,30 +673,23 @@ button {
     z-index: 2;
 }
 
-
 .club-info strong {
     display: block;
 
-    font-size: clamp(26px, 4vw, 40px);
+    font-size:
+        clamp(26px,4vw,40px);
 
     line-height: 1;
 
     margin-bottom: 8px;
-
-    letter-spacing: -1px;
 }
-
 
 .club-info small {
     color: #d0d0d0;
-
-    font-size: 14px;
 }
 
 
-/* ========================================
-   PROGRAM RESULT
-======================================== */
+/* PROGRAM */
 
 .program-result {
     margin-top: 40px;
@@ -627,38 +708,26 @@ button {
         );
 }
 
-
 .program-label {
-    color: var(--yellow);
-
-    font-size: 13px;
-    font-weight: 900;
-
-    letter-spacing: 4px;
-
     margin-bottom: 15px;
 }
 
-
 .program-result h2 {
-    font-size: clamp(36px, 6vw, 60px);
+    font-size:
+        clamp(36px,6vw,60px);
 
     line-height: 1;
 
     margin-bottom: 12px;
 }
 
-
 .program-date {
-    color: #888888;
+    color: #888;
 
     font-size: 19px;
 }
 
-
 .program-divider {
-    width: 100%;
-
     height: 1px;
 
     background: #292929;
@@ -666,54 +735,43 @@ button {
     margin: 30px 0;
 }
 
-
 .program-info h3 {
-    font-size: clamp(22px, 4vw, 34px);
+    font-size:
+        clamp(22px,4vw,34px);
 
     line-height: 1.3;
-
-    margin-top: 8px;
 }
 
-
 .program-info p {
-    color: #a0a0a0;
+    color: #999;
 
     margin-top: 10px;
 }
 
 
-/* ========================================
-   RESERVATION
-======================================== */
+/* RESERVATION */
 
 .reservation-section {
     margin-top: 50px;
 
     padding: 40px;
 
-    border: 1px solid #292929;
+    border:
+        1px solid #292929;
 
-    border-radius: var(--radius);
+    border-radius:
+        var(--radius);
 
     background: #0e0e0e;
 }
-
-
-.reservation-heading {
-    margin-bottom: 35px;
-}
-
 
 #reservationForm {
     max-width: 720px;
 }
 
-
 .form-group {
     margin-bottom: 22px;
 }
-
 
 .form-group label {
     display: block;
@@ -728,14 +786,14 @@ button {
     color: #d7d7d7;
 }
 
-
 .form-group input,
 .form-group select {
     width: 100%;
 
     padding: 17px 18px;
 
-    border: 1px solid #303030;
+    border:
+        1px solid #303030;
 
     border-radius: 13px;
 
@@ -746,34 +804,17 @@ button {
     color: white;
 
     font-size: 16px;
-
-    transition: 0.2s ease;
 }
-
-
-.form-group input:hover,
-.form-group select:hover {
-    border-color: #555555;
-}
-
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: var(--yellow);
+    border-color:
+        var(--yellow);
 
     box-shadow:
-        0 0 0 3px rgba(255, 184, 0, 0.08);
+        0 0 0 3px
+        rgba(255,184,0,.08);
 }
-
-
-.form-group input::placeholder {
-    color: #666666;
-}
-
-
-/* ========================================
-   SUBMIT BUTTON
-======================================== */
 
 .submit-button {
     width: 100%;
@@ -784,34 +825,14 @@ button {
 
     padding: 19px 22px;
 
-    background: var(--yellow);
+    background:
+        var(--yellow);
 
     color: #050505;
 
     font-size: 16px;
     font-weight: 950;
-
-    letter-spacing: 0.5px;
-
-    transition: 0.2s ease;
 }
-
-
-.submit-button:hover {
-    background: #ffc52e;
-
-    transform: translateY(-2px);
-}
-
-
-.submit-button:active {
-    transform: translateY(0);
-}
-
-
-/* ========================================
-   RESERVATION MESSAGE
-======================================== */
 
 .reservation-message {
     margin-top: 18px;
@@ -824,18 +845,16 @@ button {
 }
 
 
-/* ========================================
-   FOOTER
-======================================== */
+/* FOOTER */
 
 footer {
-    border-top: 1px solid #202020;
+    border-top:
+        1px solid #202020;
 
     background: #050505;
 
     padding: 55px 5%;
 }
-
 
 .footer-inner {
     max-width: 1180px;
@@ -843,49 +862,36 @@ footer {
     margin: auto;
 }
 
-
 footer p {
     margin-top: 15px;
 
-    color: #888888;
+    color: #888;
 }
-
 
 footer small {
     display: block;
 
     margin-top: 10px;
 
-    color: #4f4f4f;
+    color: #555;
 }
-
-
-/* ========================================
-   HIDDEN
-======================================== */
 
 .hidden {
     display: none !important;
 }
 
 
-/* ========================================
-   MOBILE
-======================================== */
+/* MOBILE */
 
 @media (max-width: 700px) {
 
     .navbar {
         height: 76px;
-
-        padding: 0 5%;
     }
-
 
     .logo {
         font-size: 23px;
     }
-
 
     .nav-button {
         padding: 12px 17px;
@@ -893,24 +899,19 @@ footer small {
         font-size: 12px;
     }
 
-
     .hero {
         min-height: 510px;
 
         padding:
-            80px 6%
+            75px 6%
             90px;
-
-        background-position: center;
     }
 
-
     .hero h1 {
-        font-size: 56px;
+        font-size: 55px;
 
         letter-spacing: -3px;
     }
-
 
     .hero-subtitle {
         font-size: 16px;
@@ -918,26 +919,69 @@ footer small {
         max-width: 330px;
     }
 
-
     .booking-section {
         padding:
-            70px 5%
+            65px 5%
             90px;
     }
-
 
     .section-heading h2 {
         font-size: 42px;
     }
 
+    .date-section {
+        padding: 20px;
+
+        border-radius: 20px;
+    }
+
+    .date-title-row {
+        display: block;
+    }
+
+    .selected-date-badge {
+        display: inline-block;
+
+        margin-top: 14px;
+    }
+
+    .main-date-button {
+        padding: 16px 13px;
+    }
+
+    .main-date-full {
+        font-size: 15px;
+    }
+
+    .quick-dates {
+        display: flex;
+
+        overflow-x: auto;
+
+        gap: 9px;
+
+        padding-bottom: 6px;
+
+        scrollbar-width: none;
+    }
+
+    .quick-dates::-webkit-scrollbar {
+        display: none;
+    }
+
+    .quick-date {
+        flex:
+            0 0 76px;
+
+        min-height: 98px;
+    }
 
     .clubs-grid {
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+            repeat(2,minmax(0,1fr));
 
         gap: 12px;
     }
-
 
     .club-card {
         min-height: 220px;
@@ -947,7 +991,6 @@ footer small {
         padding: 15px;
     }
 
-
     .club-number {
         width: 35px;
         height: 35px;
@@ -955,53 +998,28 @@ footer small {
         font-size: 10px;
     }
 
-
     .club-info {
         left: 16px;
         right: 16px;
         bottom: 18px;
     }
 
-
     .club-info strong {
         font-size: 21px;
     }
-
 
     .club-info small {
         font-size: 12px;
     }
 
-
     .program-result {
         padding: 28px 22px;
-
-        border-radius: 20px;
     }
-
-
-    .program-result h2 {
-        font-size: 38px;
-    }
-
-
-    .program-info h3 {
-        font-size: 23px;
-    }
-
 
     .reservation-section {
         padding: 28px 20px;
-
-        border-radius: 20px;
     }
-
 }
-
-
-/* ========================================
-   VERY SMALL PHONES
-======================================== */
 
 @media (max-width: 390px) {
 
@@ -1009,14 +1027,11 @@ footer small {
         grid-template-columns: 1fr;
     }
 
-
     .club-card {
         min-height: 240px;
     }
 
-
     .club-info strong {
         font-size: 28px;
     }
-
 }
