@@ -1,3 +1,7 @@
+/* ========================================
+   RESET
+======================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +23,7 @@ html {
 
 body {
     background: var(--black);
-    color: #fff;
+    color: #ffffff;
 
     font-family:
         -apple-system,
@@ -44,7 +48,9 @@ button {
 }
 
 
-/* NAVBAR */
+/* ========================================
+   NAVBAR
+======================================== */
 
 .navbar {
     height: 88px;
@@ -92,7 +98,9 @@ button {
 }
 
 
-/* HERO */
+/* ========================================
+   HERO
+======================================== */
 
 .hero {
     min-height: 570px;
@@ -196,7 +204,9 @@ button {
 }
 
 
-/* BOOKING */
+/* ========================================
+   BOOKING
+======================================== */
 
 .booking-section {
     max-width: 1180px;
@@ -231,7 +241,9 @@ button {
 }
 
 
-/* DATE BOX */
+/* ========================================
+   DATE SECTION
+======================================== */
 
 .date-section {
     background:
@@ -251,12 +263,6 @@ button {
 }
 
 .date-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-
-    gap: 20px;
-
     margin-bottom: 25px;
 }
 
@@ -269,63 +275,73 @@ button {
     letter-spacing: -1px;
 }
 
-.selected-date-badge {
-    padding: 9px 14px;
 
-    border-radius: 100px;
-
-    border: 1px solid #333;
-
-    color: #999;
-
-    background: #0b0b0b;
-
-    font-size: 13px;
-    font-weight: 700;
-}
-
-
-/* DANAS / SUTRA */
+/* ========================================
+   TRI GLAVNA DATUMA
+======================================== */
 
 .main-quick-dates {
+    width: 100%;
+
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
-    grid-template-columns:
-        repeat(2, 1fr);
+    gap: 14px;
 
-    gap: 12px;
-
-    margin-bottom: 27px;
+    margin-bottom: 18px;
 }
 
 .main-date-button {
+    min-width: 0;
+    min-height: 150px;
+
     border: 1px solid #303030;
 
-    background: #151515;
+    border-radius: 20px;
 
-    color: white;
+    background: #121212;
 
-    border-radius: 17px;
+    color: #ffffff;
 
-    padding: 19px;
+    padding: 20px 10px;
 
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-    transition: .2s ease;
+    text-align: center;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
-.main-date-button:hover,
+.main-date-button:hover {
+    border-color: #666666;
+
+    transform: translateY(-2px);
+}
+
 .main-date-button.active {
     border-color: var(--yellow);
 
     background:
-        rgba(255, 184, 0, .08);
+        linear-gradient(
+            145deg,
+            rgba(255,184,0,.16),
+            rgba(255,184,0,.06)
+        );
+
+    box-shadow:
+        0 0 0 2px rgba(255,184,0,.08),
+        0 12px 30px rgba(0,0,0,.25);
 }
 
-.main-date-title {
-    display: block;
-
-    color: var(--yellow);
+.main-date-day {
+    color: #8b8b8b;
 
     font-size: 12px;
     font-weight: 900;
@@ -335,138 +351,82 @@ button {
     margin-bottom: 6px;
 }
 
-.main-date-full {
-    display: block;
+.main-date-number {
+    color: #ffffff;
 
-    font-size: 19px;
-    font-weight: 850;
+    font-size: 43px;
+    font-weight: 950;
+
+    line-height: 1;
+
+    margin-bottom: 8px;
 }
 
-
-/* QUICK DATES */
-
-.quick-heading {
-    color: #777;
-
-    font-size: 11px;
-    font-weight: 900;
-
-    letter-spacing: 2px;
-
-    margin-bottom: 12px;
-}
-
-.quick-dates {
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
-    gap: 10px;
-
-    margin-bottom: 16px;
-}
-
-.quick-date {
-    min-height: 105px;
-
-    border: 1px solid #303030;
-
-    border-radius: 16px;
-
-    background: #121212;
-
-    color: white;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    transition: .2s ease;
-}
-
-.quick-date:hover {
-    border-color: #666;
-    transform: translateY(-2px);
-}
-
-.quick-date.active {
-    border-color: var(--yellow);
-
-    background:
-        rgba(255,184,0,.10);
-
-    box-shadow:
-        0 0 0 2px
-        rgba(255,184,0,.08);
-}
-
-.quick-date-day {
-    color: #888;
-
-    font-size: 11px;
-    font-weight: 900;
-
-    letter-spacing: 1px;
-}
-
-.quick-date-number {
-    font-size: 28px;
-    font-weight: 900;
-
-    line-height: 1.2;
-}
-
-.quick-date-month {
+.main-date-month {
     color: var(--yellow);
-
-    font-size: 11px;
-    font-weight: 900;
-}
-
-
-/* OTHER DATE */
-
-.other-date-button {
-    width: 100%;
-
-    border: 1px solid #303030;
-
-    border-radius: 15px;
-
-    background: transparent;
-
-    color: #ddd;
-
-    padding: 16px 18px;
 
     font-size: 13px;
     font-weight: 900;
 
     letter-spacing: 1px;
+}
+
+
+/* ========================================
+   IZABERI DRUGI DATUM
+======================================== */
+
+.other-date-button {
+    width: 100%;
+
+    min-height: 64px;
+
+    border: 1px solid #303030;
+
+    border-radius: 17px;
+
+    background: #101010;
+
+    color: #eeeeee;
+
+    padding: 17px 20px;
+
+    font-size: 13px;
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
     gap: 10px;
+
+    transition:
+        border-color .2s ease,
+        color .2s ease,
+        background .2s ease;
 }
 
 .other-date-button:hover {
     border-color: var(--yellow);
 
     color: var(--yellow);
+
+    background:
+        rgba(255,184,0,.04);
 }
 
 .calendar-symbol {
     color: var(--yellow);
 
-    font-size: 19px;
+    font-size: 20px;
 }
 
 
-/* CUSTOM DATE */
+/* ========================================
+   KALENDAR
+======================================== */
 
 .custom-date-wrapper {
     margin-top: 20px;
@@ -481,7 +441,7 @@ button {
 
     margin-bottom: 10px;
 
-    color: #aaa;
+    color: #aaaaaa;
 
     font-size: 11px;
     font-weight: 900;
@@ -490,7 +450,7 @@ button {
 }
 
 .date-input-wrapper {
-    border: 1px solid #333;
+    border: 1px solid #333333;
 
     border-radius: 15px;
 
@@ -507,7 +467,7 @@ button {
 
     background: transparent;
 
-    color: white;
+    color: #ffffff;
 
     color-scheme: dark;
 
@@ -518,7 +478,7 @@ button {
 }
 
 .date-help {
-    color: #666;
+    color: #666666;
 
     font-size: 12px;
 
@@ -526,7 +486,9 @@ button {
 }
 
 
-/* CLUBS */
+/* ========================================
+   CLUBS
+======================================== */
 
 .clubs-heading {
     margin-bottom: 22px;
@@ -558,9 +520,9 @@ button {
 
     text-align: left;
 
-    color: white;
+    color: #ffffff;
 
-    background-color: #111;
+    background-color: #111111;
 
     background-size: cover;
     background-position: center;
@@ -578,9 +540,13 @@ button {
     border: 2px solid var(--yellow);
 
     box-shadow:
-        0 0 0 3px
-        rgba(255,184,0,.10);
+        0 0 0 3px rgba(255,184,0,.10);
 }
+
+
+/* ========================================
+   CLUB IMAGES
+======================================== */
 
 .lasta-card {
     background-image:
@@ -650,8 +616,7 @@ button {
 
     border-radius: 50%;
 
-    background:
-        rgba(0,0,0,.65);
+    background: rgba(0,0,0,.65);
 
     border:
         1px solid
@@ -689,7 +654,9 @@ button {
 }
 
 
-/* PROGRAM */
+/* ========================================
+   PROGRAM
+======================================== */
 
 .program-result {
     margin-top: 40px;
@@ -722,7 +689,7 @@ button {
 }
 
 .program-date {
-    color: #888;
+    color: #888888;
 
     font-size: 19px;
 }
@@ -743,24 +710,24 @@ button {
 }
 
 .program-info p {
-    color: #999;
+    color: #999999;
 
     margin-top: 10px;
 }
 
 
-/* RESERVATION */
+/* ========================================
+   RESERVATION
+======================================== */
 
 .reservation-section {
     margin-top: 50px;
 
     padding: 40px;
 
-    border:
-        1px solid #292929;
+    border: 1px solid #292929;
 
-    border-radius:
-        var(--radius);
+    border-radius: var(--radius);
 
     background: #0e0e0e;
 }
@@ -792,8 +759,7 @@ button {
 
     padding: 17px 18px;
 
-    border:
-        1px solid #303030;
+    border: 1px solid #303030;
 
     border-radius: 13px;
 
@@ -801,15 +767,14 @@ button {
 
     background: #151515;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 16px;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color:
-        var(--yellow);
+    border-color: var(--yellow);
 
     box-shadow:
         0 0 0 3px
@@ -825,8 +790,7 @@ button {
 
     padding: 19px 22px;
 
-    background:
-        var(--yellow);
+    background: var(--yellow);
 
     color: #050505;
 
@@ -845,11 +809,12 @@ button {
 }
 
 
-/* FOOTER */
+/* ========================================
+   FOOTER
+======================================== */
 
 footer {
-    border-top:
-        1px solid #202020;
+    border-top: 1px solid #202020;
 
     background: #050505;
 
@@ -865,7 +830,7 @@ footer {
 footer p {
     margin-top: 15px;
 
-    color: #888;
+    color: #888888;
 }
 
 footer small {
@@ -873,15 +838,22 @@ footer small {
 
     margin-top: 10px;
 
-    color: #555;
+    color: #555555;
 }
+
+
+/* ========================================
+   HIDDEN
+======================================== */
 
 .hidden {
     display: none !important;
 }
 
 
-/* MOBILE */
+/* ========================================
+   MOBILE
+======================================== */
 
 @media (max-width: 700px) {
 
@@ -936,45 +908,62 @@ footer small {
     }
 
     .date-title-row {
-        display: block;
+        margin-bottom: 22px;
     }
 
-    .selected-date-badge {
-        display: inline-block;
-
-        margin-top: 14px;
+    .date-title-row h3,
+    .clubs-heading h3 {
+        font-size: 27px;
     }
 
-    .main-date-button {
-        padding: 16px 13px;
-    }
 
-    .main-date-full {
-        font-size: 15px;
-    }
+    /* TRI DATUMA U JEDNOM REDU */
 
-    .quick-dates {
-        display: flex;
-
-        overflow-x: auto;
+    .main-quick-dates {
+        grid-template-columns:
+            repeat(3, minmax(0,1fr));
 
         gap: 9px;
 
-        padding-bottom: 6px;
-
-        scrollbar-width: none;
+        margin-bottom: 14px;
     }
 
-    .quick-dates::-webkit-scrollbar {
-        display: none;
+    .main-date-button {
+        min-height: 125px;
+
+        padding: 15px 5px;
+
+        border-radius: 17px;
     }
 
-    .quick-date {
-        flex:
-            0 0 76px;
+    .main-date-day {
+        font-size: 10px;
 
-        min-height: 98px;
+        letter-spacing: 1.2px;
     }
+
+    .main-date-number {
+        font-size: 35px;
+
+        margin-bottom: 5px;
+    }
+
+    .main-date-month {
+        font-size: 11px;
+    }
+
+    .other-date-button {
+        min-height: 58px;
+
+        padding: 15px 8px;
+
+        font-size: 11px;
+
+        letter-spacing: 1px;
+    }
+
+
+    /* KLUBOVI */
 
     .clubs-grid {
         grid-template-columns:
@@ -1021,7 +1010,20 @@ footer small {
     }
 }
 
+
+/* ========================================
+   VERY SMALL PHONES
+======================================== */
+
 @media (max-width: 390px) {
+
+    .main-date-button {
+        min-height: 115px;
+    }
+
+    .main-date-number {
+        font-size: 32px;
+    }
 
     .clubs-grid {
         grid-template-columns: 1fr;
