@@ -1,6 +1,11 @@
-/* ========================================
-   RESET
-======================================== */
+:root {
+    --yellow: #ffb800;
+    --black: #070707;
+    --card: #111111;
+    --border: #2b2b2b;
+    --text: #ffffff;
+    --muted: #8d8d8d;
+}
 
 * {
     margin: 0;
@@ -12,71 +17,59 @@ html {
     scroll-behavior: smooth;
 }
 
-:root {
-    --yellow: #ffb800;
-    --black: #070707;
-    --card: #101010;
-    --border: #292929;
-    --gray: #999999;
-    --radius: 24px;
-}
-
 body {
     background: var(--black);
-    color: #ffffff;
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Helvetica,
-        Arial,
-        sans-serif;
-
-    line-height: 1.5;
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    min-height: 100vh;
 }
 
 button,
-input,
-select {
-    font-family: inherit;
+input {
+    font: inherit;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
 }
 
 button {
     cursor: pointer;
 }
 
+.hidden {
+    display: none !important;
+}
 
-/* ========================================
+
+/* =========================
    NAVBAR
-======================================== */
+========================= */
 
 .navbar {
-    height: 88px;
-    padding: 0 5%;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    height: 74px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    position: sticky;
-    top: 0;
+    padding: 0 6%;
 
-    background: rgba(7, 7, 7, 0.95);
-
+    background: rgba(7, 7, 7, 0.94);
     backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
 
-    border-bottom: 1px solid #202020;
-
-    z-index: 1000;
+    border-bottom: 1px solid #1d1d1d;
 }
 
 .logo {
-    font-size: 27px;
-    font-weight: 900;
-    letter-spacing: 2px;
+    font-size: 22px;
+    font-weight: 950;
+    letter-spacing: -1px;
 }
 
 .logo span {
@@ -84,201 +77,164 @@ button {
 }
 
 .nav-button {
+    background: var(--yellow);
+    color: #000;
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+
     text-decoration: none;
 
-    background: var(--yellow);
-    color: #050505;
-
-    padding: 14px 22px;
-
-    border-radius: 13px;
-
-    font-size: 14px;
-    font-weight: 900;
+    font-size: 12px;
+    font-weight: 950;
+    letter-spacing: 1px;
 }
 
 
-/* ========================================
+/* =========================
    HERO
-======================================== */
+========================= */
 
 .hero {
-    min-height: 570px;
-
-    position: relative;
+    min-height: 600px;
 
     display: flex;
-    align-items: center;
+    align-items: flex-end;
 
-    padding: 80px 6%;
+    padding: 70px 6%;
 
     background:
         linear-gradient(
-            90deg,
-            rgba(0,0,0,.95),
-            rgba(0,0,0,.65),
-            rgba(0,0,0,.25)
+            to bottom,
+            rgba(0, 0, 0, 0.15),
+            rgba(0, 0, 0, 0.45) 45%,
+            #070707 100%
         ),
         url("../freestyler.jpg.jpg");
 
     background-size: cover;
     background-position: center;
-
-    overflow: hidden;
-}
-
-.hero::after {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    height: 170px;
-
-    background:
-        linear-gradient(
-            transparent,
-            var(--black)
-        );
 }
 
 .hero-content {
-    position: relative;
-    z-index: 2;
-
-    max-width: 720px;
+    max-width: 760px;
 }
 
 .hero-label,
 .section-label,
-.small-label,
-.program-label {
+.small-label {
     color: var(--yellow);
 
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 900;
 
-    letter-spacing: 3px;
-}
-
-.hero-label {
-    margin-bottom: 20px;
+    letter-spacing: 2.5px;
 }
 
 .hero h1 {
-    font-size: clamp(54px, 10vw, 100px);
+    margin-top: 14px;
 
-    line-height: .93;
+    font-size: clamp(54px, 10vw, 105px);
+    line-height: 0.88;
 
-    letter-spacing: -4px;
-
-    margin-bottom: 28px;
+    font-weight: 950;
+    letter-spacing: -5px;
 }
 
 .hero-subtitle {
-    max-width: 520px;
+    max-width: 500px;
 
-    color: #c8c8c8;
+    margin-top: 24px;
 
-    font-size: 19px;
+    color: #c6c6c6;
 
-    margin-bottom: 34px;
+    font-size: 17px;
+    line-height: 1.6;
 }
 
 .hero-button {
     display: inline-block;
 
-    text-decoration: none;
+    margin-top: 30px;
 
     background: var(--yellow);
-    color: #050505;
+    color: #000;
 
-    padding: 18px 28px;
+    padding: 17px 25px;
 
-    border-radius: 14px;
+    border-radius: 12px;
 
-    font-weight: 900;
+    text-decoration: none;
+
+    font-size: 12px;
+    font-weight: 950;
+
+    letter-spacing: 1.4px;
 }
 
 
-/* ========================================
+/* =========================
    BOOKING
-======================================== */
+========================= */
 
 .booking-section {
-    max-width: 1180px;
+    width: min(1100px, 88%);
+    margin: 0 auto;
 
-    margin: auto;
-
-    padding: 90px 5% 120px;
+    padding: 90px 0 120px;
 }
 
 .section-heading {
-    margin-bottom: 45px;
-}
-
-.section-label {
-    margin-bottom: 10px;
+    margin-bottom: 38px;
 }
 
 .section-heading h2 {
-    font-size: clamp(38px, 6vw, 64px);
-
-    line-height: 1;
+    font-size: clamp(34px, 6vw, 58px);
+    font-weight: 950;
 
     letter-spacing: -2px;
-
-    margin-bottom: 15px;
 }
 
-.section-heading > p:last-child {
-    color: var(--gray);
+.section-heading p {
+    margin-top: 10px;
 
-    font-size: 17px;
+    color: var(--muted);
+
+    font-size: 15px;
 }
 
 
-/* ========================================
-   DATE SECTION
-======================================== */
+/* =========================
+   DATUM
+========================= */
 
 .date-section {
-    background:
-        linear-gradient(
-            145deg,
-            #121212,
-            #0c0c0c
-        );
+    padding: 30px;
 
-    border: 1px solid var(--border);
-
+    border: 1px solid #242424;
     border-radius: 24px;
 
-    padding: 28px;
+    background: #0c0c0c;
 
-    margin-bottom: 65px;
+    margin-bottom: 55px;
 }
 
 .date-title-row {
-    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 24px;
 }
 
 .date-title-row h3,
 .clubs-heading h3 {
-    margin-top: 5px;
+    margin-top: 6px;
 
-    font-size: 28px;
-
-    letter-spacing: -1px;
+    font-size: 25px;
+    font-weight: 900;
 }
-
-
-/* ========================================
-   TRI GLAVNA DATUMA
-======================================== */
 
 .main-quick-dates {
     width: 100%;
@@ -296,11 +252,9 @@ button {
     min-height: 150px;
 
     border: 1px solid #303030;
-
     border-radius: 20px;
 
     background: #121212;
-
     color: #ffffff;
 
     padding: 20px 10px;
@@ -313,15 +267,14 @@ button {
     text-align: center;
 
     transition:
-        border-color .2s ease,
-        background .2s ease,
-        transform .2s ease,
-        box-shadow .2s ease;
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .main-date-button:hover {
-    border-color: #666666;
-
+    border-color: #555;
     transform: translateY(-2px);
 }
 
@@ -331,13 +284,13 @@ button {
     background:
         linear-gradient(
             145deg,
-            rgba(255,184,0,.16),
-            rgba(255,184,0,.06)
+            rgba(255, 184, 0, 0.16),
+            rgba(255, 184, 0, 0.06)
         );
 
     box-shadow:
-        0 0 0 2px rgba(255,184,0,.08),
-        0 12px 30px rgba(0,0,0,.25);
+        0 0 0 2px rgba(255, 184, 0, 0.08),
+        0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
 .main-date-day {
@@ -352,7 +305,7 @@ button {
 }
 
 .main-date-number {
-    color: #ffffff;
+    color: #fff;
 
     font-size: 43px;
     font-weight: 950;
@@ -371,22 +324,14 @@ button {
     letter-spacing: 1px;
 }
 
-
-/* ========================================
-   IZABERI DRUGI DATUM
-======================================== */
-
 .other-date-button {
     width: 100%;
-
     min-height: 64px;
 
     border: 1px solid #303030;
-
     border-radius: 17px;
 
     background: #101010;
-
     color: #eeeeee;
 
     padding: 17px 20px;
@@ -401,39 +346,27 @@ button {
     justify-content: center;
 
     gap: 10px;
-
-    transition:
-        border-color .2s ease,
-        color .2s ease,
-        background .2s ease;
 }
 
 .other-date-button:hover {
     border-color: var(--yellow);
-
-    color: var(--yellow);
-
-    background:
-        rgba(255,184,0,.04);
 }
 
 .calendar-symbol {
     color: var(--yellow);
-
     font-size: 20px;
 }
 
-
-/* ========================================
-   KALENDAR
-======================================== */
-
 .custom-date-wrapper {
-    margin-top: 20px;
+    margin-top: 18px;
 
-    padding-top: 20px;
+    padding: 20px;
 
-    border-top: 1px solid #252525;
+    border-radius: 16px;
+
+    background: #121212;
+
+    border: 1px solid #282828;
 }
 
 .custom-date-wrapper label {
@@ -441,199 +374,173 @@ button {
 
     margin-bottom: 10px;
 
-    color: #aaaaaa;
+    color: #bcbcbc;
 
     font-size: 11px;
     font-weight: 900;
 
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
-.date-input-wrapper {
-    border: 1px solid #333333;
-
-    border-radius: 15px;
-
-    background: #151515;
-
-    overflow: hidden;
-}
-
-#eventDate {
+.date-input-wrapper input {
     width: 100%;
-
-    border: none;
-    outline: none;
-
-    background: transparent;
-
-    color: #ffffff;
-
-    color-scheme: dark;
 
     padding: 17px;
 
-    font-size: 16px;
-    font-weight: 700;
+    border-radius: 12px;
+
+    border: 1px solid #333;
+
+    background: #080808;
+    color: white;
+
+    outline: none;
+}
+
+.date-input-wrapper input:focus {
+    border-color: var(--yellow);
 }
 
 .date-help {
-    color: #666666;
+    margin-top: 10px;
+
+    color: #777;
 
     font-size: 12px;
-
-    margin-top: 8px;
 }
 
 
-/* ========================================
-   CLUBS
-======================================== */
+/* =========================
+   KLUBOVI
+========================= */
 
 .clubs-heading {
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .clubs-grid {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    grid-template-columns:
-        repeat(2, minmax(0,1fr));
-
-    gap: 18px;
-
-    margin-bottom: 60px;
+    gap: 16px;
 }
 
 .club-card {
-    min-height: 310px;
-
     position: relative;
+
+    min-height: 290px;
 
     overflow: hidden;
 
-    border: 1px solid #292929;
+    border-radius: 22px;
 
-    border-radius: 24px;
+    border: 1px solid #252525;
 
-    padding: 24px;
-
-    text-align: left;
-
-    color: #ffffff;
-
-    background-color: #111111;
+    background-color: #111;
 
     background-size: cover;
     background-position: center;
 
-    transition: .25s ease;
+    color: white;
+
+    text-align: left;
+
+    padding: 22px;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .club-card:hover {
-    transform: translateY(-5px);
-
-    border-color: var(--yellow);
+    transform: translateY(-3px);
+    border-color: #4a4a4a;
 }
 
 .club-card.active {
-    border: 2px solid var(--yellow);
+    border-color: var(--yellow);
 
     box-shadow:
-        0 0 0 3px rgba(255,184,0,.10);
+        0 0 0 2px rgba(255, 184, 0, 0.08);
 }
 
 
-/* ========================================
-   CLUB IMAGES
-======================================== */
+/* POSTOJEĆE SLIKE */
 
 .lasta-card {
     background-image:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.95),
-            rgba(0,0,0,.10)
-        ),
         url("../lasta.jpg.jpg");
 }
 
 .freestyler-card {
     background-image:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.95),
-            rgba(0,0,0,.10)
-        ),
         url("../freestyler.jpg.jpg");
 }
 
 .remiks-card {
     background-image:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.95),
-            rgba(0,0,0,.10)
-        ),
         url("../remiks.jpg.jpg");
 }
 
 .tranzit-card {
     background-image:
-        linear-gradient(
-            to top,
-            rgba(0,0,0,.95),
-            rgba(0,0,0,.10)
-        ),
         url("../tranzit.jpg.jpg");
 }
 
+
+/* NOVE SLIKE */
+
+.bank-card {
+    background-image:
+        url("../bank.jpg");
+}
+
+.leto-card {
+    background-image:
+        url("../leto.jpg");
+}
+
+.gradska-card {
+    background-image:
+        url("../gradska.jpg");
+}
+
+
 .club-dark-overlay {
     position: absolute;
-
     inset: 0;
 
     background:
         linear-gradient(
-            to bottom,
-            rgba(0,0,0,.05),
-            rgba(0,0,0,.10),
-            rgba(0,0,0,.85)
+            to top,
+            rgba(0, 0, 0, 0.92),
+            rgba(0, 0, 0, 0.12) 70%
         );
 }
 
 .club-number {
-    position: relative;
+    position: absolute;
+
+    top: 20px;
+    right: 20px;
+
     z-index: 2;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: rgba(0,0,0,.65);
-
-    border:
-        1px solid
-        rgba(255,255,255,.25);
 
     color: var(--yellow);
 
     font-size: 12px;
-    font-weight: 900;
+    font-weight: 950;
+
+    letter-spacing: 1.5px;
 }
 
 .club-info {
     position: absolute;
 
-    left: 25px;
-    right: 25px;
-    bottom: 24px;
+    left: 22px;
+    right: 22px;
+    bottom: 22px;
 
     z-index: 2;
 }
@@ -641,287 +548,354 @@ button {
 .club-info strong {
     display: block;
 
-    font-size:
-        clamp(26px,4vw,40px);
+    font-size: 26px;
+    font-weight: 950;
 
-    line-height: 1;
-
-    margin-bottom: 8px;
+    letter-spacing: -1px;
 }
 
 .club-info small {
-    color: #d0d0d0;
+    display: block;
+
+    margin-top: 5px;
+
+    color: #b7b7b7;
+
+    font-size: 12px;
 }
 
 
-/* ========================================
+/* =========================
    PROGRAM
-======================================== */
+========================= */
 
 .program-result {
-    margin-top: 40px;
+    margin-top: 45px;
 
-    padding: 36px;
-
-    border-radius: var(--radius);
+    padding: 30px;
 
     border: 1px solid #292929;
+    border-radius: 22px;
 
-    background:
-        linear-gradient(
-            145deg,
-            #121212,
-            #0c0c0c
-        );
+    background: #0e0e0e;
 }
 
 .program-label {
-    margin-bottom: 15px;
+    color: var(--yellow);
+
+    font-size: 11px;
+    font-weight: 950;
+
+    letter-spacing: 2px;
 }
 
 .program-result h2 {
-    font-size:
-        clamp(36px,6vw,60px);
+    margin-top: 9px;
 
-    line-height: 1;
-
-    margin-bottom: 12px;
+    font-size: 32px;
+    font-weight: 950;
 }
 
 .program-date {
-    color: #888888;
+    margin-top: 6px;
 
-    font-size: 19px;
+    color: #8c8c8c;
+
+    font-size: 13px;
 }
 
 .program-divider {
     height: 1px;
 
-    background: #292929;
+    margin: 22px 0;
 
-    margin: 30px 0;
+    background: #282828;
 }
 
-.program-info h3 {
-    font-size:
-        clamp(22px,4vw,34px);
+#programContent {
+    color: #eeeeee;
 
-    line-height: 1.3;
+    font-size: 17px;
+    line-height: 1.6;
 }
 
-.program-info p {
-    color: #999999;
+.reserve-table-button {
+    width: 100%;
 
-    margin-top: 10px;
+    margin-top: 24px;
+
+    padding: 17px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: var(--yellow);
+    color: #000;
+
+    font-weight: 950;
+
+    letter-spacing: 1px;
 }
 
 
-/* ========================================
-   RESERVATION
-======================================== */
+/* =========================
+   REZERVACIJA
+========================= */
 
 .reservation-section {
     margin-top: 50px;
 
-    padding: 40px;
+    padding: 32px;
 
-    border: 1px solid #292929;
+    border-radius: 24px;
 
-    border-radius: var(--radius);
+    border: 1px solid #272727;
 
-    background: #0e0e0e;
+    background: #0d0d0d;
+}
+
+.reservation-heading {
+    margin-bottom: 28px;
 }
 
 #reservationForm {
-    max-width: 720px;
+    display: grid;
+
+    gap: 18px;
 }
 
 .form-group {
-    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
 }
 
 .form-group label {
-    display: block;
+    color: #a7a7a7;
 
-    margin-bottom: 10px;
-
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 900;
 
-    letter-spacing: 1.5px;
-
-    color: #d7d7d7;
+    letter-spacing: 1.4px;
 }
 
-.form-group input,
-.form-group select {
+.optional-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.form-group input {
     width: 100%;
 
-    padding: 17px 18px;
-
     border: 1px solid #303030;
+    border-radius: 13px;
+
+    background: #080808;
+    color: white;
+
+    padding: 17px;
+
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: var(--yellow);
+}
+
+
+/* =========================
+   TIPOVI STOLOVA
+========================= */
+
+#tableSelection {
+    margin-top: 8px;
+}
+
+.table-selection-title {
+    margin-bottom: 12px;
+
+    color: #a7a7a7;
+
+    font-size: 11px;
+    font-weight: 900;
+
+    letter-spacing: 1.4px;
+}
+
+.table-options {
+    display: grid;
+
+    gap: 10px;
+}
+
+.table-option {
+    width: 100%;
+
+    padding: 16px;
 
     border-radius: 13px;
 
-    outline: none;
+    border: 1px solid #303030;
 
-    background: #151515;
+    background: #101010;
+    color: white;
 
-    color: #ffffff;
-
-    font-size: 16px;
+    text-align: left;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.table-option:hover {
+    border-color: #555;
+}
+
+.table-option.active {
     border-color: var(--yellow);
 
-    box-shadow:
-        0 0 0 3px
-        rgba(255,184,0,.08);
+    background:
+        rgba(255, 184, 0, 0.08);
 }
+
+.table-option-name {
+    display: block;
+
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.table-option-condition {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #8e8e8e;
+
+    font-size: 12px;
+}
+
+
+/* =========================
+   SUBMIT
+========================= */
 
 .submit-button {
     width: 100%;
 
+    margin-top: 8px;
+
+    padding: 18px;
+
     border: none;
-
-    border-radius: 14px;
-
-    padding: 19px 22px;
+    border-radius: 13px;
 
     background: var(--yellow);
+    color: #000;
 
-    color: #050505;
-
-    font-size: 16px;
+    font-size: 13px;
     font-weight: 950;
+
+    letter-spacing: 1.2px;
 }
 
 .reservation-message {
-    margin-top: 18px;
+    min-height: 20px;
 
-    min-height: 24px;
+    text-align: center;
 
-    color: var(--yellow);
+    color: #a0a0a0;
 
-    font-weight: 700;
+    font-size: 13px;
 }
 
 
-/* ========================================
+/* =========================
    FOOTER
-======================================== */
+========================= */
 
 footer {
-    border-top: 1px solid #202020;
+    border-top: 1px solid #1e1e1e;
+
+    padding: 55px 6%;
 
     background: #050505;
-
-    padding: 55px 5%;
 }
 
 .footer-inner {
-    max-width: 1180px;
+    width: min(1100px, 100%);
 
     margin: auto;
 }
 
-footer p {
-    margin-top: 15px;
+.footer-inner p {
+    margin-top: 12px;
 
-    color: #888888;
+    color: #777;
 }
 
-footer small {
+.footer-inner small {
     display: block;
 
-    margin-top: 10px;
+    margin-top: 25px;
 
-    color: #555555;
+    color: #4f4f4f;
 }
 
 
-/* ========================================
-   HIDDEN
-======================================== */
-
-.hidden {
-    display: none !important;
-}
-
-
-/* ========================================
+/* =========================
    MOBILE
-======================================== */
+========================= */
 
 @media (max-width: 700px) {
 
     .navbar {
-        height: 76px;
+        height: 66px;
+        padding: 0 5%;
     }
 
     .logo {
-        font-size: 23px;
+        font-size: 19px;
     }
 
     .nav-button {
-        padding: 12px 17px;
-
-        font-size: 12px;
+        padding: 10px 13px;
+        font-size: 10px;
     }
 
     .hero {
-        min-height: 510px;
+        min-height: 530px;
 
         padding:
-            75px 6%
-            90px;
+            60px 6%
+            55px;
+
+        background-position: center;
     }
 
     .hero h1 {
-        font-size: 55px;
-
+        font-size: 57px;
         letter-spacing: -3px;
     }
 
     .hero-subtitle {
-        font-size: 16px;
-
-        max-width: 330px;
+        font-size: 14px;
     }
 
     .booking-section {
+        width: 90%;
+
         padding:
-            65px 5%
+            70px 0
             90px;
     }
 
-    .section-heading h2 {
-        font-size: 42px;
-    }
-
     .date-section {
-        padding: 20px;
+        padding: 18px;
 
         border-radius: 20px;
     }
 
-    .date-title-row {
-        margin-bottom: 22px;
-    }
-
-    .date-title-row h3,
-    .clubs-heading h3 {
-        font-size: 27px;
-    }
-
-
-    /* TRI DATUMA U JEDNOM REDU */
-
     .main-quick-dates {
         grid-template-columns:
-            repeat(3, minmax(0,1fr));
+            repeat(3, minmax(0, 1fr));
 
         gap: 9px;
 
@@ -938,7 +912,6 @@ footer small {
 
     .main-date-day {
         font-size: 10px;
-
         letter-spacing: 1.2px;
     }
 
@@ -962,78 +935,68 @@ footer small {
         letter-spacing: 1px;
     }
 
-
-    /* KLUBOVI */
-
     .clubs-grid {
         grid-template-columns:
-            repeat(2,minmax(0,1fr));
+            repeat(2, minmax(0, 1fr));
 
-        gap: 12px;
+        gap: 10px;
     }
 
     .club-card {
-        min-height: 220px;
+        min-height: 205px;
 
-        border-radius: 19px;
+        border-radius: 17px;
 
         padding: 15px;
     }
 
     .club-number {
-        width: 35px;
-        height: 35px;
+        top: 14px;
+        right: 14px;
 
         font-size: 10px;
     }
 
     .club-info {
-        left: 16px;
-        right: 16px;
-        bottom: 18px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
     }
 
     .club-info strong {
-        font-size: 21px;
+        font-size: 18px;
     }
 
     .club-info small {
-        font-size: 12px;
+        font-size: 10px;
     }
 
-    .program-result {
-        padding: 28px 22px;
-    }
-
+    .program-result,
     .reservation-section {
-        padding: 28px 20px;
+        padding: 21px;
+
+        border-radius: 19px;
     }
+
 }
 
 
-/* ========================================
-   VERY SMALL PHONES
-======================================== */
+/* =========================
+   VEOMA MALI TELEFONI
+========================= */
 
 @media (max-width: 390px) {
 
-    .main-date-button {
-        min-height: 115px;
-    }
-
-    .main-date-number {
-        font-size: 32px;
-    }
-
-    .clubs-grid {
-        grid-template-columns: 1fr;
+    .hero h1 {
+        font-size: 50px;
     }
 
     .club-card {
-        min-height: 240px;
+        min-height: 185px;
     }
 
     .club-info strong {
-        font-size: 28px;
+        font-size: 16px;
     }
+
 }
