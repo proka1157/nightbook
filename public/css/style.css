@@ -996,3 +996,44 @@ footer {
     }
 
 }
+/* ===== CUSTOM DATE PICKER FIX ===== */
+
+.custom-date-wrap {
+    margin-top: 14px;
+}
+
+#customDate {
+    width: 100%;
+    height: 58px;
+    padding: 0 18px;
+
+    background: #0a0a0a;
+    color: #ffffff;
+
+    border: 1px solid #333333;
+    border-radius: 14px;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+
+    outline: none;
+    box-sizing: border-box;
+
+    color-scheme: dark;
+}
+
+#customDate:focus {
+    border-color: #ffb800;
+}
+
+#customDate::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+/* iPhone / Safari */
+#customDate::-webkit-date-and-time-value {
+    text-align: left;
+}
