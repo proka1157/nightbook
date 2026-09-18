@@ -60,6 +60,24 @@ const CLUBS = {
         name: "Tranzit Bar",
         url:
             "https://www.beogradnocu.com/klubovi-u-beogradu/tranzit-bar/"
+    },
+
+    bank: {
+        name: "The Bank",
+        url:
+            "https://www.beogradnocu.com/klubovi-u-beogradu/klub-bank/"
+    },
+
+    leto: {
+        name: "Leto",
+        url:
+            "https://www.beogradnocu.com/splavovi-u-beogradu/splav-leto/"
+    },
+
+    gradska: {
+        name: "Gradska Kafana",
+        url:
+            "https://www.beogradnocu.com/kafane-u-beogradu/gradska-kafana/"
     }
 
 };
@@ -84,7 +102,6 @@ const MONTHS = [
     "Decembar"
 ];
 
-
 const DAYS = [
     "NEDELJA",
     "PONEDELJAK",
@@ -105,35 +122,20 @@ function decodeHTML(text) {
     return text
 
         .replace(/&nbsp;/gi, " ")
-
         .replace(/&amp;/gi, "&")
-
         .replace(/&quot;/gi, '"')
-
         .replace(/&#039;/gi, "'")
-
         .replace(/&apos;/gi, "'")
-
         .replace(/&scaron;/gi, "š")
-
         .replace(/&Scaron;/gi, "Š")
-
         .replace(/&ccaron;/gi, "č")
-
         .replace(/&Ccaron;/gi, "Č")
-
         .replace(/&cacute;/gi, "ć")
-
         .replace(/&Cacute;/gi, "Ć")
-
         .replace(/&zcaron;/gi, "ž")
-
         .replace(/&Zcaron;/gi, "Ž")
-
         .replace(/&dstrok;/gi, "đ")
-
         .replace(/&Dstrok;/gi, "Đ")
-
         .replace(
             /&#(\d+);/g,
             (_, number) =>
@@ -251,7 +253,7 @@ function extractProgram(
 
 
     // ========================================
-    // TRAŽIMO TAČAN DATUM
+    // TAČAN DATUM
     // Primer:
     // PETAK 18. Septembar
     // ========================================
@@ -275,7 +277,9 @@ function extractProgram(
     }
 
 
-    // Sve posle pronađenog datuma
+    // ========================================
+    // SVE POSLE DATUMA
+    // ========================================
 
     let afterDate =
         text
@@ -312,7 +316,7 @@ function extractProgram(
 
 
     // ========================================
-    // UKLANJAMO NEPOTREBNE DELOVE
+    // UKLANJANJE NEPOTREBNOG
     // ========================================
 
     afterDate =
@@ -325,6 +329,11 @@ function extractProgram(
 
             .replace(
                 /rezervisi online/gi,
+                "\n"
+            )
+
+            .replace(
+                /online rezervacije/gi,
                 "\n"
             )
 
@@ -359,7 +368,7 @@ function extractProgram(
 
 
     // ========================================
-    // TEKST KOJI NE ŽELIMO
+    // REDOVI KOJE NE ŽELIMO
     // ========================================
 
     const ignored = [
@@ -382,13 +391,27 @@ function extractProgram(
 
         "noćnom životu beograda",
 
-        "nocnom zivotu beograda"
+        "nocnom zivotu beograda",
+
+        "rezervacije su obavezne",
+
+        "putem korisničkog",
+
+        "putem korisnickog",
+
+        "program kluba",
+
+        "program splava",
+
+        "nema najavljenih dogadjaja",
+
+        "nema najavljenih događaja"
 
     ];
 
 
     // ========================================
-    // PRONAĐI PRVI RELEVANTAN RED
+    // PRVI RELEVANTAN RED
     // ========================================
 
     const programLine =
@@ -423,15 +446,14 @@ function extractProgram(
 
     let cleanProgram =
         programLine
+
             .replace(
                 /\s+/g,
                 " "
             )
+
             .trim();
 
-
-    // Ako se ipak zalepio Enterijer,
-    // sečemo sve nakon njega.
 
     cleanProgram =
         cleanProgram
@@ -441,8 +463,6 @@ function extractProgram(
             .trim();
 
 
-    // Ako se zalepio "Beograd Noću"
-
     cleanProgram =
         cleanProgram
             .split(
@@ -450,8 +470,6 @@ function extractProgram(
             )[0]
             .trim();
 
-
-    // Ako se zalepio opis kluba
 
     cleanProgram =
         cleanProgram
