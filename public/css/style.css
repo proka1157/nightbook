@@ -490,17 +490,16 @@ button {
 
 
 /* NOVE SLIKE */
-
 .bank-card {
-    background-image: url("../bank.jpg.png");
+    background-image: url("/bank.jpg.png") !important;
 }
 
 .leto-card {
-    background-image: url("../leto.jpg.png");
+    background-image: url("/leto.jpg.png") !important;
 }
 
 .gradska-card {
-    background-image: url("../gradska.jpg.png");
+    background-image: url("/gradska.jpg.png") !important;
 }
 
 
