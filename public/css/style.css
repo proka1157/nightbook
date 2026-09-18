@@ -1,25 +1,15 @@
 :root {
     --yellow: #ffbd19;
     --yellow-strong: #ffc400;
-
     --black: #050505;
     --black-soft: #090909;
-
     --card: #0d0d0d;
     --card-light: #121212;
-
     --border: #282828;
-
     --text: #ffffff;
     --muted: #898989;
-
     --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
-
-
-/* =========================
-   RESET
-========================= */
 
 * {
     margin: 0;
@@ -27,53 +17,39 @@
     box-sizing: border-box;
 }
 
-
 html {
     scroll-behavior: smooth;
 }
 
-
 body {
     min-height: 100vh;
-
     background: var(--black);
     color: var(--text);
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: Arial, Helvetica, sans-serif;
     overflow-x: hidden;
 }
-
 
 button,
 input {
     font: inherit;
 }
 
-
 button,
 a {
     -webkit-tap-highlight-color: transparent;
 }
 
-
 button {
     cursor: pointer;
 }
-
 
 a {
     color: inherit;
 }
 
-
 .hidden {
     display: none !important;
 }
-
 
 
 /* =========================
@@ -82,11 +58,9 @@ a {
 
 .navbar {
     position: fixed;
-
     top: 0;
     left: 0;
     right: 0;
-
     z-index: 1000;
 
     height: 78px;
@@ -95,42 +69,34 @@ a {
     align-items: center;
     justify-content: space-between;
 
-    padding:
-        env(safe-area-inset-top, 0px)
-        6%
-        0;
+    padding-left: 6%;
+    padding-right: 6%;
 
     background:
         linear-gradient(
             to bottom,
-            rgba(0, 0, 0, 0.88),
+            rgba(0, 0, 0, 0.82),
             rgba(0, 0, 0, 0)
         );
 }
 
-
 .logo {
     color: #ffffff;
-
     text-decoration: none;
-
     font-size: 22px;
     font-weight: 950;
-
     letter-spacing: -1.2px;
 }
-
 
 .logo span {
     color: var(--yellow);
 }
 
-
 .nav-button {
     padding: 12px 17px;
 
     background: var(--yellow);
-    color: #000000;
+    color: #000;
 
     border-radius: 999px;
 
@@ -138,10 +104,8 @@ a {
 
     font-size: 10px;
     font-weight: 950;
-
     letter-spacing: 1.4px;
 }
-
 
 
 /* =========================
@@ -152,7 +116,6 @@ a {
     position: relative;
 
     width: 100%;
-
     min-height: 100svh;
 
     display: flex;
@@ -160,20 +123,12 @@ a {
 
     overflow: hidden;
 
-    padding:
-        130px
-        6%
-        110px;
+    padding: 120px 6% 125px;
 
-    background:
-        url("/freestyler.jpg.jpg");
-
+    background-image: url("/freestyler.jpg.jpg");
     background-size: cover;
-
-    background-position:
-        center center;
+    background-position: center;
 }
-
 
 .hero-overlay {
     position: absolute;
@@ -182,30 +137,28 @@ a {
     background:
         linear-gradient(
             to bottom,
-            rgba(0, 0, 0, 0.16) 0%,
-            rgba(0, 0, 0, 0.10) 28%,
-            rgba(0, 0, 0, 0.35) 53%,
-            rgba(0, 0, 0, 0.90) 90%,
+            rgba(0, 0, 0, 0.10) 0%,
+            rgba(0, 0, 0, 0.08) 30%,
+            rgba(0, 0, 0, 0.38) 60%,
+            rgba(0, 0, 0, 0.90) 93%,
             #050505 100%
         );
 }
 
-
 .hero-content {
     position: relative;
-
     z-index: 2;
 
-    width: min(900px, 100%);
+    width: 100%;
+    max-width: 900px;
 
     margin: 0 auto;
 
     text-align: center;
 }
 
-
 .hero-eyebrow {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 
     color: #ffffff;
 
@@ -216,74 +169,48 @@ a {
 }
 
 
+/*
+BITNO:
+NIGHTBOOK sada UVEK staje na ekran.
+*/
+
 .hero h1 {
+    width: 100%;
+
     color: #ffffff;
 
-    font-size:
-        clamp(
-            64px,
-            14vw,
-            145px
-        );
+    font-size: clamp(48px, 14vw, 120px);
 
-    line-height: 0.78;
+    line-height: 0.9;
 
     font-weight: 950;
 
-    letter-spacing: -7px;
-}
+    letter-spacing: -5px;
 
+    white-space: nowrap;
+}
 
 .hero h1 span {
     color: var(--yellow);
 }
 
-
-.hero-slogan {
-    margin-top: 29px;
-
-    color: #ffffff;
-
-    font-size:
-        clamp(
-            18px,
-            3vw,
-            26px
-        );
-
-    line-height: 1.05;
-
-    font-weight: 950;
-
-    letter-spacing: 4px;
-}
-
-
 .hero-description {
-    max-width: 450px;
+    max-width: 480px;
 
-    margin:
-        18px
-        auto
-        0;
+    margin: 25px auto 0;
 
-    color: #c2c2c2;
+    color: #d0d0d0;
 
     font-size: 14px;
-
     line-height: 1.55;
 }
-
 
 .hero-button {
     width: min(440px, 100%);
 
-    min-height: 68px;
+    min-height: 66px;
 
-    margin:
-        30px
-        auto
-        0;
+    margin: 29px auto 0;
 
     padding: 0 25px;
 
@@ -292,93 +219,42 @@ a {
     justify-content: space-between;
 
     background: var(--yellow);
-
-    color: #000000;
+    color: #000;
 
     border-radius: 999px;
 
     text-decoration: none;
 
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 950;
 
     letter-spacing: 1.7px;
 
     box-shadow:
         0 15px 50px
-        rgba(0, 0, 0, 0.35);
+        rgba(0, 0, 0, 0.4);
 }
-
 
 .hero-arrow {
-    font-size: 25px;
+    font-size: 24px;
 }
-
-
-.hero-scroll {
-    position: absolute;
-
-    z-index: 2;
-
-    left: 50%;
-    bottom: 34px;
-
-    transform:
-        translateX(-50%);
-
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    color: #777777;
-
-    font-size: 8px;
-    font-weight: 900;
-
-    letter-spacing: 2px;
-}
-
-
-.hero-scroll span {
-    width: 4px;
-    height: 4px;
-
-    background: var(--yellow);
-
-    border-radius: 50%;
-}
-
 
 
 /* =========================
-   BOOKING
+   GENERAL SECTIONS
 ========================= */
 
 .booking-section {
-    width:
-        min(
-            1100px,
-            88%
-        );
+    width: min(1100px, 88%);
+    margin: 0 auto;
 
-    margin:
-        0
-        auto;
-
-    padding:
-        100px
-        0
-        120px;
+    padding: 100px 0 120px;
 }
-
 
 .section-heading {
     position: relative;
-
     margin-bottom: 40px;
 }
-
 
 .section-number {
     display: block;
@@ -393,7 +269,6 @@ a {
     letter-spacing: 2px;
 }
 
-
 .small-label,
 .section-label {
     color: var(--yellow);
@@ -404,17 +279,10 @@ a {
     letter-spacing: 2.7px;
 }
 
-
 .section-heading h2 {
     margin-top: 10px;
 
-    font-size:
-        clamp(
-            45px,
-            8vw,
-            80px
-        );
-
+    font-size: clamp(45px, 8vw, 80px);
     line-height: 0.88;
 
     font-weight: 950;
@@ -422,11 +290,9 @@ a {
     letter-spacing: -4px;
 }
 
-
 .section-heading h2 span {
     color: var(--yellow);
 }
-
 
 .section-description,
 .section-heading > p:last-child {
@@ -437,10 +303,8 @@ a {
     color: var(--muted);
 
     font-size: 14px;
-
     line-height: 1.6;
 }
-
 
 
 /* =========================
@@ -459,124 +323,73 @@ a {
             #090909
         );
 
-    border:
-        1px
-        solid
-        #242424;
-
+    border: 1px solid #242424;
     border-radius: 25px;
 }
-
 
 .date-title-row {
     margin-bottom: 23px;
 }
 
-
 .date-title-row h3 {
     margin-top: 7px;
 
     font-size: 26px;
-
     font-weight: 950;
 
     letter-spacing: -1px;
 }
 
-
 .main-quick-dates {
     width: 100%;
 
     display: grid;
-
-    grid-template-columns:
-        repeat(
-            3,
-            minmax(0, 1fr)
-        );
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 
     gap: 12px;
 
     margin-bottom: 12px;
 }
 
-
 .main-date-button {
     min-width: 0;
-
     min-height: 145px;
 
-    padding:
-        18px
-        7px;
+    padding: 18px 7px;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
     background: #111111;
-
     color: #ffffff;
 
-    border:
-        1px
-        solid
-        #292929;
-
+    border: 1px solid #292929;
     border-radius: 19px;
 
-    transition:
-        0.2s ease;
+    transition: 0.2s ease;
 }
-
 
 .main-date-button:hover {
-    border-color: #555555;
+    border-color: #555;
 }
-
 
 .main-date-button.active {
     background:
         linear-gradient(
             145deg,
-            rgba(
-                255,
-                189,
-                25,
-                0.20
-            ),
-            rgba(
-                255,
-                189,
-                25,
-                0.04
-            )
+            rgba(255, 189, 25, 0.20),
+            rgba(255, 189, 25, 0.04)
         );
 
     border-color: var(--yellow);
-
-    box-shadow:
-        inset
-        0
-        0
-        30px
-        rgba(
-            255,
-            189,
-            25,
-            0.03
-        );
 }
-
 
 .main-date-day {
     margin-bottom: 5px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 10px;
     font-weight: 950;
@@ -584,18 +397,16 @@ a {
     letter-spacing: 1.5px;
 }
 
-
 .main-date-number {
     margin-bottom: 7px;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 40px;
     font-weight: 950;
 
     line-height: 1;
 }
-
 
 .main-date-month {
     color: var(--yellow);
@@ -606,36 +417,22 @@ a {
     letter-spacing: 1.2px;
 }
 
-
 .other-date-button {
     width: 100%;
-
     min-height: 62px;
 
-    padding:
-        0
-        18px;
+    padding: 0 18px;
 
     display: grid;
-
-    grid-template-columns:
-        auto
-        1fr
-        auto;
-
+    grid-template-columns: auto 1fr auto;
     align-items: center;
 
     gap: 10px;
 
     background: #0b0b0b;
+    color: #eee;
 
-    color: #eeeeee;
-
-    border:
-        1px
-        solid
-        #292929;
-
+    border: 1px solid #292929;
     border-radius: 17px;
 
     font-size: 11px;
@@ -646,25 +443,15 @@ a {
     text-align: left;
 }
 
-
 .other-date-button:hover {
     border-color: var(--yellow);
 }
 
-
-.calendar-symbol {
-    color: var(--yellow);
-
-    font-size: 20px;
-}
-
-
+.calendar-symbol,
 .other-date-arrow {
     color: var(--yellow);
-
     font-size: 19px;
 }
-
 
 
 /* =========================
@@ -678,23 +465,14 @@ a {
 
     background: #0b0b0b;
 
-    border:
-        1px
-        solid
-        #292929;
-
+    border: 1px solid #292929;
     border-radius: 17px;
 }
 
-
 .custom-date-title {
-    margin:
-        0
-        0
-        9px
-        2px;
+    margin: 0 0 9px 2px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 9px;
     font-weight: 950;
@@ -702,37 +480,26 @@ a {
     letter-spacing: 1.5px;
 }
 
-
 .nightbook-date-picker {
     width: 100%;
-
     height: 56px;
 
     display: flex;
-
     align-items: center;
 
-    padding:
-        0
-        14px;
+    padding: 0 14px;
 
     background: #060606;
 
-    border:
-        1px
-        solid
-        #303030;
-
+    border: 1px solid #303030;
     border-radius: 13px;
 
     overflow: hidden;
 }
 
-
 .nightbook-date-picker:focus-within {
     border-color: var(--yellow);
 }
-
 
 .nightbook-calendar-icon {
     flex-shrink: 0;
@@ -744,41 +511,32 @@ a {
     font-size: 18px;
 }
 
-
 .nightbook-date-picker input[type="date"] {
     flex: 1;
 
     width: 100% !important;
 
     height: 54px !important;
-
     min-height: 54px !important;
 
     padding: 0 !important;
-
     margin: 0 !important;
 
     background: transparent !important;
-
-    color: #ffffff !important;
+    color: #fff !important;
 
     border: 0 !important;
-
     outline: none !important;
-
     box-shadow: none !important;
 
     font-size: 15px !important;
-
     font-weight: 850 !important;
 
     color-scheme: dark;
 
     -webkit-appearance: none;
-
     appearance: none;
 }
-
 
 .nightbook-date-picker
 input[type="date"]
@@ -786,20 +544,14 @@ input[type="date"]
     text-align: left;
 }
 
-
 .date-help {
-    margin:
-        9px
-        2px
-        0;
+    margin: 9px 2px 0;
 
-    color: #555555;
+    color: #555;
 
     font-size: 10px;
-
     line-height: 1.5;
 }
-
 
 
 /* =========================
@@ -810,22 +562,14 @@ input[type="date"]
     margin-top: 20px;
 }
 
-
 .clubs-heading {
     margin-bottom: 28px;
 }
 
-
 .clubs-heading h3 {
     margin-top: 10px;
 
-    font-size:
-        clamp(
-            43px,
-            7vw,
-            70px
-        );
-
+    font-size: clamp(43px, 7vw, 70px);
     line-height: 0.9;
 
     font-weight: 950;
@@ -833,11 +577,9 @@ input[type="date"]
     letter-spacing: -3px;
 }
 
-
 .clubs-heading h3 span {
     color: var(--yellow);
 }
-
 
 
 /* =========================
@@ -846,16 +588,10 @@ input[type="date"]
 
 .clubs-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 13px;
 }
-
 
 .club-card {
     position: relative;
@@ -866,138 +602,84 @@ input[type="date"]
 
     overflow: hidden;
 
-    background-color: #111111;
-
+    background-color: #111;
     background-size: cover;
-
     background-position: center;
 
-    color: #ffffff;
+    color: #fff;
 
-    border:
-        1px
-        solid
-        #222222;
-
+    border: 1px solid #222;
     border-radius: 20px;
 
     text-align: left;
 
     transition:
-        transform
-        0.25s ease,
-        border-color
-        0.25s ease;
+        transform 0.25s ease,
+        border-color 0.25s ease;
 }
-
 
 .club-card:hover {
-    transform:
-        translateY(-3px);
-
-    border-color: #555555;
+    transform: translateY(-3px);
+    border-color: #555;
 }
-
 
 .club-card.active {
     border-color: var(--yellow);
 
     box-shadow:
-        0
-        0
-        0
-        2px
-        rgba(
-            255,
-            189,
-            25,
-            0.08
-        );
+        0 0 0 2px
+        rgba(255, 189, 25, 0.08);
 }
 
 
 /* SLIKE */
 
 .lasta-card {
-    background-image:
-        url("/lasta.jpg.jpg");
+    background-image: url("/lasta.jpg.jpg");
 }
-
 
 .freestyler-card {
-    background-image:
-        url("/freestyler.jpg.jpg");
+    background-image: url("/freestyler.jpg.jpg");
 }
-
 
 .remiks-card {
-    background-image:
-        url("/remiks.jpg.jpg");
+    background-image: url("/remiks.jpg.jpg");
 }
-
 
 .tranzit-card {
-    background-image:
-        url("/tranzit.jpg.jpg");
+    background-image: url("/tranzit.jpg.jpg");
 }
-
 
 .bank-card {
-    background-image:
-        url("/bank.jpg.png");
+    background-image: url("/bank.jpg.png");
 }
-
 
 .leto-card {
-    background-image:
-        url("/leto.jpg.png");
+    background-image: url("/leto.jpg.png");
 }
 
-
 .gradska-card {
-    background-image:
-        url("/gradska.jpg.png");
+    background-image: url("/gradska.jpg.png");
 }
 
 
 .club-dark-overlay {
     position: absolute;
-
     inset: 0;
 
     background:
         linear-gradient(
             to top,
-            rgba(
-                0,
-                0,
-                0,
-                0.98
-            )
-            0%,
-            rgba(
-                0,
-                0,
-                0,
-                0.65
-            )
-            30%,
-            rgba(
-                0,
-                0,
-                0,
-                0.05
-            )
-            72%
+            rgba(0, 0, 0, 0.98) 0%,
+            rgba(0, 0, 0, 0.65) 30%,
+            rgba(0, 0, 0, 0.05) 72%
         );
 }
-
 
 .club-number {
     position: absolute;
 
     top: 17px;
-
     right: 17px;
 
     z-index: 2;
@@ -1005,12 +687,10 @@ input[type="date"]
     color: var(--yellow);
 
     font-size: 10px;
-
     font-weight: 950;
 
     letter-spacing: 2px;
 }
-
 
 .club-info {
     position: absolute;
@@ -1018,12 +698,9 @@ input[type="date"]
     z-index: 2;
 
     left: 20px;
-
     right: 20px;
-
     bottom: 20px;
 }
-
 
 .club-location {
     display: block;
@@ -1033,20 +710,17 @@ input[type="date"]
     color: var(--yellow);
 
     font-size: 8px;
-
     font-weight: 950;
 
     letter-spacing: 2px;
 }
 
-
 .club-info strong {
     display: block;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 28px;
-
     line-height: 0.95;
 
     font-weight: 950;
@@ -1054,21 +728,18 @@ input[type="date"]
     letter-spacing: -1.4px;
 }
 
-
 .club-action {
     display: block;
 
     margin-top: 12px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 8px;
-
     font-weight: 900;
 
     letter-spacing: 1px;
 }
-
 
 
 /* =========================
@@ -1087,38 +758,27 @@ input[type="date"]
             #090909
         );
 
-    border:
-        1px
-        solid
-        #292929;
-
+    border: 1px solid #292929;
     border-radius: 23px;
 }
 
-
 .program-top {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 }
-
 
 .program-label {
     color: var(--yellow);
 
     font-size: 9px;
-
     font-weight: 950;
 
     letter-spacing: 2.5px;
 }
 
-
 .program-dot {
     width: 8px;
-
     height: 8px;
 
     background: var(--yellow);
@@ -1126,81 +786,62 @@ input[type="date"]
     border-radius: 50%;
 
     box-shadow:
-        0
-        0
-        18px
+        0 0 18px
         var(--yellow);
 }
-
 
 .program-result h2 {
     margin-top: 13px;
 
-    color: #ffffff;
+    color: #fff;
 
     font-size: 38px;
-
     font-weight: 950;
 
     letter-spacing: -2px;
 }
 
-
 .program-date {
     margin-top: 5px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 12px;
 }
 
-
 .program-divider {
     height: 1px;
 
-    margin:
-        22px
-        0;
+    margin: 22px 0;
 
     background: #292929;
 }
 
-
 #programContent {
-    color: #eeeeee;
+    color: #eee;
 
     font-size: 16px;
-
     line-height: 1.6;
 }
 
-
 .reserve-table-button {
     width: 100%;
-
     min-height: 59px;
 
     margin-top: 24px;
-
-    padding:
-        0
-        20px;
+    padding: 0 20px;
 
     background: var(--yellow);
-
-    color: #000000;
+    color: #000;
 
     border: 0;
-
     border-radius: 999px;
 
     font-size: 11px;
-
     font-weight: 950;
 
     letter-spacing: 1.5px;
 }
-
 
 
 /* =========================
@@ -1214,82 +855,58 @@ input[type="date"]
 
     background: #0c0c0c;
 
-    border:
-        1px
-        solid
-        #272727;
-
+    border: 1px solid #272727;
     border-radius: 24px;
 }
-
 
 .reservation-heading {
     margin-bottom: 30px;
 }
 
-
 #reservationForm {
     display: grid;
-
     gap: 17px;
 }
 
-
 .form-group {
     display: flex;
-
     flex-direction: column;
 
     gap: 8px;
 }
 
-
 .form-group label {
-    color: #777777;
+    color: #777;
 
     font-size: 9px;
-
     font-weight: 950;
 
     letter-spacing: 1.7px;
 }
 
-
 .optional-label {
     color: #4e4e4e;
-
     font-weight: 600;
 }
 
-
 .form-group input {
     width: 100%;
-
     min-height: 57px;
 
-    padding:
-        0
-        17px;
+    padding: 0 17px;
 
     background: #060606;
+    color: #fff;
 
-    color: #ffffff;
-
-    border:
-        1px
-        solid
-        #2d2d2d;
-
+    border: 1px solid #2d2d2d;
     border-radius: 13px;
 
     outline: none;
 }
 
-
 .form-group input:focus {
     border-color: var(--yellow);
 }
-
 
 
 /* =========================
@@ -1300,26 +917,21 @@ input[type="date"]
     margin-top: 5px;
 }
 
-
 .table-selection-title {
     margin-bottom: 11px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 9px;
-
     font-weight: 950;
 
     letter-spacing: 1.7px;
 }
 
-
 .table-options {
     display: grid;
-
     gap: 9px;
 }
-
 
 .table-option {
     width: 100%;
@@ -1327,52 +939,37 @@ input[type="date"]
     padding: 15px;
 
     background: #0a0a0a;
+    color: #fff;
 
-    color: #ffffff;
-
-    border:
-        1px
-        solid
-        #2d2d2d;
-
+    border: 1px solid #2d2d2d;
     border-radius: 13px;
 
     text-align: left;
 }
 
-
 .table-option.active {
     background:
-        rgba(
-            255,
-            189,
-            25,
-            0.08
-        );
+        rgba(255, 189, 25, 0.08);
 
     border-color: var(--yellow);
 }
-
 
 .table-option-name {
     display: block;
 
     font-size: 13px;
-
     font-weight: 950;
 }
-
 
 .table-option-condition {
     display: block;
 
     margin-top: 5px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 11px;
 }
-
 
 
 /* =========================
@@ -1381,46 +978,35 @@ input[type="date"]
 
 .submit-button {
     width: 100%;
-
     min-height: 62px;
 
     margin-top: 7px;
-
-    padding:
-        0
-        22px;
+    padding: 0 22px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     background: var(--yellow);
-
-    color: #000000;
+    color: #000;
 
     border: 0;
-
     border-radius: 999px;
 
     font-size: 11px;
-
     font-weight: 950;
 
     letter-spacing: 1.3px;
 }
 
-
 .submit-button span:last-child {
     font-size: 22px;
 }
 
-
 .reservation-message {
     min-height: 18px;
 
-    color: #aaaaaa;
+    color: #aaa;
 
     text-align: center;
 
@@ -1428,41 +1014,24 @@ input[type="date"]
 }
 
 
-
 /* =========================
    CONTACT
 ========================= */
 
 .contact-section {
-    width:
-        min(
-            1100px,
-            88%
-        );
+    width: min(1100px, 88%);
 
-    margin:
-        0
-        auto;
+    margin: 0 auto;
 
-    padding:
-        50px
-        0
-        110px;
+    padding: 50px 0 110px;
 }
-
 
 .contact-section h2 {
     margin-top: 10px;
 
-    color: #ffffff;
+    color: #fff;
 
-    font-size:
-        clamp(
-            48px,
-            9vw,
-            90px
-        );
-
+    font-size: clamp(48px, 9vw, 90px);
     line-height: 0.86;
 
     font-weight: 950;
@@ -1470,34 +1039,26 @@ input[type="date"]
     letter-spacing: -4px;
 }
 
-
 .contact-section h2 span {
     color: var(--yellow);
 }
-
 
 .contact-text {
     max-width: 430px;
 
     margin-top: 22px;
 
-    color: #777777;
+    color: #777;
 
     font-size: 13px;
-
     line-height: 1.6;
 }
-
 
 .contact-links {
     margin-top: 35px;
 
-    border-top:
-        1px
-        solid
-        #292929;
+    border-top: 1px solid #292929;
 }
-
 
 .contact-link {
     position: relative;
@@ -1505,25 +1066,15 @@ input[type="date"]
     min-height: 92px;
 
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
 
-    padding:
-        18px
-        50px
-        18px
-        0;
+    padding: 18px 50px 18px 0;
 
-    border-bottom:
-        1px
-        solid
-        #292929;
+    border-bottom: 1px solid #292929;
 
     text-decoration: none;
 }
-
 
 .contact-type {
     margin-bottom: 7px;
@@ -1531,37 +1082,30 @@ input[type="date"]
     color: var(--yellow);
 
     font-size: 8px;
-
     font-weight: 950;
 
     letter-spacing: 2px;
 }
 
-
 .contact-link strong {
-    color: #ffffff;
+    color: #fff;
 
     font-size: 18px;
-
     font-weight: 900;
 }
-
 
 .contact-arrow {
     position: absolute;
 
     right: 5px;
-
     top: 50%;
 
-    transform:
-        translateY(-50%);
+    transform: translateY(-50%);
 
     color: var(--yellow);
 
     font-size: 27px;
 }
-
 
 
 /* =========================
@@ -1572,39 +1116,25 @@ footer {
     padding:
         50px
         6%
-        calc(
-            125px +
-            var(--safe-bottom)
-        );
+        calc(125px + var(--safe-bottom));
 
     background: #030303;
 
-    border-top:
-        1px
-        solid
-        #191919;
+    border-top: 1px solid #191919;
 }
-
 
 .footer-inner {
-    width:
-        min(
-            1100px,
-            100%
-        );
-
+    width: min(1100px, 100%);
     margin: auto;
 }
-
 
 .footer-inner p {
     margin-top: 11px;
 
-    color: #666666;
+    color: #666;
 
     font-size: 12px;
 }
-
 
 .footer-inner small {
     display: block;
@@ -1619,9 +1149,8 @@ footer {
 }
 
 
-
 /* =========================
-   BOTTOM MOBILE NAV
+   WHATSAPP + INSTAGRAM BAR
 ========================= */
 
 .mobile-bottom-bar {
@@ -1630,7 +1159,6 @@ footer {
     z-index: 2000;
 
     left: 12px;
-
     right: 12px;
 
     bottom:
@@ -1642,102 +1170,83 @@ footer {
     height: 74px;
 
     display: grid;
-
-    grid-template-columns:
-        1fr
-        1.25fr;
+    grid-template-columns: 1fr 1fr;
 
     gap: 6px;
 
     padding: 6px;
 
     background:
-        rgba(
-            10,
-            10,
-            10,
-            0.94
-        );
+        rgba(10, 10, 10, 0.94);
 
-    border:
-        1px
-        solid
-        #343434;
-
+    border: 1px solid #343434;
     border-radius: 23px;
 
     box-shadow:
-        0
-        15px
-        60px
-        rgba(
-            0,
-            0,
-            0,
-            0.65
-        );
+        0 15px 60px
+        rgba(0, 0, 0, 0.65);
 
-    backdrop-filter:
-        blur(20px);
-
-    -webkit-backdrop-filter:
-        blur(20px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
-
 
 .bottom-action {
     min-width: 0;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
-    gap: 8px;
+    gap: 9px;
 
     border-radius: 17px;
 
     text-decoration: none;
 
     font-size: 9px;
-
     font-weight: 950;
 
-    letter-spacing: 1.3px;
+    letter-spacing: 1.2px;
 }
-
 
 .whatsapp-action {
-    color: #ffffff;
+    color: #fff;
 }
 
-
-.bottom-icon {
-    color: var(--yellow);
-
-    font-size: 14px;
-}
-
-
-.events-action {
-    justify-content:
-        space-between;
-
-    padding:
-        0
-        20px;
+.instagram-action {
+    padding: 0 14px;
 
     background: var(--yellow);
-
-    color: #000000;
+    color: #000;
 }
 
+.bottom-social-icon {
+    width: 25px;
+    height: 25px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--yellow);
+    border-radius: 50%;
+
+    color: var(--yellow);
+
+    font-size: 8px;
+    font-weight: 950;
+}
+
+.instagram-action .bottom-social-icon {
+    border-color: #000;
+    color: #000;
+}
 
 .bottom-arrow {
-    font-size: 20px;
+    font-size: 17px;
 }
-
 
 
 /* =========================
@@ -1752,12 +1261,9 @@ footer {
         left: 50%;
         right: auto;
 
-        transform:
-            translateX(-50%);
+        transform: translateX(-50%);
     }
-
 }
-
 
 
 /* =========================
@@ -1770,95 +1276,90 @@ footer {
         height: 70px;
 
         padding-left: 5%;
-
         padding-right: 5%;
     }
-
 
     .logo {
         font-size: 19px;
     }
 
-
     .nav-button {
-        padding:
-            10px
-            14px;
+        padding: 10px 14px;
 
         font-size: 9px;
     }
 
 
+    /* HERO */
+
     .hero {
         min-height: 100svh;
 
         padding:
-            115px
+            110px
             6%
-            115px;
+            125px;
 
-        background-position:
-            53%
-            center;
+        background-position: 53% center;
     }
 
+    .hero-content {
+        width: 100%;
+    }
+
+    .hero-eyebrow {
+        margin-bottom: 14px;
+
+        font-size: 8px;
+
+        letter-spacing: 3.8px;
+    }
 
     .hero h1 {
-        font-size:
-            clamp(
-                58px,
-                18vw,
-                80px
-            );
+        /*
+        Smanjeno da NIGHTBOOK
+        sigurno stane na iPhone.
+        */
 
-        letter-spacing: -5px;
+        font-size: 15vw;
+
+        line-height: 0.92;
+
+        letter-spacing: -3.5px;
+
+        white-space: nowrap;
     }
-
-
-    .hero-slogan {
-        font-size: 17px;
-
-        letter-spacing: 3px;
-    }
-
 
     .hero-description {
-        max-width: 330px;
+        max-width: 320px;
+
+        margin-top: 22px;
 
         font-size: 12px;
     }
 
-
     .hero-button {
-        min-height: 64px;
+        min-height: 62px;
 
-        padding:
-            0
-            22px;
+        margin-top: 25px;
 
-        font-size: 10px;
+        padding: 0 22px;
+
+        font-size: 9px;
     }
 
 
-    .hero-scroll {
-        display: none;
-    }
-
+    /* BOOKING */
 
     .booking-section {
         width: 90%;
 
-        padding:
-            80px
-            0
-            95px;
+        padding: 80px 0 95px;
     }
-
 
     .section-heading {
         margin-bottom: 30px;
     }
-
 
     .section-heading h2 {
         font-size: 50px;
@@ -1866,6 +1367,8 @@ footer {
         letter-spacing: -3px;
     }
 
+
+    /* DATE */
 
     .date-section {
         padding: 17px;
@@ -1875,55 +1378,43 @@ footer {
         border-radius: 20px;
     }
 
-
     .date-title-row h3 {
         font-size: 21px;
     }
-
 
     .main-quick-dates {
         gap: 7px;
     }
 
-
     .main-date-button {
         min-height: 120px;
 
-        padding:
-            13px
-            4px;
+        padding: 13px 4px;
 
         border-radius: 15px;
     }
-
 
     .main-date-number {
         font-size: 33px;
     }
 
-
     .main-date-day {
         font-size: 8px;
     }
-
 
     .main-date-month {
         font-size: 9px;
     }
 
-
     .other-date-button {
         min-height: 56px;
 
-        padding:
-            0
-            13px;
+        padding: 0 13px;
 
         border-radius: 14px;
 
         font-size: 9px;
     }
-
 
     .custom-date-wrapper {
         padding: 12px;
@@ -1931,16 +1422,16 @@ footer {
         border-radius: 14px;
     }
 
-
     .nightbook-date-picker {
         height: 54px;
     }
 
 
+    /* CLUBS */
+
     .clubs-heading {
         margin-bottom: 22px;
     }
-
 
     .clubs-heading h3 {
         font-size: 48px;
@@ -1948,11 +1439,9 @@ footer {
         letter-spacing: -3px;
     }
 
-
     .clubs-grid {
         gap: 9px;
     }
-
 
     .club-card {
         min-height: 250px;
@@ -1960,24 +1449,18 @@ footer {
         border-radius: 16px;
     }
 
-
     .club-number {
         top: 13px;
-
         right: 13px;
 
         font-size: 8px;
     }
 
-
     .club-info {
         left: 14px;
-
         right: 14px;
-
         bottom: 15px;
     }
-
 
     .club-location {
         margin-bottom: 5px;
@@ -1985,13 +1468,11 @@ footer {
         font-size: 7px;
     }
 
-
     .club-info strong {
         font-size: 20px;
 
         letter-spacing: -1px;
     }
-
 
     .club-action {
         margin-top: 9px;
@@ -2002,6 +1483,8 @@ footer {
     }
 
 
+    /* PROGRAM */
+
     .program-result {
         margin-top: 35px;
 
@@ -2010,11 +1493,12 @@ footer {
         border-radius: 18px;
     }
 
-
     .program-result h2 {
         font-size: 30px;
     }
 
+
+    /* RESERVATION */
 
     .reservation-section {
         margin-top: 35px;
@@ -2024,22 +1508,19 @@ footer {
         border-radius: 19px;
     }
 
-
     .reservation-section
     .section-heading h2 {
         font-size: 43px;
     }
 
 
+    /* CONTACT */
+
     .contact-section {
         width: 90%;
 
-        padding:
-            35px
-            0
-            90px;
+        padding: 35px 0 90px;
     }
-
 
     .contact-section h2 {
         font-size: 51px;
@@ -2047,18 +1528,14 @@ footer {
         letter-spacing: -3px;
     }
 
-
     .contact-link {
         min-height: 82px;
     }
 
-
     .contact-link strong {
         font-size: 15px;
     }
-
 }
-
 
 
 /* =========================
@@ -2068,9 +1545,10 @@ footer {
 @media (max-width: 390px) {
 
     .hero h1 {
-        font-size: 58px;
-    }
+        font-size: 14.5vw;
 
+        letter-spacing: -3px;
+    }
 
     .section-heading h2,
     .clubs-heading h3,
@@ -2078,21 +1556,26 @@ footer {
         font-size: 44px;
     }
 
-
     .club-card {
         min-height: 225px;
     }
-
 
     .club-info strong {
         font-size: 18px;
     }
 
-
     .mobile-bottom-bar {
         left: 8px;
-
         right: 8px;
     }
 
+    .bottom-action {
+        gap: 6px;
+
+        font-size: 8px;
+    }
+
+    .instagram-action {
+        padding: 0 10px;
+    }
 }
