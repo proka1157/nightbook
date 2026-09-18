@@ -11,7 +11,7 @@
 
     <title>NightBook | Rezervacije klubova Beograd</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=4">
 </head>
 
 <body>
@@ -100,34 +100,7 @@
                 id="mainQuickDates"
                 class="main-quick-dates"
             ></div>
-<div
-    id="customDateWrapper"
-    class="custom-date-wrapper hidden"
->
 
-    <p class="custom-date-title">
-        IZABERI DATUM
-    </p>
-
-    <div class="nightbook-date-picker">
-
-        <span class="nightbook-calendar-icon">
-            ◷
-        </span>
-
-        <input
-            type="date"
-            id="eventDate"
-            required
-        >
-
-    </div>
-
-    <p class="date-help">
-        Izaberi današnji ili neki budući datum.
-    </p>
-
-</div>
 
             <button
                 type="button"
@@ -146,9 +119,34 @@
             </button>
 
 
+            <!-- DRUGI DATUM -->
 
-</div>
-            
+            <div
+                id="customDateWrapper"
+                class="custom-date-wrapper hidden"
+            >
+
+                <p class="custom-date-title">
+                    DRUGI DATUM
+                </p>
+
+                <div class="nightbook-date-picker">
+
+                    <span class="nightbook-calendar-icon">
+                        ◷
+                    </span>
+
+                    <input
+                        type="date"
+                        id="eventDate"
+                        required
+                    >
+
+                </div>
+
+                <p class="date-help">
+                    Izaberi današnji ili neki budući datum.
+                </p>
 
             </div>
 
@@ -311,7 +309,6 @@
                 </div>
 
             </button>
-
 
         </div>
 
@@ -489,7 +486,7 @@
 </footer>
 
 
-<script src="js/app.js"></script>
+<script src="js/app.js?v=4"></script>
 
 </body>
 </html>
