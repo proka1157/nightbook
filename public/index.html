@@ -1,171 +1,277 @@
 <!DOCTYPE html>
 <html lang="sr">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
 
     <meta
         name="description"
-        content="NightBook - rezervacije klubova u Beogradu. Izaberi datum, klub i rezerviši sto."
+        content="NightBook - pronađi događaje i rezerviši sto u najboljim klubovima Beograda."
     >
 
-    <title>NightBook | Rezervacije klubova Beograd</title>
+    <meta name="theme-color" content="#050505">
 
-    <link rel="stylesheet" href="css/style.css?v=4">
+    <title>
+        NightBook | Beograd Nightlife
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css?v=10"
+    >
+
 </head>
+
 
 <body>
 
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
 <header class="navbar">
 
-    <div class="logo">
+    <a
+        href="#top"
+        class="logo"
+    >
         NIGHT<span>BOOK</span>
-    </div>
+    </a>
 
-    <a href="#booking" class="nav-button">
+
+    <a
+        href="#booking"
+        class="nav-button"
+    >
         REZERVIŠI
     </a>
 
 </header>
 
 
-<main>
 
-    <!-- HERO -->
+<main id="top">
 
-    <section class="hero">
 
-        <div class="hero-content">
+<!-- =========================
+     HERO
+========================= -->
 
-            <p class="hero-label">
-                BEOGRAD • NIGHTLIFE
-            </p>
+<section class="hero">
 
-            <h1>
-                TVOJA NOĆ.<br>
-                TVOJ KLUB.
-            </h1>
+    <div class="hero-overlay"></div>
 
-            <p class="hero-subtitle">
-                Pronađi događaj i rezerviši sto
-                za nekoliko sekundi.
-            </p>
 
-            <a href="#booking" class="hero-button">
+    <div class="hero-content">
+
+        <p class="hero-eyebrow">
+            BEOGRAD • NIGHTLIFE
+        </p>
+
+
+        <h1>
+            NIGHT<span>BOOK</span>
+        </h1>
+
+
+        <p class="hero-slogan">
+            TVOJA NOĆ.<br>
+            TVOJ STO.
+        </p>
+
+
+        <p class="hero-description">
+            Pronađi događaj. Izaberi klub.
+            Rezerviši za nekoliko sekundi.
+        </p>
+
+
+        <a
+            href="#booking"
+            class="hero-button"
+        >
+
+            <span>
                 PRONAĐI DOGAĐAJ
-            </a>
+            </span>
 
-        </div>
+            <span class="hero-arrow">
+                →
+            </span>
 
-    </section>
+        </a>
 
-
-    <!-- BOOKING -->
-
-    <section class="booking-section" id="booking">
-
-        <div class="section-heading">
-
-            <h2>IZABERI VEČE</h2>
-
-            <p>
-                Izaberi datum, a zatim klub.
-            </p>
-
-        </div>
+    </div>
 
 
-        <!-- DATUM -->
+    <div class="hero-scroll">
 
-        <div class="date-section">
+        <span></span>
 
-            <div class="date-title-row">
+        ISTRAŽI
 
-                <div>
+    </div>
 
-                    <span class="small-label">
-                        KADA IZLAZIŠ?
-                    </span>
+</section>
 
-                    <h3>
-                        Izaberi datum
-                    </h3>
 
-                </div>
+
+<!-- =========================
+     BOOKING
+========================= -->
+
+<section
+    class="booking-section"
+    id="booking"
+>
+
+
+    <!-- NASLOV -->
+
+    <div class="section-heading">
+
+        <span class="section-number">
+            01
+        </span>
+
+        <p class="small-label">
+            PRONAĐI SVOJU NOĆ
+        </p>
+
+        <h2>
+            IZABERI<br>
+            <span>VEČE.</span>
+        </h2>
+
+        <p class="section-description">
+            Izaberi datum, zatim klub i pogledaj
+            program za to veče.
+        </p>
+
+    </div>
+
+
+
+    <!-- =========================
+         DATUM
+    ========================= -->
+
+    <div class="date-section">
+
+
+        <div class="date-title-row">
+
+            <div>
+
+                <span class="small-label">
+                    KADA IZLAZIŠ?
+                </span>
+
+                <h3>
+                    Izaberi datum
+                </h3>
 
             </div>
 
-
-            <div
-                id="mainQuickDates"
-                class="main-quick-dates"
-            ></div>
+        </div>
 
 
-            <button
-                type="button"
-                id="otherDateButton"
-                class="other-date-button"
-            >
 
-                <span class="calendar-symbol">
+        <div
+            id="mainQuickDates"
+            class="main-quick-dates"
+        ></div>
+
+
+
+        <button
+            type="button"
+            id="otherDateButton"
+            class="other-date-button"
+        >
+
+            <span class="calendar-symbol">
+                ◷
+            </span>
+
+            <span>
+                IZABERI DRUGI DATUM
+            </span>
+
+            <span class="other-date-arrow">
+                →
+            </span>
+
+        </button>
+
+
+
+        <div
+            id="customDateWrapper"
+            class="custom-date-wrapper hidden"
+        >
+
+            <p class="custom-date-title">
+                DRUGI DATUM
+            </p>
+
+
+            <div class="nightbook-date-picker">
+
+                <span class="nightbook-calendar-icon">
                     ◷
                 </span>
 
-                <span>
-                    IZABERI DRUGI DATUM
-                </span>
-
-            </button>
-
-
-            <!-- DRUGI DATUM -->
-
-            <div
-                id="customDateWrapper"
-                class="custom-date-wrapper hidden"
-            >
-
-                <p class="custom-date-title">
-                    DRUGI DATUM
-                </p>
-
-                <div class="nightbook-date-picker">
-
-                    <span class="nightbook-calendar-icon">
-                        ◷
-                    </span>
-
-                    <input
-                        type="date"
-                        id="eventDate"
-                        required
-                    >
-
-                </div>
-
-                <p class="date-help">
-                    Izaberi današnji ili neki budući datum.
-                </p>
+                <input
+                    type="date"
+                    id="eventDate"
+                    required
+                >
 
             </div>
 
+
+            <p class="date-help">
+                Izaberi današnji ili neki budući datum.
+            </p>
+
         </div>
 
+    </div>
 
-        <!-- KLUBOVI -->
+
+
+    <!-- =========================
+         KLUBOVI
+    ========================= -->
+
+    <div class="clubs-section">
+
 
         <div class="clubs-heading">
+
+            <span class="section-number">
+                02
+            </span>
 
             <span class="small-label">
                 GDE IZLAZIŠ?
             </span>
 
             <h3>
-                Izaberi klub
+                IZABERI<br>
+                <span>KLUB.</span>
             </h3>
 
         </div>
+
 
 
         <div class="clubs-grid">
@@ -181,14 +287,28 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">01</span>
+                <span class="club-number">
+                    01
+                </span>
 
                 <div class="club-info">
-                    <strong>LASTA</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        LASTA
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
+
 
 
             <!-- FREESTYLER -->
@@ -201,14 +321,28 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">02</span>
+                <span class="club-number">
+                    02
+                </span>
 
                 <div class="club-info">
-                    <strong>FREESTYLER</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        FREESTYLER
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
+
 
 
             <!-- REMIKS -->
@@ -221,14 +355,28 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">03</span>
+                <span class="club-number">
+                    03
+                </span>
 
                 <div class="club-info">
-                    <strong>REMIKS</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        REMIKS
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
+
 
 
             <!-- TRANZIT -->
@@ -241,14 +389,28 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">04</span>
+                <span class="club-number">
+                    04
+                </span>
 
                 <div class="club-info">
-                    <strong>TRANZIT</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        TRANZIT
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
+
 
 
             <!-- THE BANK -->
@@ -261,14 +423,28 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">05</span>
+                <span class="club-number">
+                    05
+                </span>
 
                 <div class="club-info">
-                    <strong>THE BANK</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        THE BANK
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
+
 
 
             <!-- LETO -->
@@ -281,17 +457,31 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">06</span>
+                <span class="club-number">
+                    06
+                </span>
 
                 <div class="club-info">
-                    <strong>LETO</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        LETO
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
 
 
-            <!-- GRADSKA KAFANA -->
+
+            <!-- GRADSKA -->
 
             <button
                 type="button"
@@ -301,169 +491,310 @@
 
                 <div class="club-dark-overlay"></div>
 
-                <span class="club-number">07</span>
+                <span class="club-number">
+                    07
+                </span>
 
                 <div class="club-info">
-                    <strong>GRADSKA KAFANA</strong>
-                    <small>Beograd</small>
+
+                    <span class="club-location">
+                        BEOGRAD
+                    </span>
+
+                    <strong>
+                        GRADSKA<br>KAFANA
+                    </strong>
+
+                    <span class="club-action">
+                        POGLEDAJ PROGRAM →
+                    </span>
+
                 </div>
 
             </button>
 
+
         </div>
 
+    </div>
 
-        <!-- PROGRAM -->
 
-        <div
-            id="programResult"
-            class="program-result hidden"
-        >
+
+    <!-- =========================
+         PROGRAM
+    ========================= -->
+
+    <div
+        id="programResult"
+        class="program-result hidden"
+    >
+
+        <div class="program-top">
 
             <p class="program-label">
                 PROGRAM
             </p>
 
-            <h2 id="programClub"></h2>
-
-            <p
-                id="programDate"
-                class="program-date"
-            ></p>
-
-            <div class="program-divider"></div>
-
-            <div id="programContent"></div>
+            <span class="program-dot"></span>
 
         </div>
 
 
-        <!-- REZERVACIJA -->
+        <h2 id="programClub"></h2>
 
-        <div
-            id="reservationSection"
-            class="reservation-section hidden"
-        >
 
-            <div class="section-heading reservation-heading">
+        <p
+            id="programDate"
+            class="program-date"
+        ></p>
 
-                <p class="section-label">
-                    REZERVACIJA
-                </p>
 
-                <h2>
-                    REZERVIŠI STO
-                </h2>
+        <div class="program-divider"></div>
 
-                <p>
-                    Unesi podatke i izaberi tip stola.
-                </p>
+
+        <div id="programContent"></div>
+
+    </div>
+
+
+
+    <!-- =========================
+         REZERVACIJA
+    ========================= -->
+
+    <div
+        id="reservationSection"
+        class="reservation-section hidden"
+    >
+
+
+        <div class="section-heading reservation-heading">
+
+            <span class="section-number">
+                03
+            </span>
+
+            <p class="section-label">
+                JOŠ JEDAN KORAK
+            </p>
+
+            <h2>
+                REZERVIŠI<br>
+                <span>STO.</span>
+            </h2>
+
+            <p>
+                Unesi podatke i izaberi tip stola.
+            </p>
+
+        </div>
+
+
+
+        <form id="reservationForm">
+
+
+            <input
+                type="hidden"
+                id="selectedClub"
+            >
+
+
+            <input
+                type="hidden"
+                id="selectedDate"
+            >
+
+
+
+            <div class="form-group">
+
+                <label for="name">
+                    IME I PREZIME
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Tvoje ime i prezime"
+                    required
+                >
 
             </div>
 
 
-            <form id="reservationForm">
+
+            <div class="form-group">
+
+                <label for="phone">
+                    BROJ TELEFONA
+                </label>
 
                 <input
-                    type="hidden"
-                    id="selectedClub"
+                    type="tel"
+                    id="phone"
+                    placeholder="+381..."
+                    required
                 >
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="instagram">
+
+                    INSTAGRAM
+
+                    <span class="optional-label">
+                        (opciono)
+                    </span>
+
+                </label>
 
                 <input
-                    type="hidden"
-                    id="selectedDate"
+                    type="text"
+                    id="instagram"
+                    placeholder="@username — nije obavezno"
                 >
 
-
-                <div class="form-group">
-
-                    <label for="name">
-                        IME I PREZIME
-                    </label>
-
-                    <input
-                        type="text"
-                        id="name"
-                        placeholder="Tvoje ime i prezime"
-                        required
-                    >
-
-                </div>
+            </div>
 
 
-                <div class="form-group">
 
-                    <label for="phone">
-                        BROJ TELEFONA
-                    </label>
+            <div class="form-group">
 
-                    <input
-                        type="tel"
-                        id="phone"
-                        placeholder="+381..."
-                        required
-                    >
+                <label for="guests">
+                    BROJ OSOBA
+                </label>
 
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="instagram">
-                        INSTAGRAM
-                        <span class="optional-label">
-                            (opciono)
-                        </span>
-                    </label>
-
-                    <input
-                        type="text"
-                        id="instagram"
-                        placeholder="@username — nije obavezno"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="guests">
-                        BROJ OSOBA
-                    </label>
-
-                    <input
-                        type="number"
-                        id="guests"
-                        min="1"
-                        max="30"
-                        value="2"
-                        required
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="submit-button"
+                <input
+                    type="number"
+                    id="guests"
+                    min="1"
+                    max="30"
+                    value="2"
+                    required
                 >
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="submit-button"
+            >
+
+                <span>
                     POŠALJI REZERVACIJU
-                </button>
+                </span>
+
+                <span>
+                    →
+                </span>
+
+            </button>
 
 
-                <p
-                    id="reservationMessage"
-                    class="reservation-message"
-                ></p>
 
-            </form>
+            <p
+                id="reservationMessage"
+                class="reservation-message"
+            ></p>
 
-        </div>
 
-    </section>
+        </form>
+
+    </div>
+
+
+</section>
+
+
+<!-- =========================
+     CONTACT
+========================= -->
+
+<section class="contact-section">
+
+    <p class="small-label">
+        NIGHTBOOK
+    </p>
+
+    <h2>
+        VIDIMO SE<br>
+        <span>VEČERAS.</span>
+    </h2>
+
+
+    <p class="contact-text">
+        Za dodatne informacije ili pomoć oko
+        rezervacije kontaktiraj me direktno.
+    </p>
+
+
+    <div class="contact-links">
+
+
+        <a
+            href="https://wa.me/381641418710"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link"
+        >
+
+            <span class="contact-type">
+                WHATSAPP
+            </span>
+
+            <strong>
+                +381 64 141 8710
+            </strong>
+
+            <span class="contact-arrow">
+                →
+            </span>
+
+        </a>
+
+
+
+        <a
+            href="https://www.instagram.com/_prokic_____/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact-link"
+        >
+
+            <span class="contact-type">
+                INSTAGRAM
+            </span>
+
+            <strong>
+                @_prokic_____
+            </strong>
+
+            <span class="contact-arrow">
+                →
+            </span>
+
+        </a>
+
+
+    </div>
+
+</section>
+
 
 </main>
 
+
+
+<!-- =========================
+     FOOTER
+========================= -->
 
 <footer>
 
@@ -473,12 +804,14 @@
             NIGHT<span>BOOK</span>
         </div>
 
+
         <p>
             Beograd noću počinje ovde.
         </p>
 
+
         <small>
-            © 2026 NightBook
+            © 2026 NIGHTBOOK
         </small>
 
     </div>
@@ -486,7 +819,55 @@
 </footer>
 
 
-<script src="js/app.js?v=4"></script>
+
+<!-- =========================
+     MOBILE BOTTOM BAR
+========================= -->
+
+<nav class="mobile-bottom-bar">
+
+
+    <a
+        href="https://wa.me/381641418710"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="bottom-action whatsapp-action"
+    >
+
+        <span class="bottom-icon">
+            ◉
+        </span>
+
+        <span>
+            WHATSAPP
+        </span>
+
+    </a>
+
+
+
+    <a
+        href="#booking"
+        class="bottom-action events-action"
+    >
+
+        <span>
+            DOGAĐAJI
+        </span>
+
+        <span class="bottom-arrow">
+            →
+        </span>
+
+    </a>
+
+
+</nav>
+
+
+
+<script src="js/app.js?v=10"></script>
 
 </body>
+
 </html>
