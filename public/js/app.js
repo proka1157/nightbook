@@ -113,7 +113,7 @@ const TABLES = {
     bank: [
         {
             name: "Barski sto",
-            condition: "8.000 RSD"
+            condition: "1 obicna flaša"
         },
         {
             name: "Visoko sedenje",
@@ -164,19 +164,19 @@ const TABLES = {
             condition: "1 obična flaša"
         },
         {
-            name: "Mali separe — dalje",
+            name: "Nisko sedenje — dalje bini",
             condition: "1 obična flaša"
         },
         {
-            name: "Mali separe — bliže",
+            name: "Nisko sedenje — bliže bini",
             condition: "1 premium flaša"
         },
         {
-            name: "Separe — dalje",
+            name: "Separe — dalje bini",
             condition: "2 obične flaše"
         },
         {
-            name: "Separe — bliže",
+            name: "Separe — bliže bini",
             condition: "2 premium flaše"
         }
     ]
