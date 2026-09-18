@@ -51,7 +51,6 @@ button {
     position: sticky;
     top: 0;
     z-index: 1000;
-
     height: 74px;
 
     display: flex;
@@ -62,6 +61,7 @@ button {
 
     background: rgba(7, 7, 7, 0.94);
     backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 
     border-bottom: 1px solid #1d1d1d;
 }
@@ -81,7 +81,6 @@ button {
     color: #000;
 
     padding: 12px 18px;
-
     border-radius: 10px;
 
     text-decoration: none;
@@ -111,7 +110,7 @@ button {
             rgba(0, 0, 0, 0.45) 45%,
             #070707 100%
         ),
-        url("../freestyler.jpg.jpg");
+        url("/freestyler.jpg.jpg");
 
     background-size: cover;
     background-position: center;
@@ -128,7 +127,6 @@ button {
 
     font-size: 11px;
     font-weight: 900;
-
     letter-spacing: 2.5px;
 }
 
@@ -162,14 +160,12 @@ button {
     color: #000;
 
     padding: 17px 25px;
-
     border-radius: 12px;
 
     text-decoration: none;
 
     font-size: 12px;
     font-weight: 950;
-
     letter-spacing: 1.4px;
 }
 
@@ -192,7 +188,6 @@ button {
 .section-heading h2 {
     font-size: clamp(34px, 6vw, 58px);
     font-weight: 950;
-
     letter-spacing: -2px;
 }
 
@@ -324,6 +319,11 @@ button {
     letter-spacing: 1px;
 }
 
+
+/* =========================
+   DUGME - DRUGI DATUM
+========================= */
+
 .other-date-button {
     width: 100%;
     min-height: 64px;
@@ -346,10 +346,15 @@ button {
     justify-content: center;
 
     gap: 10px;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
 }
 
 .other-date-button:hover {
     border-color: var(--yellow);
+    background: #141414;
 }
 
 .calendar-symbol {
@@ -357,56 +362,128 @@ button {
     font-size: 20px;
 }
 
+
+/* =========================
+   NOVI DATE PICKER
+========================= */
+
 .custom-date-wrapper {
-    margin-top: 18px;
-
-    padding: 20px;
-
-    border-radius: 16px;
-
-    background: #121212;
-
-    border: 1px solid #282828;
-}
-
-.custom-date-wrapper label {
-    display: block;
-
-    margin-bottom: 10px;
-
-    color: #bcbcbc;
-
-    font-size: 11px;
-    font-weight: 900;
-
-    letter-spacing: 1.5px;
-}
-
-.date-input-wrapper input {
-    width: 100%;
+    margin-top: 14px;
 
     padding: 17px;
 
-    border-radius: 12px;
+    background: #101010;
 
-    border: 1px solid #333;
-
-    background: #080808;
-    color: white;
-
-    outline: none;
+    border: 1px solid #292929;
+    border-radius: 17px;
 }
 
-.date-input-wrapper input:focus {
+.custom-date-title {
+    margin: 0 0 10px 2px;
+
+    color: #8d8d8d;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    letter-spacing: 1.6px;
+}
+
+.nightbook-date-picker {
+    position: relative;
+
+    width: 100%;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 15px;
+
+    background: #080808;
+
+    border: 1px solid #353535;
+    border-radius: 13px;
+
+    overflow: hidden;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.nightbook-date-picker:focus-within {
     border-color: var(--yellow);
+    background: #0b0b0b;
+}
+
+.nightbook-calendar-icon {
+    flex: 0 0 auto;
+
+    margin-right: 11px;
+
+    color: var(--yellow);
+
+    font-size: 19px;
+    font-weight: 900;
+
+    pointer-events: none;
+}
+
+.nightbook-date-picker input[type="date"] {
+    display: block;
+
+    flex: 1 1 auto;
+
+    width: 100% !important;
+    min-width: 0 !important;
+
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 56px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: transparent !important;
+    color: #ffffff !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+
+    outline: 0 !important;
+    box-shadow: none !important;
+
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+
+    color-scheme: dark;
+
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.nightbook-date-picker input[type="date"]::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.2em;
+}
+
+.nightbook-date-picker input[type="date"]::-webkit-calendar-picker-indicator {
+    display: block;
+
+    opacity: 0.85;
+
+    cursor: pointer;
 }
 
 .date-help {
-    margin-top: 10px;
+    margin: 10px 2px 0;
 
-    color: #777;
+    color: #666666;
 
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.45;
 }
 
 
@@ -437,7 +514,6 @@ button {
     border: 1px solid #252525;
 
     background-color: #111;
-
     background-size: cover;
     background-position: center;
 
@@ -466,30 +542,24 @@ button {
 }
 
 
-/* POSTOJEĆE SLIKE */
+/* SLIKE */
 
 .lasta-card {
-    background-image:
-        url("../lasta.jpg.jpg");
+    background-image: url("/lasta.jpg.jpg");
 }
 
 .freestyler-card {
-    background-image:
-        url("../freestyler.jpg.jpg");
+    background-image: url("/freestyler.jpg.jpg");
 }
 
 .remiks-card {
-    background-image:
-        url("../remiks.jpg.jpg");
+    background-image: url("/remiks.jpg.jpg");
 }
 
 .tranzit-card {
-    background-image:
-        url("../tranzit.jpg.jpg");
+    background-image: url("/tranzit.jpg.jpg");
 }
 
-
-/* NOVE SLIKE */
 .bank-card {
     background-image: url("/bank.jpg.png") !important;
 }
@@ -656,7 +726,6 @@ button {
 
 #reservationForm {
     display: grid;
-
     gap: 18px;
 }
 
@@ -721,7 +790,6 @@ button {
 
 .table-options {
     display: grid;
-
     gap: 10px;
 }
 
@@ -747,8 +815,7 @@ button {
 .table-option.active {
     border-color: var(--yellow);
 
-    background:
-        rgba(255, 184, 0, 0.08);
+    background: rgba(255, 184, 0, 0.08);
 }
 
 .table-option-name {
@@ -885,7 +952,6 @@ footer {
 
     .date-section {
         padding: 18px;
-
         border-radius: 20px;
     }
 
@@ -931,6 +997,27 @@ footer {
         letter-spacing: 1px;
     }
 
+    .custom-date-wrapper {
+        padding: 14px;
+        border-radius: 15px;
+    }
+
+    .nightbook-date-picker {
+        height: 56px;
+
+        padding: 0 13px;
+
+        border-radius: 12px;
+    }
+
+    .nightbook-date-picker input[type="date"] {
+        height: 54px !important;
+        min-height: 54px !important;
+        max-height: 54px !important;
+
+        font-size: 15px !important;
+    }
+
     .clubs-grid {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
@@ -973,7 +1060,6 @@ footer {
 
         border-radius: 19px;
     }
-
 }
 
 
@@ -994,46 +1080,4 @@ footer {
     .club-info strong {
         font-size: 16px;
     }
-
-}
-/* ===== CUSTOM DATE PICKER FIX ===== */
-
-.custom-date-wrap {
-    margin-top: 14px;
-}
-
-#customDate {
-    width: 100%;
-    height: 58px;
-    padding: 0 18px;
-
-    background: #0a0a0a;
-    color: #ffffff;
-
-    border: 1px solid #333333;
-    border-radius: 14px;
-
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 700;
-
-    outline: none;
-    box-sizing: border-box;
-
-    color-scheme: dark;
-}
-
-#customDate:focus {
-    border-color: #ffb800;
-}
-
-#customDate::-webkit-calendar-picker-indicator {
-    cursor: pointer;
-    filter: invert(1);
-    opacity: 0.8;
-}
-
-/* iPhone / Safari */
-#customDate::-webkit-date-and-time-value {
-    text-align: left;
 }
