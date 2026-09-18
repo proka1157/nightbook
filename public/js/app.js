@@ -1277,3 +1277,208 @@ function escapeAttribute(value) {
     return escapeHTML(value);
 
 }
+
+// ========================================
+// NIGHTBOOK - AUTO SCROLL DO KLUBOVA
+// ========================================
+
+function scrollToClubs() {
+
+    const clubsSection =
+        document.querySelector(".clubs-section");
+
+    if (!clubsSection) {
+        return;
+    }
+
+    // Malo čekanje da se završi promena datuma
+    setTimeout(() => {
+
+        const navbar =
+            document.querySelector(".navbar");
+
+        const navbarHeight =
+            navbar
+                ? navbar.offsetHeight
+                : 70;
+
+        const position =
+            clubsSection.getBoundingClientRect().top +
+            window.pageYOffset -
+            navbarHeight -
+            18;
+
+        window.scrollTo({
+            top: position,
+            behavior: "smooth"
+        });
+
+    }, 180);
+}
+
+
+// Klik na DANAS / SUTRA / TREĆI DATUM
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const dateButton =
+            event.target.closest(
+                ".main-date-button"
+            );
+
+        if (!dateButton) {
+            return;
+        }
+
+        scrollToClubs();
+
+    }
+);
+
+
+// Datum iz kalendara
+
+eventDate.addEventListener(
+    "change",
+    () => {
+
+        if (!eventDate.value) {
+            return;
+        }
+
+        scrollToClubs();
+
+    }
+);
+
+
+// ========================================
+// NIGHTBOOK - BOTTOM BAR SCROLL
+// ========================================
+
+const bottomBar =
+    document.querySelector(
+        ".mobile-bottom-bar"
+    );
+
+let lastScrollY =
+    window.scrollY;
+
+let ticking =
+    false;
+
+
+function updateBottomBar() {
+
+    if (!bottomBar) {
+        return;
+    }
+
+
+    const currentScrollY =
+        window.scrollY;
+
+
+    const scrollDifference =
+        currentScrollY -
+        lastScrollY;
+
+
+    /*
+    Na samom vrhu:
+    bar je potpuno vidljiv.
+    */
+
+    if (currentScrollY < 80) {
+
+        bottomBar.classList.remove(
+            "bottom-bar-hidden"
+        );
+
+        bottomBar.classList.remove(
+            "bottom-bar-soft"
+        );
+
+    }
+
+
+    /*
+    Korisnik skroluje DOLE.
+    Prvo lagano nestaje.
+    */
+
+    else if (scrollDifference > 3) {
+
+        bottomBar.classList.add(
+            "bottom-bar-soft"
+        );
+
+
+        /*
+        Kada ode malo dalje,
+        potpuno ga sklanjamo.
+        */
+
+        if (currentScrollY > 350) {
+
+            bottomBar.classList.add(
+                "bottom-bar-hidden"
+            );
+
+        }
+
+    }
+
+
+    /*
+    Korisnik skroluje GORE.
+    Bar se vraća.
+    */
+
+    else if (scrollDifference < -3) {
+
+        bottomBar.classList.remove(
+            "bottom-bar-hidden"
+        );
+
+        bottomBar.classList.remove(
+            "bottom-bar-soft"
+        );
+
+    }
+
+
+    lastScrollY =
+        Math.max(
+            currentScrollY,
+            0
+        );
+
+
+    ticking =
+        false;
+
+}
+
+
+window.addEventListener(
+    "scroll",
+    () => {
+
+        if (!ticking) {
+
+            window.requestAnimationFrame(
+                updateBottomBar
+            );
+
+            ticking = true;
+
+        }
+
+    },
+    {
+        passive: true
+    }
+);
