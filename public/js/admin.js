@@ -30,29 +30,125 @@ let allReservations = [];
 
 
 // ========================================
+// NORMALIZACIJA KLUBA
+// ========================================
+
+function normalizeClub(value) {
+
+    const club =
+        String(value || "")
+            .trim()
+            .toLowerCase();
+
+    const aliases = {
+
+        "lasta": "lasta",
+        "splav lasta": "lasta",
+
+        "freestyler": "freestyler",
+        "free styler": "freestyler",
+        "klub freestyler": "freestyler",
+
+        "remiks": "remiks",
+        "remix": "remiks",
+
+        "tranzit": "tranzit",
+        "tranzit bar": "tranzit",
+
+        "bank": "bank",
+        "the bank": "bank",
+        "thebank": "bank",
+        "klub bank": "bank",
+
+        "leto": "leto",
+        "splav leto": "leto",
+
+        "gradska": "gradska",
+        "gradska kafana": "gradska",
+        "kafana gradska": "gradska"
+
+    };
+
+    return aliases[club] || club;
+}
+
+
+// ========================================
+// NORMALIZACIJA STATUSA
+// ========================================
+
+function normalizeStatus(value) {
+
+    return String(value || "nova")
+        .trim()
+        .toLowerCase()
+        .replace("potvrđena", "potvrdjena");
+}
+
+
+// ========================================
+// NORMALIZACIJA DATUMA
+// ========================================
+
+function normalizeDate(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    const stringValue =
+        String(value).trim();
+
+    // PostgreSQL / standardni YYYY-MM-DD
+    if (
+        /^\d{4}-\d{2}-\d{2}$/.test(
+            stringValue
+        )
+    ) {
+        return stringValue;
+    }
+
+    // Ako server nekada vrati ISO datum
+    // npr. 2026-09-19T00:00:00.000Z
+    const isoMatch =
+        stringValue.match(
+            /^(\d{4}-\d{2}-\d{2})/
+        );
+
+    if (isoMatch) {
+        return isoMatch[1];
+    }
+
+    return stringValue;
+}
+
+
+// ========================================
 // FORMAT DATUMA
 // ========================================
 
 function formatDate(dateString) {
 
-    if (!dateString) {
+    const normalized =
+        normalizeDate(dateString);
+
+    if (!normalized) {
         return "-";
     }
 
     const parts =
-        String(dateString).split("-");
+        normalized.split("-");
 
     if (parts.length !== 3) {
-        return dateString;
+        return normalized;
     }
 
     return `${parts[2]}.${parts[1]}.${parts[0]}.`;
-
 }
 
 
 // ========================================
-// FORMAT VREMENA
+// FORMAT VREMENA REZERVACIJE
 // ========================================
 
 function formatCreatedAt(value) {
@@ -82,15 +178,17 @@ function formatCreatedAt(value) {
             minute: "2-digit"
         }
     );
-
 }
 
 
 // ========================================
-// KLUBOVI
+// NAZIV KLUBA
 // ========================================
 
 function clubName(club) {
+
+    const normalizedClub =
+        normalizeClub(club);
 
     const clubs = {
 
@@ -117,16 +215,22 @@ function clubName(club) {
 
     };
 
-    return clubs[club] || club || "-";
-
+    return (
+        clubs[normalizedClub] ||
+        club ||
+        "-"
+    );
 }
 
 
 // ========================================
-// STATUS
+// NAZIV STATUSA
 // ========================================
 
 function statusName(status) {
+
+    const normalizedStatus =
+        normalizeStatus(status);
 
     const statuses = {
 
@@ -141,10 +245,10 @@ function statusName(status) {
 
     };
 
-    return statuses[status] ||
-        String(status || "nova")
-            .toUpperCase();
-
+    return (
+        statuses[normalizedStatus] ||
+        normalizedStatus.toUpperCase()
+    );
 }
 
 
@@ -180,12 +284,11 @@ function escapeHTML(value) {
             /'/g,
             "&#039;"
         );
-
 }
 
 
 // ========================================
-// TELEFON
+// TELEFON LINK
 // ========================================
 
 function phoneLink(phone) {
@@ -212,12 +315,11 @@ function phoneLink(phone) {
             ${safePhone}
         </a>
     `;
-
 }
 
 
 // ========================================
-// INSTAGRAM
+// INSTAGRAM LINK
 // ========================================
 
 function instagramLink(instagram) {
@@ -232,6 +334,19 @@ function instagramLink(instagram) {
             .replace(/^@/, "");
 
 
+    // Ako je neko uneo ceo Instagram URL
+    username =
+        username
+            .replace(
+                /^https?:\/\/(www\.)?instagram\.com\//i,
+                ""
+            )
+            .replace(
+                /\/.*$/,
+                ""
+            );
+
+
     if (!username) {
         return "-";
     }
@@ -239,7 +354,6 @@ function instagramLink(instagram) {
 
     const safeUsername =
         escapeHTML(username);
-
 
     const encodedUsername =
         encodeURIComponent(username);
@@ -255,15 +369,18 @@ function instagramLink(instagram) {
             @${safeUsername}
         </a>
     `;
-
 }
 
 
 // ========================================
-// PORUKA
+// ADMIN PORUKA
 // ========================================
 
 function showMessage(message) {
+
+    if (!adminMessage) {
+        return;
+    }
 
     adminMessage.textContent =
         message;
@@ -289,7 +406,6 @@ function showMessage(message) {
             },
             3000
         );
-
 }
 
 
@@ -306,17 +422,19 @@ function updateStats() {
     newCount.textContent =
         allReservations.filter(
             reservation =>
-                reservation.status === "nova"
+                normalizeStatus(
+                    reservation.status
+                ) === "nova"
         ).length;
 
 
     confirmedCount.textContent =
         allReservations.filter(
             reservation =>
-                reservation.status ===
-                "potvrdjena"
+                normalizeStatus(
+                    reservation.status
+                ) === "potvrdjena"
         ).length;
-
 }
 
 
@@ -327,35 +445,61 @@ function updateStats() {
 function applyFilters() {
 
     const selectedClub =
-        clubFilter.value;
+        normalizeClub(
+            clubFilter.value
+        );
 
     const selectedStatus =
-        statusFilter.value;
+        statusFilter.value
+            ? normalizeStatus(
+                statusFilter.value
+            )
+            : "";
 
     const selectedDate =
-        dateFilter.value;
+        normalizeDate(
+            dateFilter.value
+        );
 
 
     const filtered =
         allReservations.filter(
             reservation => {
 
+                const reservationClub =
+                    normalizeClub(
+                        reservation.club
+                    );
+
+
+                const reservationStatus =
+                    normalizeStatus(
+                        reservation.status
+                    );
+
+
+                const reservationDate =
+                    normalizeDate(
+                        reservation.date
+                    );
+
+
                 const clubMatches =
                     !selectedClub ||
-                    reservation.club ===
-                    selectedClub;
+                    reservationClub ===
+                        selectedClub;
 
 
                 const statusMatches =
                     !selectedStatus ||
-                    reservation.status ===
-                    selectedStatus;
+                    reservationStatus ===
+                        selectedStatus;
 
 
                 const dateMatches =
                     !selectedDate ||
-                    reservation.date ===
-                    selectedDate;
+                    reservationDate ===
+                        selectedDate;
 
 
                 return (
@@ -371,12 +515,11 @@ function applyFilters() {
     renderReservations(
         filtered
     );
-
 }
 
 
 // ========================================
-// UČITAVANJE
+// UČITAJ REZERVACIJE
 // ========================================
 
 async function loadReservations() {
@@ -398,10 +541,18 @@ async function loadReservations() {
 
         const response =
             await fetch(
-                "/api/reservations",
+                `/api/reservations?t=${Date.now()}`,
                 {
+                    method:
+                        "GET",
+
                     cache:
-                        "no-store"
+                        "no-store",
+
+                    headers: {
+                        "Accept":
+                            "application/json"
+                    }
                 }
             );
 
@@ -443,7 +594,10 @@ async function loadReservations() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Greška:",
+            error
+        );
 
 
         allReservations = [];
@@ -459,6 +613,7 @@ async function loadReservations() {
             </div>
         `;
 
+
     } finally {
 
         refreshButton.disabled = false;
@@ -467,12 +622,11 @@ async function loadReservations() {
             "OSVEŽI REZERVACIJE";
 
     }
-
 }
 
 
 // ========================================
-// PRIKAZ
+// PRIKAŽI REZERVACIJE
 // ========================================
 
 function renderReservations(
@@ -488,7 +642,6 @@ function renderReservations(
         `;
 
         return;
-
     }
 
 
@@ -499,8 +652,9 @@ function renderReservations(
                 reservation => {
 
                     const status =
-                        reservation.status ||
-                        "nova";
+                        normalizeStatus(
+                            reservation.status
+                        );
 
 
                     const id =
@@ -525,7 +679,9 @@ function renderReservations(
                                 <div>
 
                                     <div class="reservation-id">
+
                                         REZERVACIJA #${id}
+
                                     </div>
 
 
@@ -582,9 +738,11 @@ function renderReservations(
                                     </span>
 
                                     <strong>
+
                                         ${escapeHTML(
                                             reservation.name
                                         )}
+
                                     </strong>
 
                                 </div>
@@ -597,9 +755,11 @@ function renderReservations(
                                     </span>
 
                                     <strong>
+
                                         ${phoneLink(
                                             reservation.phone
                                         )}
+
                                     </strong>
 
                                 </div>
@@ -612,9 +772,11 @@ function renderReservations(
                                     </span>
 
                                     <strong>
+
                                         ${instagramLink(
                                             reservation.instagram
                                         )}
+
                                     </strong>
 
                                 </div>
@@ -627,9 +789,11 @@ function renderReservations(
                                     </span>
 
                                     <strong>
+
                                         ${escapeHTML(
                                             reservation.guests
                                         )}
+
                                     </strong>
 
                                 </div>
@@ -642,10 +806,12 @@ function renderReservations(
                                     </span>
 
                                     <strong>
+
                                         ${escapeHTML(
                                             reservation.tableType ||
                                             "-"
                                         )}
+
                                     </strong>
 
                                 </div>
@@ -658,11 +824,13 @@ function renderReservations(
                                     </span>
 
                                     <strong>
+
                                         ${escapeHTML(
                                             formatCreatedAt(
                                                 reservation.createdAt
                                             )
                                         )}
+
                                     </strong>
 
                                 </div>
@@ -694,11 +862,14 @@ function renderReservations(
 
                                 <button
                                     type="button"
+
                                     class="
                                         action-button
                                         confirm
                                     "
+
                                     data-action="confirm"
+
                                     data-id="${id}"
 
                                     ${
@@ -718,11 +889,14 @@ function renderReservations(
 
                                 <button
                                     type="button"
+
                                     class="
                                         action-button
                                         reject
                                     "
+
                                     data-action="reject"
+
                                     data-id="${id}"
 
                                     ${
@@ -742,11 +916,14 @@ function renderReservations(
 
                                 <button
                                     type="button"
+
                                     class="
                                         action-button
                                         delete
                                     "
+
                                     data-action="delete"
+
                                     data-id="${id}"
                                 >
 
@@ -766,7 +943,6 @@ function renderReservations(
             )
 
             .join("");
-
 }
 
 
@@ -831,24 +1007,25 @@ async function changeStatus(
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Greška:",
+            error
+        );
+
 
         showMessage(
             "Nije moguće promeniti status."
         );
 
     }
-
 }
 
 
 // ========================================
-// BRISANJE
+// BRISANJE REZERVACIJE
 // ========================================
 
-async function deleteReservation(
-    id
-) {
+async function deleteReservation(id) {
 
     const confirmed =
         window.confirm(
@@ -897,19 +1074,22 @@ async function deleteReservation(
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Greška:",
+            error
+        );
+
 
         showMessage(
             "Nije moguće obrisati rezervaciju."
         );
 
     }
-
 }
 
 
 // ========================================
-// ACTION BUTTONS
+// DUGMAD NA REZERVACIJAMA
 // ========================================
 
 reservationsList.addEventListener(
@@ -939,36 +1119,37 @@ reservationsList.addEventListener(
         }
 
 
-        button.disabled = true;
-
-
         if (action === "confirm") {
+
+            button.disabled = true;
+
 
             await changeStatus(
                 id,
                 "potvrdjena"
             );
 
-            return;
 
+            return;
         }
 
 
         if (action === "reject") {
+
+            button.disabled = true;
+
 
             await changeStatus(
                 id,
                 "odbijena"
             );
 
-            return;
 
+            return;
         }
 
 
         if (action === "delete") {
-
-            button.disabled = false;
 
             await deleteReservation(
                 id
@@ -981,34 +1162,58 @@ reservationsList.addEventListener(
 
 
 // ========================================
-// FILTER EVENTS
+// FILTER - KLUB
 // ========================================
 
 clubFilter.addEventListener(
     "change",
-    applyFilters
-);
+    () => {
 
+        applyFilters();
 
-statusFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-
-dateFilter.addEventListener(
-    "change",
-    applyFilters
+    }
 );
 
 
 // ========================================
-// REFRESH
+// FILTER - STATUS
+// ========================================
+
+statusFilter.addEventListener(
+    "change",
+    () => {
+
+        applyFilters();
+
+    }
+);
+
+
+// ========================================
+// FILTER - DATUM
+// ========================================
+
+dateFilter.addEventListener(
+    "change",
+    () => {
+
+        applyFilters();
+
+    }
+);
+
+
+// ========================================
+// OSVEŽI
 // ========================================
 
 refreshButton.addEventListener(
     "click",
-    loadReservations
+    () => {
+
+        loadReservations();
+
+    }
 );
 
 
