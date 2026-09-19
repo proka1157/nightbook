@@ -1680,3 +1680,83 @@ footer {
 
     color: #000000;
 }
+
+/* ========================================
+   CLEAN WHATSAPP + INSTAGRAM BAR
+======================================== */
+
+.mobile-bottom-bar {
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+
+    background: rgba(8, 8, 8, 0.96);
+    border: 1px solid #343434;
+}
+
+/* OBA DUGMETA ISTA */
+
+.bottom-action,
+.whatsapp-action,
+.instagram-action {
+    background: transparent;
+    color: #ffffff;
+
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    border-radius: 17px;
+}
+
+/* Linija između WhatsApp i Instagram */
+
+.whatsapp-action {
+    border-right: 1px solid #292929;
+    border-radius: 17px 0 0 17px;
+}
+
+.instagram-action {
+    border-radius: 0 17px 17px 0;
+}
+
+/* IKONICE */
+
+.whatsapp-action .bottom-social-icon,
+.instagram-action .bottom-social-icon {
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--yellow);
+
+    border: none;
+}
+
+.bottom-social-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+/* TEKST */
+
+.bottom-action > span:not(.bottom-social-icon) {
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 950;
+
+    letter-spacing: 1.4px;
+}
+
+/* STRELICA SE NIKADA NE PRIKAZUJE */
+
+.bottom-arrow {
+    display: none !important;
+}
