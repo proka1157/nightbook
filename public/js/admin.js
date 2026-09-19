@@ -99,7 +99,6 @@ function normalizeDate(value) {
     const stringValue =
         String(value).trim();
 
-    // PostgreSQL / standardni YYYY-MM-DD
     if (
         /^\d{4}-\d{2}-\d{2}$/.test(
             stringValue
@@ -108,8 +107,6 @@ function normalizeDate(value) {
         return stringValue;
     }
 
-    // Ako server nekada vrati ISO datum
-    // npr. 2026-09-19T00:00:00.000Z
     const isoMatch =
         stringValue.match(
             /^(\d{4}-\d{2}-\d{2})/
@@ -148,7 +145,7 @@ function formatDate(dateString) {
 
 
 // ========================================
-// FORMAT VREMENA REZERVACIJE
+// FORMAT VREMENA
 // ========================================
 
 function formatCreatedAt(value) {
@@ -288,7 +285,7 @@ function escapeHTML(value) {
 
 
 // ========================================
-// TELEFON LINK
+// TELEFON
 // ========================================
 
 function phoneLink(phone) {
@@ -317,81 +314,9 @@ function phoneLink(phone) {
     `;
 }
 
-// ========================================
-// WHATSAPP LINK
-// ========================================
-
-function whatsappLink(reservation) {
-
-    if (!reservation.phone) {
-        return "";
-    }
-
-    let phone =
-        String(reservation.phone)
-            .replace(/\D/g, "");
-
-
-    // 06x... -> 3816x...
-    if (phone.startsWith("0")) {
-
-        phone =
-            "381" + phone.substring(1);
-
-    }
-
-
-    // Ako je neko uneo samo 6x...
-    if (
-        !phone.startsWith("381") &&
-        phone.startsWith("6")
-    ) {
-
-        phone =
-            "381" + phone;
-
-    }
-
-
-    const name =
-        reservation.name || "";
-
-
-    const club =
-        clubName(
-            reservation.club
-        );
-
-
-    const date =
-        formatDate(
-            reservation.date
-        );
-
-
-    const message =
-        `Zdravo ${name}! 👋
-
-Javljamo se povodom vaše NightBook rezervacije.
-
-📍 ${club}
-📅 ${date}
-
-Vaša rezervacija je potvrđena. ✅
-
-Vidimo se! 🥂`;
-
-
-    return (
-        "https://wa.me/" +
-        phone +
-        "?text=" +
-        encodeURIComponent(message)
-    );
-}
 
 // ========================================
-// INSTAGRAM LINK
+// INSTAGRAM
 // ========================================
 
 function instagramLink(instagram) {
@@ -406,7 +331,6 @@ function instagramLink(instagram) {
             .replace(/^@/, "");
 
 
-    // Ako je neko uneo ceo Instagram URL
     username =
         username
             .replace(
@@ -441,6 +365,134 @@ function instagramLink(instagram) {
             @${safeUsername}
         </a>
     `;
+}
+
+
+// ========================================
+// WHATSAPP BROJ
+// ========================================
+
+function normalizeWhatsAppPhone(phone) {
+
+    let number =
+        String(phone || "")
+            .replace(/\D/g, "");
+
+
+    if (!number) {
+        return "";
+    }
+
+
+    // +381...
+    if (number.startsWith("381")) {
+        return number;
+    }
+
+
+    // 06... -> 3816...
+    if (number.startsWith("0")) {
+
+        return (
+            "381" +
+            number.substring(1)
+        );
+    }
+
+
+    // 6... -> 3816...
+    if (number.startsWith("6")) {
+
+        return (
+            "381" +
+            number
+        );
+    }
+
+
+    return number;
+}
+
+
+// ========================================
+// WHATSAPP LINK
+// ========================================
+
+function whatsappLink(reservation) {
+
+    const phone =
+        normalizeWhatsAppPhone(
+            reservation.phone
+        );
+
+
+    if (!phone) {
+        return "#";
+    }
+
+
+    const name =
+        String(
+            reservation.name || ""
+        ).trim();
+
+
+    const firstName =
+        name.split(/\s+/)[0] ||
+        name;
+
+
+    const club =
+        clubName(
+            reservation.club
+        );
+
+
+    const date =
+        formatDate(
+            reservation.date
+        );
+
+
+    const tableType =
+        reservation.tableType ||
+        "-";
+
+
+    const condition =
+        reservation.condition ||
+        "Bez uslova";
+
+
+    const guests =
+        reservation.guests ||
+        "-";
+
+
+    const message =
+`Zdravo ${firstName}! 👋
+
+Javljamo se povodom vaše NightBook rezervacije.
+
+📍 Klub: ${club}
+📅 Datum: ${date}
+👥 Broj osoba: ${guests}
+🥂 Sto: ${tableType}
+📋 Uslov: ${condition}
+
+Vaša rezervacija je potvrđena. ✅
+
+Vidimo se! 🥂`;
+
+
+    return (
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(
+            message
+        )
+    );
 }
 
 
@@ -591,7 +643,7 @@ function applyFilters() {
 
 
 // ========================================
-// UČITAJ REZERVACIJE
+// UČITAVANJE
 // ========================================
 
 async function loadReservations() {
@@ -634,7 +686,6 @@ async function loadReservations() {
             throw new Error(
                 "Nije moguće učitati rezervacije."
             );
-
         }
 
 
@@ -651,7 +702,6 @@ async function loadReservations() {
             throw new Error(
                 "Neispravan odgovor servera."
             );
-
         }
 
 
@@ -698,7 +748,7 @@ async function loadReservations() {
 
 
 // ========================================
-// PRIKAŽI REZERVACIJE
+// PRIKAZ REZERVACIJA
 // ========================================
 
 function renderReservations(
@@ -732,6 +782,12 @@ function renderReservations(
                     const id =
                         escapeHTML(
                             reservation.id
+                        );
+
+
+                    const waLink =
+                        whatsappLink(
+                            reservation
                         );
 
 
@@ -932,6 +988,19 @@ function renderReservations(
                             <div class="reservation-actions">
 
 
+                                <a
+                                    href="${escapeHTML(waLink)}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="
+                                        action-button
+                                        whatsapp-button
+                                    "
+                                >
+                                    WHATSAPP
+                                </a>
+
+
                                 <button
                                     type="button"
 
@@ -1063,7 +1132,6 @@ async function changeStatus(
                 data.error ||
                 "Greška pri promeni statusa."
             );
-
         }
 
 
@@ -1094,7 +1162,7 @@ async function changeStatus(
 
 
 // ========================================
-// BRISANJE REZERVACIJE
+// BRISANJE
 // ========================================
 
 async function deleteReservation(id) {
@@ -1132,7 +1200,6 @@ async function deleteReservation(id) {
                 data.error ||
                 "Greška pri brisanju."
             );
-
         }
 
 
@@ -1161,7 +1228,7 @@ async function deleteReservation(id) {
 
 
 // ========================================
-// DUGMAD NA REZERVACIJAMA
+// DUGMAD
 // ========================================
 
 reservationsList.addEventListener(
@@ -1234,44 +1301,24 @@ reservationsList.addEventListener(
 
 
 // ========================================
-// FILTER - KLUB
+// FILTERI
 // ========================================
 
 clubFilter.addEventListener(
     "change",
-    () => {
-
-        applyFilters();
-
-    }
+    applyFilters
 );
 
-
-// ========================================
-// FILTER - STATUS
-// ========================================
 
 statusFilter.addEventListener(
     "change",
-    () => {
-
-        applyFilters();
-
-    }
+    applyFilters
 );
 
 
-// ========================================
-// FILTER - DATUM
-// ========================================
-
 dateFilter.addEventListener(
     "change",
-    () => {
-
-        applyFilters();
-
-    }
+    applyFilters
 );
 
 
@@ -1281,11 +1328,7 @@ dateFilter.addEventListener(
 
 refreshButton.addEventListener(
     "click",
-    () => {
-
-        loadReservations();
-
-    }
+    loadReservations
 );
 
 
