@@ -1644,3 +1644,39 @@ footer {
     }
 
 }
+
+/* ========================================
+   NIGHTBOOK SOCIAL ICONS
+======================================== */
+
+.bottom-social-icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+.whatsapp-action .bottom-social-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    color: #ffffff;
+}
+
+.instagram-action .bottom-social-icon {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    color: #000000;
+}
