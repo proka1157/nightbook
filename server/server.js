@@ -1,34 +1,105 @@
 const express = require("express");
 const path = require("path");
-const fs = require("fs");
+const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+// ========================================
+// MIDDLEWARE
+// ========================================
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
+
+app.use(
+    express.static(
+        path.join(__dirname, "../public")
+    )
+);
 
 
 // ========================================
-// REZERVACIJE
+// POSTGRESQL
 // ========================================
 
-const dataDir = path.join(__dirname, "data");
-
-const reservationsFile =
-    path.join(dataDir, "reservations.json");
-
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, {
-        recursive: true
-    });
+if (!process.env.DATABASE_URL) {
+    console.error(
+        "DATABASE_URL nije podešen."
+    );
 }
 
-if (!fs.existsSync(reservationsFile)) {
-    fs.writeFileSync(
-        reservationsFile,
-        "[]"
-    );
+const pool = new Pool({
+    connectionString:
+        process.env.DATABASE_URL
+});
+
+
+// ========================================
+// KREIRANJE TABELE
+// ========================================
+
+async function initializeDatabase() {
+
+    try {
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS reservations (
+
+                id BIGSERIAL PRIMARY KEY,
+
+                club VARCHAR(100) NOT NULL,
+
+                date DATE NOT NULL,
+
+                name VARCHAR(200) NOT NULL,
+
+                phone VARCHAR(100) NOT NULL,
+
+                instagram VARCHAR(200) DEFAULT '',
+
+                guests INTEGER NOT NULL,
+
+                table_type VARCHAR(200) NOT NULL,
+
+                condition TEXT DEFAULT '',
+
+                status VARCHAR(50) NOT NULL DEFAULT 'nova',
+
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+
+            );
+        `);
+
+
+        await pool.query(`
+            CREATE INDEX IF NOT EXISTS
+            idx_reservations_date
+            ON reservations(date);
+        `);
+
+
+        await pool.query(`
+            CREATE INDEX IF NOT EXISTS
+            idx_reservations_status
+            ON reservations(status);
+        `);
+
+
+        console.log(
+            "PostgreSQL baza je spremna."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Greška pri inicijalizaciji baze:",
+            error
+        );
+
+    }
+
 }
 
 
@@ -102,6 +173,7 @@ const MONTHS = [
     "Decembar"
 ];
 
+
 const DAYS = [
     "NEDELJA",
     "PONEDELJAK",
@@ -136,6 +208,7 @@ function decodeHTML(text) {
         .replace(/&Zcaron;/gi, "Ž")
         .replace(/&dstrok;/gi, "đ")
         .replace(/&Dstrok;/gi, "Đ")
+
         .replace(
             /&#(\d+);/g,
             (_, number) =>
@@ -237,10 +310,12 @@ function extractProgram(
     const dayNumber =
         date.getDate();
 
+
     const month =
         MONTHS[
             date.getMonth()
         ];
+
 
     const dayName =
         DAYS[
@@ -251,12 +326,6 @@ function extractProgram(
     const text =
         htmlToText(html);
 
-
-    // ========================================
-    // TAČAN DATUM
-    // Primer:
-    // PETAK 18. Septembar
-    // ========================================
 
     const exactDateRegex =
         new RegExp(
@@ -277,10 +346,6 @@ function extractProgram(
     }
 
 
-    // ========================================
-    // SVE POSLE DATUMA
-    // ========================================
-
     let afterDate =
         text
             .slice(
@@ -289,10 +354,6 @@ function extractProgram(
             )
             .trim();
 
-
-    // ========================================
-    // ZAUSTAVI KOD SLEDEĆEG DATUMA
-    // ========================================
 
     const nextDateRegex =
         /(?:PONEDELJAK|UTORAK|SREDA|ČETVRTAK|PETAK|SUBOTA|NEDELJA)\s+\d{1,2}\.\s*(?:Januar|Februar|Mart|April|Maj|Jun|Jul|Avgust|Septembar|Oktobar|Novembar|Decembar)/i;
@@ -315,10 +376,6 @@ function extractProgram(
     }
 
 
-    // ========================================
-    // UKLANJANJE NEPOTREBNOG
-    // ========================================
-
     afterDate =
         afterDate
 
@@ -339,10 +396,6 @@ function extractProgram(
 
             .trim();
 
-
-    // ========================================
-    // PRETVORI U REDOVE
-    // ========================================
 
     const lines =
         afterDate
@@ -366,10 +419,6 @@ function extractProgram(
         return null;
     }
 
-
-    // ========================================
-    // REDOVI KOJE NE ŽELIMO
-    // ========================================
 
     const ignored = [
 
@@ -410,10 +459,6 @@ function extractProgram(
     ];
 
 
-    // ========================================
-    // PRVI RELEVANTAN RED
-    // ========================================
-
     const programLine =
         lines.find(line => {
 
@@ -440,10 +485,6 @@ function extractProgram(
     }
 
 
-    // ========================================
-    // DODATNO ČIŠĆENJE
-    // ========================================
-
     let cleanProgram =
         programLine
 
@@ -457,25 +498,31 @@ function extractProgram(
 
     cleanProgram =
         cleanProgram
+
             .split(
                 /\s*[•|]\s*Enterijer/i
             )[0]
+
             .trim();
 
 
     cleanProgram =
         cleanProgram
+
             .split(
                 /\s*[•|]\s*Beograd Noću/i
             )[0]
+
             .trim();
 
 
     cleanProgram =
         cleanProgram
+
             .split(
                 /Freestyler Winter Stage je/i
             )[0]
+
             .trim();
 
 
@@ -644,7 +691,7 @@ app.get(
 
 app.post(
     "/api/reservations",
-    (req, res) => {
+    async (req, res) => {
 
         try {
 
@@ -683,78 +730,94 @@ app.post(
             }
 
 
-            let reservations = [];
+            const guestsNumber =
+                Number(guests);
 
 
-            try {
+            if (
+                !Number.isInteger(
+                    guestsNumber
+                ) ||
+                guestsNumber < 1 ||
+                guestsNumber > 30
+            ) {
 
-                reservations =
-                    JSON.parse(
+                return res
+                    .status(400)
+                    .json({
 
-                        fs.readFileSync(
-                            reservationsFile,
-                            "utf8"
-                        )
+                        error:
+                            "Broj osoba mora biti između 1 i 30."
 
-                    );
-
-            } catch {
-
-                reservations = [];
+                    });
 
             }
 
 
-            const reservation = {
+            const result =
+                await pool.query(
+                    `
+                    INSERT INTO reservations
+                    (
+                        club,
+                        date,
+                        name,
+                        phone,
+                        instagram,
+                        guests,
+                        table_type,
+                        condition,
+                        status
+                    )
 
-                id:
-                    Date.now(),
+                    VALUES
+                    (
+                        $1,
+                        $2,
+                        $3,
+                        $4,
+                        $5,
+                        $6,
+                        $7,
+                        $8,
+                        'nova'
+                    )
 
-                club,
+                    RETURNING
+                        id,
+                        club,
+                        date::text AS date,
+                        name,
+                        phone,
+                        instagram,
+                        guests,
+                        table_type AS "tableType",
+                        condition,
+                        status,
+                        created_at AS "createdAt"
+                    `,
 
-                date,
-
-                name,
-
-                phone,
-
-                instagram:
-                    instagram || "",
-
-                guests:
-                    Number(guests),
-
-                tableType:
-                    tableType || "",
-
-                condition:
-                    condition || "",
-
-                status:
-                    "nova",
-
-                createdAt:
-                    new Date()
-                        .toISOString()
-
-            };
-
-
-            reservations.push(
-                reservation
-            );
+                    [
+                        club,
+                        date,
+                        name.trim(),
+                        phone.trim(),
+                        instagram
+                            ? instagram.trim()
+                            : "",
+                        guestsNumber,
+                        tableType,
+                        condition || ""
+                    ]
+                );
 
 
-            fs.writeFileSync(
+            const reservation =
+                result.rows[0];
 
-                reservationsFile,
 
-                JSON.stringify(
-                    reservations,
-                    null,
-                    2
-                )
-
+            console.log(
+                `Nova rezervacija #${reservation.id}`
             );
 
 
@@ -801,41 +864,266 @@ app.post(
 
 app.get(
     "/api/reservations",
-    (req, res) => {
+    async (req, res) => {
 
         try {
 
-            const reservations =
-                JSON.parse(
+            const result =
+                await pool.query(`
+                    SELECT
 
-                    fs.readFileSync(
-                        reservationsFile,
-                        "utf8"
-                    )
+                        id,
 
-                );
+                        club,
 
+                        date::text AS date,
 
-            reservations.sort(
-                (a, b) => {
+                        name,
 
-                    return (
-                        new Date(b.createdAt) -
-                        new Date(a.createdAt)
-                    );
+                        phone,
 
-                }
-            );
+                        instagram,
+
+                        guests,
+
+                        table_type AS "tableType",
+
+                        condition,
+
+                        status,
+
+                        created_at AS "createdAt"
+
+                    FROM reservations
+
+                    ORDER BY
+                        created_at DESC;
+                `);
 
 
             return res.json(
-                reservations
+                result.rows
             );
 
 
         } catch (error) {
 
-            return res.json([]);
+            console.error(
+                "Greška pri učitavanju rezervacija:",
+                error
+            );
+
+
+            return res
+                .status(500)
+                .json({
+
+                    error:
+                        "Greška pri učitavanju rezervacija."
+
+                });
+
+        }
+
+    }
+);
+
+
+// ========================================
+// PATCH - PROMENA STATUSA
+// ========================================
+
+app.patch(
+    "/api/reservations/:id/status",
+    async (req, res) => {
+
+        try {
+
+            const {
+                id
+            } = req.params;
+
+
+            const {
+                status
+            } = req.body;
+
+
+            const allowedStatuses = [
+                "nova",
+                "potvrdjena",
+                "odbijena"
+            ];
+
+
+            if (
+                !allowedStatuses.includes(
+                    status
+                )
+            ) {
+
+                return res
+                    .status(400)
+                    .json({
+
+                        error:
+                            "Neispravan status."
+
+                    });
+
+            }
+
+
+            const result =
+                await pool.query(
+                    `
+                    UPDATE reservations
+
+                    SET status = $1
+
+                    WHERE id = $2
+
+                    RETURNING
+                        id,
+                        club,
+                        date::text AS date,
+                        name,
+                        phone,
+                        instagram,
+                        guests,
+                        table_type AS "tableType",
+                        condition,
+                        status,
+                        created_at AS "createdAt";
+                    `,
+
+                    [
+                        status,
+                        id
+                    ]
+                );
+
+
+            if (
+                result.rows.length === 0
+            ) {
+
+                return res
+                    .status(404)
+                    .json({
+
+                        error:
+                            "Rezervacija nije pronađena."
+
+                    });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                reservation:
+                    result.rows[0]
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Greška pri promeni statusa:",
+                error
+            );
+
+
+            return res
+                .status(500)
+                .json({
+
+                    error:
+                        "Greška pri promeni statusa."
+
+                });
+
+        }
+
+    }
+);
+
+
+// ========================================
+// DELETE - BRISANJE REZERVACIJE
+// ========================================
+
+app.delete(
+    "/api/reservations/:id",
+    async (req, res) => {
+
+        try {
+
+            const {
+                id
+            } = req.params;
+
+
+            const result =
+                await pool.query(
+                    `
+                    DELETE FROM reservations
+                    WHERE id = $1
+                    RETURNING id;
+                    `,
+
+                    [
+                        id
+                    ]
+                );
+
+
+            if (
+                result.rows.length === 0
+            ) {
+
+                return res
+                    .status(404)
+                    .json({
+
+                        error:
+                            "Rezervacija nije pronađena."
+
+                    });
+
+            }
+
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Rezervacija je obrisana."
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Greška pri brisanju rezervacije:",
+                error
+            );
+
+
+            return res
+                .status(500)
+                .json({
+
+                    error:
+                        "Greška pri brisanju rezervacije."
+
+                });
 
         }
 
@@ -888,14 +1176,38 @@ app.use(
 // START SERVERA
 // ========================================
 
-app.listen(
-    PORT,
-    "0.0.0.0",
-    () => {
+async function startServer() {
 
-        console.log(
-            `NightBook radi na portu ${PORT}`
+    try {
+
+        await initializeDatabase();
+
+
+        app.listen(
+            PORT,
+            "0.0.0.0",
+            () => {
+
+                console.log(
+                    `NightBook radi na portu ${PORT}`
+                );
+
+            }
         );
 
+
+    } catch (error) {
+
+        console.error(
+            "NightBook nije mogao da se pokrene:",
+            error
+        );
+
+        process.exit(1);
+
     }
-);
+
+}
+
+
+startServer();
