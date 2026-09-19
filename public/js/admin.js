@@ -317,6 +317,78 @@ function phoneLink(phone) {
     `;
 }
 
+// ========================================
+// WHATSAPP LINK
+// ========================================
+
+function whatsappLink(reservation) {
+
+    if (!reservation.phone) {
+        return "";
+    }
+
+    let phone =
+        String(reservation.phone)
+            .replace(/\D/g, "");
+
+
+    // 06x... -> 3816x...
+    if (phone.startsWith("0")) {
+
+        phone =
+            "381" + phone.substring(1);
+
+    }
+
+
+    // Ako je neko uneo samo 6x...
+    if (
+        !phone.startsWith("381") &&
+        phone.startsWith("6")
+    ) {
+
+        phone =
+            "381" + phone;
+
+    }
+
+
+    const name =
+        reservation.name || "";
+
+
+    const club =
+        clubName(
+            reservation.club
+        );
+
+
+    const date =
+        formatDate(
+            reservation.date
+        );
+
+
+    const message =
+        `Zdravo ${name}! 👋
+
+Javljamo se povodom vaše NightBook rezervacije.
+
+📍 ${club}
+📅 ${date}
+
+Vaša rezervacija je potvrđena. ✅
+
+Vidimo se! 🥂`;
+
+
+    return (
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(message)
+    );
+}
 
 // ========================================
 // INSTAGRAM LINK
