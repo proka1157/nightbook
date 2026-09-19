@@ -7,14 +7,203 @@ const PORT = process.env.PORT || 3000;
 
 
 // ========================================
-// MIDDLEWARE
+// OSNOVNI MIDDLEWARE
 // ========================================
 
 app.use(express.json());
 
+
+// ========================================
+// ADMIN AUTH
+// ========================================
+
+function adminAuth(req, res, next) {
+
+    const ADMIN_USER =
+        process.env.ADMIN_USER;
+
+    const ADMIN_PASSWORD =
+        process.env.ADMIN_PASSWORD;
+
+
+    if (
+        !ADMIN_USER ||
+        !ADMIN_PASSWORD
+    ) {
+
+        console.error(
+            "ADMIN_USER ili ADMIN_PASSWORD nisu podešeni."
+        );
+
+        return res
+            .status(503)
+            .send(
+                "Admin pristup trenutno nije podešen."
+            );
+    }
+
+
+    const authHeader =
+        req.headers.authorization;
+
+
+    if (
+        !authHeader ||
+        !authHeader.startsWith("Basic ")
+    ) {
+
+        res.set(
+            "WWW-Authenticate",
+            'Basic realm="NightBook Admin", charset="UTF-8"'
+        );
+
+        return res
+            .status(401)
+            .send(
+                "Potrebna je prijava."
+            );
+    }
+
+
+    try {
+
+        const encodedCredentials =
+            authHeader.split(" ")[1];
+
+
+        const decodedCredentials =
+            Buffer
+                .from(
+                    encodedCredentials,
+                    "base64"
+                )
+                .toString("utf8");
+
+
+        const separatorIndex =
+            decodedCredentials.indexOf(":");
+
+
+        if (separatorIndex === -1) {
+
+            res.set(
+                "WWW-Authenticate",
+                'Basic realm="NightBook Admin", charset="UTF-8"'
+            );
+
+            return res
+                .status(401)
+                .send(
+                    "Pogrešni podaci za prijavu."
+                );
+        }
+
+
+        const username =
+            decodedCredentials.slice(
+                0,
+                separatorIndex
+            );
+
+
+        const password =
+            decodedCredentials.slice(
+                separatorIndex + 1
+            );
+
+
+        if (
+            username !== ADMIN_USER ||
+            password !== ADMIN_PASSWORD
+        ) {
+
+            res.set(
+                "WWW-Authenticate",
+                'Basic realm="NightBook Admin", charset="UTF-8"'
+            );
+
+            return res
+                .status(401)
+                .send(
+                    "Pogrešni podaci za prijavu."
+                );
+        }
+
+
+        next();
+
+
+    } catch (error) {
+
+        console.error(
+            "Admin auth greška:",
+            error
+        );
+
+
+        res.set(
+            "WWW-Authenticate",
+            'Basic realm="NightBook Admin", charset="UTF-8"'
+        );
+
+
+        return res
+            .status(401)
+            .send(
+                "Pogrešni podaci za prijavu."
+            );
+    }
+}
+
+
+// ========================================
+// ZAŠTITA ADMIN STRANICE
+// ========================================
+
+// VAŽNO:
+// Ovo mora da bude PRE express.static()
+// kako /admin.html ne bi mogao da zaobiđe login.
+
+app.get(
+    "/admin",
+    adminAuth,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/admin.html"
+            )
+        );
+    }
+);
+
+
+app.get(
+    "/admin.html",
+    adminAuth,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/admin.html"
+            )
+        );
+    }
+);
+
+
+// ========================================
+// STATIČKI FRONTEND
+// ========================================
+
 app.use(
     express.static(
-        path.join(__dirname, "../public")
+        path.join(
+            __dirname,
+            "../public"
+        )
     )
 );
 
@@ -24,14 +213,18 @@ app.use(
 // ========================================
 
 if (!process.env.DATABASE_URL) {
+
     console.error(
         "DATABASE_URL nije podešen."
     );
 }
 
+
 const pool = new Pool({
+
     connectionString:
         process.env.DATABASE_URL
+
 });
 
 
@@ -98,8 +291,8 @@ async function initializeDatabase() {
             error
         );
 
+        throw error;
     }
-
 }
 
 
@@ -216,7 +409,6 @@ function decodeHTML(text) {
                     Number(number)
                 )
         );
-
 }
 
 
@@ -265,12 +457,11 @@ function htmlToText(html) {
         )
 
         .trim();
-
 }
 
 
 // ========================================
-// REGEX ZA TEKST
+// REGEX
 // ========================================
 
 function escapeRegex(text) {
@@ -279,7 +470,6 @@ function escapeRegex(text) {
         /[.*+?^${}()|[\]\\]/g,
         "\\$&"
     );
-
 }
 
 
@@ -333,7 +523,6 @@ function extractProgram(
             `${escapeRegex(dayName)}\\s+${dayNumber}\\.\\s*${escapeRegex(month)}`,
 
             "i"
-
         );
 
 
@@ -372,7 +561,6 @@ function extractProgram(
                 0,
                 nextDate
             );
-
     }
 
 
@@ -476,7 +664,6 @@ function extractProgram(
 
 
             return !shouldIgnore;
-
         });
 
 
@@ -532,7 +719,6 @@ function extractProgram(
 
 
     return cleanProgram;
-
 }
 
 
@@ -563,7 +749,6 @@ app.get(
                         "Klub i datum su obavezni."
 
                 });
-
         }
 
 
@@ -581,7 +766,6 @@ app.get(
                         "Klub nije pronađen."
 
                 });
-
         }
 
 
@@ -614,7 +798,6 @@ app.get(
                 throw new Error(
                     `Izvor status: ${response.status}`
                 );
-
             }
 
 
@@ -644,7 +827,6 @@ app.get(
                         "Program za ovaj datum još nije objavljen."
 
                 });
-
             }
 
 
@@ -678,15 +860,14 @@ app.get(
                         "Trenutno nije moguće učitati program."
 
                 });
-
         }
-
     }
 );
 
 
 // ========================================
 // POST - NOVA REZERVACIJA
+// JAVNO - NE STAVLJATI ADMIN AUTH
 // ========================================
 
 app.post(
@@ -726,7 +907,6 @@ app.post(
                             "Popuni sva obavezna polja."
 
                     });
-
             }
 
 
@@ -750,7 +930,6 @@ app.post(
                             "Broj osoba mora biti između 1 i 30."
 
                     });
-
             }
 
 
@@ -802,9 +981,11 @@ app.post(
                         date,
                         name.trim(),
                         phone.trim(),
+
                         instagram
                             ? instagram.trim()
                             : "",
+
                         guestsNumber,
                         tableType,
                         condition || ""
@@ -851,19 +1032,19 @@ app.post(
                         "Greška pri čuvanju rezervacije."
 
                 });
-
         }
-
     }
 );
 
 
 // ========================================
 // GET - SVE REZERVACIJE
+// ZAŠTIĆENO
 // ========================================
 
 app.get(
     "/api/reservations",
+    adminAuth,
     async (req, res) => {
 
         try {
@@ -922,19 +1103,19 @@ app.get(
                         "Greška pri učitavanju rezervacija."
 
                 });
-
         }
-
     }
 );
 
 
 // ========================================
 // PATCH - PROMENA STATUSA
+// ZAŠTIĆENO
 // ========================================
 
 app.patch(
     "/api/reservations/:id/status",
+    adminAuth,
     async (req, res) => {
 
         try {
@@ -970,7 +1151,6 @@ app.patch(
                             "Neispravan status."
 
                     });
-
             }
 
 
@@ -1016,7 +1196,6 @@ app.patch(
                             "Rezervacija nije pronađena."
 
                     });
-
             }
 
 
@@ -1046,19 +1225,19 @@ app.patch(
                         "Greška pri promeni statusa."
 
                 });
-
         }
-
     }
 );
 
 
 // ========================================
 // DELETE - BRISANJE REZERVACIJE
+// ZAŠTIĆENO
 // ========================================
 
 app.delete(
     "/api/reservations/:id",
+    adminAuth,
     async (req, res) => {
 
         try {
@@ -1094,7 +1273,6 @@ app.delete(
                             "Rezervacija nije pronađena."
 
                     });
-
             }
 
 
@@ -1124,30 +1302,7 @@ app.delete(
                         "Greška pri brisanju rezervacije."
 
                 });
-
         }
-
-    }
-);
-
-
-// ========================================
-// ADMIN
-// ========================================
-
-app.get(
-    "/admin",
-    (req, res) => {
-
-        res.sendFile(
-
-            path.join(
-                __dirname,
-                "../public/admin.html"
-            )
-
-        );
-
     }
 );
 
@@ -1160,14 +1315,11 @@ app.use(
     (req, res) => {
 
         res.sendFile(
-
             path.join(
                 __dirname,
                 "../public/index.html"
             )
-
         );
-
     }
 );
 
@@ -1191,7 +1343,6 @@ async function startServer() {
                 console.log(
                     `NightBook radi na portu ${PORT}`
                 );
-
             }
         );
 
@@ -1204,9 +1355,7 @@ async function startServer() {
         );
 
         process.exit(1);
-
     }
-
 }
 
 
