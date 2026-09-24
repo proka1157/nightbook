@@ -1760,3 +1760,423 @@ footer {
 .bottom-arrow {
     display: none !important;
 }
+
+/* ========================================
+   ISTAKNUTI DOGAĐAJI
+======================================== */
+
+.featured-events {
+    width: min(1200px, calc(100% - 32px));
+
+    margin: 0 auto;
+
+    padding:
+        80px
+        0;
+}
+
+
+.featured-events-heading {
+    margin-bottom: 30px;
+}
+
+
+.featured-kicker {
+    margin-bottom: 9px;
+
+    color: #ffbd19;
+
+    font-size: 10px;
+    font-weight: 950;
+
+    letter-spacing: 2.4px;
+}
+
+
+.featured-events-heading h2 {
+    color: #fff;
+
+    font-size:
+        clamp(
+            36px,
+            7vw,
+            66px
+        );
+
+    line-height: .92;
+
+    font-weight: 950;
+
+    letter-spacing: -3px;
+}
+
+
+.featured-events-heading h2 span {
+    color: #ffbd19;
+}
+
+
+.featured-intro {
+    margin-top: 13px;
+
+    color: #777;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   GRID
+========================= */
+
+.featured-events-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 14px;
+}
+
+
+/* =========================
+   CARD
+========================= */
+
+.featured-event-card {
+    position: relative;
+
+    min-height: 600px;
+
+    padding: 22px;
+
+    display: flex;
+    align-items: flex-end;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        #252525;
+
+    border-radius: 20px;
+
+    background-size: cover;
+    background-position: center;
+
+    isolation: isolate;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease;
+}
+
+
+.featured-event-card::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -1;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.4),
+            transparent 50%
+        );
+
+    pointer-events: none;
+}
+
+
+.featured-event-card:hover {
+    transform:
+        translateY(-4px);
+
+    border-color:
+        rgba(
+            255,
+            189,
+            25,
+            .55
+        );
+}
+
+
+/* =========================
+   BADGE
+========================= */
+
+.featured-badge {
+    position: absolute;
+
+    top: 17px;
+    left: 17px;
+
+    padding:
+        8px
+        11px;
+
+    border-radius: 999px;
+
+    background: #ffbd19;
+    color: #000;
+
+    font-size: 8px;
+    font-weight: 950;
+
+    letter-spacing: 1.2px;
+}
+
+
+.featured-badge.special {
+    background: #ed2626;
+
+    color: #fff;
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+
+.featured-event-content {
+    width: 100%;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.featured-date {
+    margin-bottom: 8px;
+
+    color: #ffbd19;
+
+    font-size: 11px;
+    font-weight: 950;
+
+    letter-spacing: 1.4px;
+}
+
+
+.featured-event-content h3 {
+    margin: 0;
+
+    color: #fff;
+
+    font-size:
+        clamp(
+            37px,
+            4vw,
+            55px
+        );
+
+    line-height: .9;
+
+    font-weight: 950;
+
+    letter-spacing: -2px;
+}
+
+
+.rain-text {
+    color: #ed2626;
+}
+
+
+.featured-club {
+    margin-top: 13px;
+
+    color: #fff;
+
+    font-size: 10px;
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================
+   TAGS
+========================= */
+
+.featured-tags {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin:
+        15px
+        0
+        18px;
+}
+
+
+.featured-tags span {
+    padding:
+        7px
+        9px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            .2
+        );
+
+    border-radius: 999px;
+
+    background:
+        rgba(
+            0,
+            0,
+            0,
+            .45
+        );
+
+    color: #bbb;
+
+    font-size: 8px;
+    font-weight: 900;
+
+    letter-spacing: .8px;
+
+    backdrop-filter:
+        blur(10px);
+
+    -webkit-backdrop-filter:
+        blur(10px);
+}
+
+
+/* =========================
+   RESERVE BUTTON
+========================= */
+
+.featured-reserve-button {
+    width: 100%;
+
+    min-height: 54px;
+
+    padding:
+        0
+        17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: #ffbd19;
+
+    color: #000;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    font-size: 10px;
+    font-weight: 950;
+
+    letter-spacing: 1.2px;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+}
+
+
+.featured-reserve-button > span {
+    font-size: 21px;
+}
+
+
+.featured-reserve-button:active {
+    transform:
+        scale(.98);
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (
+    max-width: 900px
+) {
+
+    .featured-events-grid {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+}
+
+
+/* =========================
+   PHONE
+========================= */
+
+@media (
+    max-width: 650px
+) {
+
+    .featured-events {
+        width:
+            calc(
+                100% - 28px
+            );
+
+        padding:
+            58px
+            0;
+    }
+
+
+    .featured-events-heading {
+        margin-bottom:
+            22px;
+    }
+
+
+    .featured-events-heading h2 {
+        letter-spacing:
+            -2px;
+    }
+
+
+    .featured-events-grid {
+        grid-template-columns:
+            1fr;
+
+        gap: 14px;
+    }
+
+
+    .featured-event-card {
+        min-height: 540px;
+
+        padding: 19px;
+
+        border-radius: 18px;
+    }
+
+
+    .featured-event-content h3 {
+        font-size: 42px;
+    }
+
+
+    .featured-reserve-button {
+        min-height: 52px;
+    }
+
+}
