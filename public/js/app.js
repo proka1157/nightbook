@@ -1482,3 +1482,125 @@ window.addEventListener(
         passive: true
     }
 );
+
+// ========================================
+// SPECIAL EVENT WHATSAPP REZERVACIJE
+// ========================================
+
+const SPECIAL_EVENTS = {
+
+    brucosijada: {
+
+        name:
+            "Fonomenalna Brucošijada",
+
+        club:
+            "Lasta",
+
+        date:
+            "04.10.2026."
+
+    },
+
+
+    dejavu: {
+
+        name:
+            "Deja Vu",
+
+        club:
+            "Lasta",
+
+        date:
+            "24.09.2026."
+
+    },
+
+
+    makeitrain: {
+
+        name:
+            "Make It Rain",
+
+        club:
+            "XO Premium Nightclub",
+
+        date:
+            "10.10.2026."
+
+    }
+
+};
+
+
+// Tvoj WhatsApp broj
+const SPECIAL_EVENTS_WHATSAPP =
+    "381641418710";
+
+
+document
+    .querySelectorAll(
+        "[data-special-event]"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+
+                const eventKey =
+                    button.dataset
+                        .specialEvent;
+
+
+                const selectedEvent =
+                    SPECIAL_EVENTS[
+                        eventKey
+                    ];
+
+
+                if (
+                    !selectedEvent
+                ) {
+                    return;
+                }
+
+
+                const message =
+`Zdravo! 👋
+
+Želim da pošaljem rezervaciju za:
+
+🎉 ${selectedEvent.name}
+📍 ${selectedEvent.club}
+📅 ${selectedEvent.date}
+
+Ime i prezime:
+Broj osoba:
+Željeni sto:
+
+Hvala!`;
+
+
+                const whatsappURL =
+                    "https://wa.me/" +
+                    SPECIAL_EVENTS_WHATSAPP +
+                    "?text=" +
+                    encodeURIComponent(
+                        message
+                    );
+
+
+                window.open(
+                    whatsappURL,
+                    "_blank",
+                    "noopener,noreferrer"
+                );
+
+            }
+        );
+
+    });
