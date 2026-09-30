@@ -160,10 +160,6 @@ function adminAuth(req, res, next) {
 // ZAŠTITA ADMIN STRANICE
 // ========================================
 
-// VAŽNO:
-// Ovo mora da bude PRE express.static()
-// kako /admin.html ne bi mogao da zaobiđe login.
-
 app.get(
     "/admin",
     adminAuth,
@@ -304,47 +300,86 @@ const CLUBS = {
 
     lasta: {
         name: "Lasta",
+        aliases: [
+            "Klub Lasta",
+            "Lasta"
+        ],
         url:
-            "https://www.beogradnocu.com/splavovi-u-beogradu/splav-lasta/"
+            "https://www.beogradnocu.com/klubovi-u-beogradu/klub-lasta/"
     },
 
     freestyler: {
         name: "Freestyler",
+        aliases: [
+            "Freestyler Winter Stage",
+            "Club Freestyler",
+            "Freestyler"
+        ],
         url:
             "https://www.beogradnocu.com/klubovi-u-beogradu/klub-freestyler/"
     },
 
     remiks: {
         name: "Remiks",
+        aliases: [
+            "Remiks"
+        ],
         url:
             "https://www.beogradnocu.com/klubovi-u-beogradu/remiks/"
     },
 
     tranzit: {
-        name: "Tranzit Bar",
+        name: "Tranzit",
+        aliases: [
+            "Klub Tranzit Savamala",
+            "Tranzit",
+            "Tranzit Bar"
+        ],
         url:
             "https://www.beogradnocu.com/klubovi-u-beogradu/tranzit-bar/"
     },
 
     bank: {
         name: "The Bank",
+        aliases: [
+            "The Bank klub",
+            "The Bank Club",
+            "The Bank"
+        ],
         url:
             "https://www.beogradnocu.com/klubovi-u-beogradu/klub-bank/"
     },
 
     leto: {
         name: "Leto",
+        aliases: [
+            "Splav Leto",
+            "Club Leto",
+            "Leto"
+        ],
         url:
             "https://www.beogradnocu.com/splavovi-u-beogradu/splav-leto/"
     },
 
     gradska: {
         name: "Gradska Kafana",
+        aliases: [
+            "Gradska kafana",
+            "Gradska Kafana"
+        ],
         url:
             "https://www.beogradnocu.com/kafane-u-beogradu/gradska-kafana/"
     }
 
 };
+
+
+// ========================================
+// FALLBACK STRANICA
+// ========================================
+
+const BEOGRAD_NOCU_MAIN_URL =
+    "https://www.beogradnocu.com/";
 
 
 // ========================================
@@ -379,12 +414,64 @@ const DAYS = [
 
 
 // ========================================
+// HTTP HEADERS
+// ========================================
+
+const SOURCE_HEADERS = {
+
+    "User-Agent":
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
+
+    "Accept":
+        "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+
+    "Accept-Language":
+        "sr-RS,sr;q=0.9,en-US;q=0.8,en;q=0.7",
+
+    "Cache-Control":
+        "no-cache",
+
+    "Pragma":
+        "no-cache"
+
+};
+
+
+// ========================================
+// FETCH HTML
+// ========================================
+
+async function fetchHTML(url) {
+
+    const response =
+        await fetch(
+            url,
+            {
+                headers:
+                    SOURCE_HEADERS
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            `Izvor status: ${response.status}`
+        );
+    }
+
+
+    return await response.text();
+}
+
+
+// ========================================
 // DEKODIRANJE HTML-a
 // ========================================
 
 function decodeHTML(text) {
 
-    return text
+    return String(text || "")
 
         .replace(/&nbsp;/gi, " ")
         .replace(/&amp;/gi, "&")
@@ -420,7 +507,7 @@ function htmlToText(html) {
 
     return decodeHTML(
 
-        html
+        String(html || "")
 
             .replace(
                 /<script[\s\S]*?<\/script>/gi,
@@ -433,7 +520,7 @@ function htmlToText(html) {
             )
 
             .replace(
-                /<\/?(h1|h2|h3|h4|h5|p|div|li|br|section|article|tr|td)[^>]*>/gi,
+                /<\/?(h1|h2|h3|h4|h5|h6|p|div|li|br|section|article|tr|td|a|span)[^>]*>/gi,
                 "\n"
             )
 
@@ -461,12 +548,12 @@ function htmlToText(html) {
 
 
 // ========================================
-// REGEX
+// REGEX ESCAPE
 // ========================================
 
 function escapeRegex(text) {
 
-    return text.replace(
+    return String(text).replace(
         /[.*+?^${}()|[\]\\]/g,
         "\\$&"
     );
@@ -474,10 +561,119 @@ function escapeRegex(text) {
 
 
 // ========================================
-// PRONALAŽENJE PROGRAMA
+// IGNORE LINIJE
 // ========================================
 
-function extractProgram(
+function shouldIgnoreProgramLine(line) {
+
+    const lower =
+        String(line || "")
+            .toLowerCase()
+            .trim();
+
+
+    if (!lower) {
+        return true;
+    }
+
+
+    const ignored = [
+
+        "enterijer",
+
+        "beograd noću",
+
+        "beograd nocu",
+
+        "rezerviši online",
+
+        "rezervisi online",
+
+        "online rezervacije",
+
+        "rezervacije brzo i lako",
+
+        "rezervacije su obavezne",
+
+        "putem korisničkog",
+
+        "putem korisnickog",
+
+        "program kluba",
+
+        "program kafane",
+
+        "program splava",
+
+        "program restorana",
+
+        "nema najavljenih dogadjaja",
+
+        "nema najavljenih događaja",
+
+        "telefoni za rezervacije",
+
+        "freestyler winter stage je",
+
+        "klub freestyler predstavlja",
+
+        "posetioce ovog",
+
+        "mesto za izlazak",
+
+        "noćnom životu beograda",
+
+        "nocnom zivotu beograda"
+
+    ];
+
+
+    return ignored.some(
+        ignoredText =>
+            lower.includes(
+                ignoredText
+            )
+    );
+}
+
+
+// ========================================
+// ČIŠĆENJE PROGRAMA
+// ========================================
+
+function cleanProgramLine(line) {
+
+    return String(line || "")
+
+        .replace(
+            /\s+/g,
+            " "
+        )
+
+        .replace(
+            /\s*rezerviši online.*$/i,
+            ""
+        )
+
+        .replace(
+            /\s*rezervisi online.*$/i,
+            ""
+        )
+
+        .replace(
+            /\s*Beograd Noću.*$/i,
+            ""
+        )
+
+        .trim();
+}
+
+
+// ========================================
+// PROGRAM SA POJEDINAČNE STRANICE
+// ========================================
+
+function extractProgramFromVenuePage(
     html,
     selectedDate
 ) {
@@ -523,6 +719,7 @@ function extractProgram(
             `${escapeRegex(dayName)}\\s+${dayNumber}\\.\\s*${escapeRegex(month)}`,
 
             "i"
+
         );
 
 
@@ -564,27 +761,6 @@ function extractProgram(
     }
 
 
-    afterDate =
-        afterDate
-
-            .replace(
-                /rezerviši online/gi,
-                "\n"
-            )
-
-            .replace(
-                /rezervisi online/gi,
-                "\n"
-            )
-
-            .replace(
-                /online rezervacije/gi,
-                "\n"
-            )
-
-            .trim();
-
-
     const lines =
         afterDate
 
@@ -603,122 +779,172 @@ function extractProgram(
             );
 
 
-    if (!lines.length) {
-        return null;
+    for (
+        const line of lines
+    ) {
+
+        if (
+            shouldIgnoreProgramLine(
+                line
+            )
+        ) {
+            continue;
+        }
+
+
+        const clean =
+            cleanProgramLine(
+                line
+            );
+
+
+        if (
+            clean &&
+            clean.length > 2
+        ) {
+
+            return clean;
+        }
     }
 
 
-    const ignored = [
-
-        "enterijer",
-
-        "beograd noću",
-
-        "beograd nocu",
-
-        "rezervacije brzo i lako",
-
-        "freestyler winter stage je",
-
-        "klub freestyler predstavlja",
-
-        "posetioce ovog",
-
-        "mesto za izlazak",
-
-        "noćnom životu beograda",
-
-        "nocnom zivotu beograda",
-
-        "rezervacije su obavezne",
-
-        "putem korisničkog",
-
-        "putem korisnickog",
-
-        "program kluba",
-
-        "program splava",
-
-        "nema najavljenih dogadjaja",
-
-        "nema najavljenih događaja"
-
-    ];
+    return null;
+}
 
 
-    const programLine =
-        lines.find(line => {
+// ========================================
+// FALLBACK:
+// PROGRAM SA GLAVNE BEOGRAD NOĆU STRANICE
+// ========================================
 
-            const lower =
-                line.toLowerCase();
+function extractProgramFromMainPage(
+    html,
+    club
+) {
 
-
-            const shouldIgnore =
-                ignored.some(
-                    ignoredText =>
-                        lower.includes(
-                            ignoredText
-                        )
-                );
+    const text =
+        htmlToText(html);
 
 
-            return !shouldIgnore;
-        });
+    const lines =
+        text
 
+            .split("\n")
 
-    if (!programLine) {
-        return null;
-    }
-
-
-    let cleanProgram =
-        programLine
-
-            .replace(
-                /\s+/g,
-                " "
+            .map(
+                line =>
+                    line.trim()
             )
 
-            .trim();
+            .filter(Boolean);
 
 
-    cleanProgram =
-        cleanProgram
-
-            .split(
-                /\s*[•|]\s*Enterijer/i
-            )[0]
-
-            .trim();
+    const aliases =
+        club.aliases || [
+            club.name
+        ];
 
 
-    cleanProgram =
-        cleanProgram
-
-            .split(
-                /\s*[•|]\s*Beograd Noću/i
-            )[0]
-
-            .trim();
+    let venueIndex = -1;
 
 
-    cleanProgram =
-        cleanProgram
+    for (
+        let i = 0;
+        i < lines.length;
+        i++
+    ) {
 
-            .split(
-                /Freestyler Winter Stage je/i
-            )[0]
-
-            .trim();
+        const line =
+            lines[i]
+                .toLowerCase();
 
 
-    if (!cleanProgram) {
+        const matched =
+            aliases.some(
+                alias =>
+                    line ===
+                    alias.toLowerCase()
+            );
+
+
+        if (matched) {
+
+            venueIndex = i;
+            break;
+        }
+    }
+
+
+    if (venueIndex === -1) {
         return null;
     }
 
 
-    return cleanProgram;
+    for (
+        let i =
+            venueIndex + 1;
+
+        i <
+        Math.min(
+            venueIndex + 8,
+            lines.length
+        );
+
+        i++
+    ) {
+
+        const line =
+            lines[i];
+
+
+        if (
+            shouldIgnoreProgramLine(
+                line
+            )
+        ) {
+            continue;
+        }
+
+
+        const lower =
+            line.toLowerCase();
+
+
+        if (
+            /^0?63/.test(
+                line.replace(/\s/g, "")
+            )
+        ) {
+            continue;
+        }
+
+
+        if (
+            lower.includes(
+                "rezervacije"
+            )
+        ) {
+            continue;
+        }
+
+
+        const clean =
+            cleanProgramLine(
+                line
+            );
+
+
+        if (
+            clean &&
+            clean.length > 2
+        ) {
+
+            return clean;
+        }
+    }
+
+
+    return null;
 }
 
 
@@ -771,75 +997,118 @@ app.get(
 
         try {
 
-            const response =
-                await fetch(
-                    club.url,
-                    {
+            // ========================================
+            // 1. PRVO POJEDINAČNA STRANICA KLUBA
+            // ========================================
 
-                        headers: {
+            try {
 
-                            "User-Agent":
-                                "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1",
-
-                            "Accept":
-                                "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-
-                            "Accept-Language":
-                                "sr-RS,sr;q=0.9,en-US;q=0.8,en;q=0.7"
-
-                        }
-
-                    }
-                );
+                const venueHTML =
+                    await fetchHTML(
+                        club.url
+                    );
 
 
-            if (!response.ok) {
+                const venueProgram =
+                    extractProgramFromVenuePage(
+                        venueHTML,
+                        date
+                    );
 
-                throw new Error(
-                    `Izvor status: ${response.status}`
+
+                if (venueProgram) {
+
+                    return res.json({
+
+                        found:
+                            true,
+
+                        club:
+                            club.name,
+
+                        date,
+
+                        program:
+                            venueProgram,
+
+                        source:
+                            "venue"
+
+                    });
+                }
+
+
+            } catch (venueError) {
+
+                console.error(
+                    `Greška za ${club.name} pojedinačnu stranicu:`,
+                    venueError.message
                 );
             }
 
 
-            const html =
-                await response.text();
+            // ========================================
+            // 2. FALLBACK - GLAVNA STRANICA
+            // ========================================
+
+            try {
+
+                const mainHTML =
+                    await fetchHTML(
+                        BEOGRAD_NOCU_MAIN_URL
+                    );
 
 
-            const program =
-                extractProgram(
-                    html,
-                    date
+                const mainProgram =
+                    extractProgramFromMainPage(
+                        mainHTML,
+                        club
+                    );
+
+
+                if (mainProgram) {
+
+                    return res.json({
+
+                        found:
+                            true,
+
+                        club:
+                            club.name,
+
+                        date,
+
+                        program:
+                            mainProgram,
+
+                        source:
+                            "main"
+
+                    });
+                }
+
+
+            } catch (mainError) {
+
+                console.error(
+                    "Greška pri fallback pretrazi:",
+                    mainError.message
                 );
-
-
-            if (!program) {
-
-                return res.json({
-
-                    found: false,
-
-                    club:
-                        club.name,
-
-                    date,
-
-                    message:
-                        "Program za ovaj datum još nije objavljen."
-
-                });
             }
 
 
             return res.json({
 
-                found: true,
+                found:
+                    false,
 
                 club:
                     club.name,
 
                 date,
 
-                program
+                message:
+                    "Program za ovaj datum još nije objavljen."
 
             });
 
@@ -867,7 +1136,6 @@ app.get(
 
 // ========================================
 // POST - NOVA REZERVACIJA
-// JAVNO - NE STAVLJATI ADMIN AUTH
 // ========================================
 
 app.post(
@@ -1006,7 +1274,8 @@ app.post(
                 .status(201)
                 .json({
 
-                    success: true,
+                    success:
+                        true,
 
                     message:
                         "Rezervacija je uspešno poslata.",
@@ -1039,7 +1308,6 @@ app.post(
 
 // ========================================
 // GET - SVE REZERVACIJE
-// ZAŠTIĆENO
 // ========================================
 
 app.get(
@@ -1110,7 +1378,6 @@ app.get(
 
 // ========================================
 // PATCH - PROMENA STATUSA
-// ZAŠTIĆENO
 // ========================================
 
 app.patch(
@@ -1201,7 +1468,8 @@ app.patch(
 
             return res.json({
 
-                success: true,
+                success:
+                    true,
 
                 reservation:
                     result.rows[0]
@@ -1232,7 +1500,6 @@ app.patch(
 
 // ========================================
 // DELETE - BRISANJE REZERVACIJE
-// ZAŠTIĆENO
 // ========================================
 
 app.delete(
@@ -1278,7 +1545,8 @@ app.delete(
 
             return res.json({
 
-                success: true,
+                success:
+                    true,
 
                 message:
                     "Rezervacija je obrisana."
