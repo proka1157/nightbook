@@ -1,1995 +1,798 @@
+// server/server.js — zameni ceo postojeći sadržaj ovog fajla.
+
+"use strict";
+
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
+const crypto = require("crypto");
 const { Pool } = require("pg");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-const PORT =
-    process.env.PORT || 3000;
+// server/server.js koristi glavni public folder, van server foldera.
+const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
 
+app.disable("x-powered-by");
+app.use(express.json({ limit: "100kb" }));
+app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 
-// =========================================================
-// BASIC MIDDLEWARE
-// =========================================================
+// KLUBOVI
 
-app.use(express.json({
-    limit: "100kb"
-}));
+const CLUBS = {
+    lasta: {
+        name: "LASTA",
+        url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-lasta/"
+    },
 
-app.use(express.urlencoded({
-    extended: true
-}));
+    freestyler: {
+        name: "FREESTYLER",
+        url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-freestyler/"
+    },
 
+    remiks: {
+        name: "REMIKS",
+        url: "https://www.beogradnocu.com/klubovi-u-beogradu/remiks/"
+    },
 
-// =========================================================
-// ADMIN AUTH
-// =========================================================
+    tranzit: {
+        name: "TRANZIT",
+        url: "https://www.beogradnocu.com/klubovi-u-beogradu/tranzit-bar/"
+    },
+
+    bank: {
+        name: "THE BANK",
+        url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-bank/"
+    },
+
+    hype: {
+        name: "HYPE",
+        url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-hype/"
+    },
+
+    gradska: {
+        name: "GRADSKA KAFANA",
+        url: "https://www.beogradnocu.com/kafane-u-beogradu/gradska-kafana/"
+    }
+};
+
+// USLOVI STOLOVA
+// app.js preuzima ove podatke preko /api/clubs.
+
+const TABLES = {
+    lasta: [
+        { type: "Barski sto", condition: "1 obična flaša" },
+        { type: "Visoko sedenje", condition: "1 premium flaša" },
+        { type: "Separe", condition: "2 premium flaše" },
+        { type: "Veliki separe", condition: "3 premium flaše" }
+    ],
+
+    freestyler: [
+        { type: "Barski sto", condition: "1 obična flaša" },
+        { type: "Mali separe", condition: "1 premium flaša" },
+        { type: "Veliki separe", condition: "2 premium flaše" },
+        { type: "Centralni separe", condition: "3 premium flaše" }
+    ],
+
+    remiks: [
+        { type: "Barski sto", condition: "Bez uslova" },
+        { type: "Visoko sedenje", condition: "1 obična flaša" },
+        { type: "Separe", condition: "1 premium flaša" }
+    ],
+
+    tranzit: [
+        { type: "Barski sto", condition: "50 €" },
+        { type: "Visoko sedenje", condition: "100 € / 1 obična flaša" },
+        { type: "Separe", condition: "1 premium flaša" }
+    ],
+
+    bank: [
+        { type: "Barski sto", condition: "1 obična flaša" },
+        { type: "Visoko sedenje", condition: "1 premium flaša" },
+        { type: "Separe", condition: "2 premium flaše" },
+        { type: "Centralni separe", condition: "3 premium flaše" }
+    ],
+
+    hype: [
+        { type: "Barski sto", condition: "1 obična flaša" },
+        { type: "Visoko sedenje", condition: "1 premium flaša" },
+        { type: "Separe", condition: "2 premium flaše" },
+        { type: "Centralni separe", condition: "3 premium flaše" }
+    ],
+
+    gradska: [
+        { type: "Barski sto — dalje od bine", condition: "8.000 RSD" },
+        { type: "Barski sto — bliže bini", condition: "1 obična flaša" },
+        { type: "Nisko sedenje — dalje od bine", condition: "1 obična flaša" },
+        { type: "Nisko sedenje — bliže bini", condition: "1 premium flaša" },
+        { type: "Separe — dalje od bine", condition: "2 obične flaše" },
+        { type: "Separe — bliže bini", condition: "2 premium flaše" }
+    ]
+};
+
+// POMOĆNE FUNKCIJE
+
+function clean(value) {
+    return typeof value === "string" ? value.trim() : "";
+}
+
+function validDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+
+    const date = new Date(`${value}T12:00:00Z`);
+
+    return (
+        Number.isFinite(date.getTime()) &&
+        date.toISOString().slice(0, 10) === value
+    );
+}
+
+function todayInBelgrade() {
+    const parts = new Intl.DateTimeFormat("en", {
+        timeZone: "Europe/Belgrade",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).formatToParts(new Date());
+
+    const get = type => parts.find(part => part.type === type).value;
+
+    return `${get("year")}-${get("month")}-${get("day")}`;
+}
+
+// ADMIN PRIJAVA
+
+function secureEqual(actual, expected) {
+    const a = crypto.createHash("sha256").update(actual).digest();
+    const b = crypto.createHash("sha256").update(expected).digest();
+
+    return crypto.timingSafeEqual(a, b);
+}
 
 function adminAuth(req, res, next) {
+    const user = process.env.ADMIN_USER;
+    const password = process.env.ADMIN_PASSWORD;
 
-    const ADMIN_USER =
-        process.env.ADMIN_USER;
+    res.setHeader("Cache-Control", "no-store");
 
-    const ADMIN_PASSWORD =
-        process.env.ADMIN_PASSWORD;
-
-    if (
-        !ADMIN_USER ||
-        !ADMIN_PASSWORD
-    ) {
-
-        console.error(
-            "ADMIN_USER ili ADMIN_PASSWORD nisu podešeni."
-        );
-
-        return res
-            .status(503)
-            .send(
-                "Admin pristup trenutno nije podešen."
-            );
-
+    if (!user || !password) {
+        return res.status(503).json({
+            error: "Admin pristup trenutno nije podešen."
+        });
     }
 
-    const authHeader =
-        req.headers.authorization;
+    const header = req.headers.authorization || "";
 
-    if (
-        !authHeader ||
-        !authHeader.startsWith("Basic ")
-    ) {
+    if (header.startsWith("Basic ")) {
+        const credentials = Buffer
+            .from(header.slice(6), "base64")
+            .toString("utf8");
 
-        res.setHeader(
-            "WWW-Authenticate",
-            'Basic realm="NightBook Admin"'
-        );
-
-        return res
-            .status(401)
-            .send(
-                "Potrebna je prijava."
-            );
-
-    }
-
-    try {
-
-        const encodedCredentials =
-            authHeader.split(" ")[1];
-
-        const decodedCredentials =
-            Buffer
-                .from(
-                    encodedCredentials,
-                    "base64"
-                )
-                .toString(
-                    "utf8"
-                );
-
-        const separatorIndex =
-            decodedCredentials.indexOf(":");
-
-        if (separatorIndex === -1) {
-
-            throw new Error(
-                "Neispravan auth format."
-            );
-
-        }
-
-        const username =
-            decodedCredentials.slice(
-                0,
-                separatorIndex
-            );
-
-        const password =
-            decodedCredentials.slice(
-                separatorIndex + 1
-            );
+        const separator = credentials.indexOf(":");
 
         if (
-            username !== ADMIN_USER ||
-            password !== ADMIN_PASSWORD
+            separator >= 0 &&
+            secureEqual(credentials.slice(0, separator), user) &&
+            secureEqual(credentials.slice(separator + 1), password)
         ) {
-
-            res.setHeader(
-                "WWW-Authenticate",
-                'Basic realm="NightBook Admin"'
-            );
-
-            return res
-                .status(401)
-                .send(
-                    "Pogrešno korisničko ime ili lozinka."
-                );
-
+            return next();
         }
-
-        next();
-
-    } catch (error) {
-
-        console.error(
-            "Admin auth greška:",
-            error
-        );
-
-        res.setHeader(
-            "WWW-Authenticate",
-            'Basic realm="NightBook Admin"'
-        );
-
-        return res
-            .status(401)
-            .send(
-                "Neispravna prijava."
-            );
-
     }
 
+    res.setHeader(
+        "WWW-Authenticate",
+        'Basic realm="NightBook Admin", charset="UTF-8"'
+    );
+
+    return res.status(401).json({
+        error: "Potrebna je ispravna admin prijava."
+    });
 }
 
-
-// =========================================================
-// PROTECTED ADMIN PAGE
-// =========================================================
+// ZAŠTIĆENA ADMIN STRANICA
 
 app.get(
-    "/admin",
+    ["/admin", "/admin.html"],
     adminAuth,
     (req, res) => {
-
-        res.sendFile(
-            path.join(
-                __dirname,
-                "public",
-                "admin.html"
-            )
-        );
-
+        res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
     }
 );
 
-app.get(
-    "/admin.html",
-    adminAuth,
-    (req, res) => {
+// Zaštita admin.html i kroz alternativno zapisane putanje.
 
-        res.sendFile(
-            path.join(
-                __dirname,
-                "public",
-                "admin.html"
-            )
-        );
+app.use((req, res, next) => {
+    let pathname;
 
+    try {
+        pathname = decodeURIComponent(req.path);
+    } catch {
+        return res.status(400).json({
+            error: "Neispravna putanja."
+        });
     }
-);
 
+    if (path.posix.basename(pathname).toLowerCase() === "admin.html") {
+        return adminAuth(req, res, next);
+    }
 
-// =========================================================
-// STATIC FILES
-// =========================================================
+    next();
+});
+
+// STATIČKI FAJLOVI
 
 app.use(
-    express.static(
-        path.join(
-            __dirname,
-            "public"
-        ),
-        {
-            index: false
+    express.static(PUBLIC_DIR, {
+        index: false,
+
+        setHeaders(res) {
+            res.setHeader("Cache-Control", "no-cache");
         }
-    )
+    })
 );
 
-
-// =========================================================
 // POSTGRESQL
-// =========================================================
 
-let pool = null;
+const pool = process.env.DATABASE_URL
+    ? new Pool({
+        connectionString: process.env.DATABASE_URL,
 
-if (process.env.DATABASE_URL) {
+        ssl: process.env.NODE_ENV === "production"
+            ? { rejectUnauthorized: false }
+            : false,
 
-    pool = new Pool({
+        connectionTimeoutMillis: 10000,
+        max: 10
+    })
+    : null;
 
-        connectionString:
-            process.env.DATABASE_URL,
+let databaseReady = false;
 
-        ssl:
-            process.env.NODE_ENV ===
-            "production"
-                ? {
-                    rejectUnauthorized:
-                        false
-                }
-                : false
-
+if (pool) {
+    pool.on("error", error => {
+        console.error("PostgreSQL greška:", error.message);
     });
-
-    pool.on(
-        "error",
-        (error) => {
-
-            console.error(
-                "Neočekivana PostgreSQL greška:",
-                error
-            );
-
-        }
-    );
-
-} else {
-
-    console.warn(
-        "DATABASE_URL nije podešen. Rezervacije neće raditi dok baza ne bude povezana."
-    );
-
 }
 
-
-// =========================================================
-// DATABASE INITIALIZATION
-// =========================================================
-
 async function initializeDatabase() {
-
     if (!pool) {
+        console.warn(
+            "DATABASE_URL nije podešen. Rezervacije trenutno nisu dostupne."
+        );
         return;
     }
 
     try {
-
         await pool.query(`
             CREATE TABLE IF NOT EXISTS reservations (
-
                 id SERIAL PRIMARY KEY,
-
                 club VARCHAR(100) NOT NULL,
-
                 event_date DATE NOT NULL,
-
                 name VARCHAR(150) NOT NULL,
-
                 phone VARCHAR(100) NOT NULL,
-
                 instagram VARCHAR(150),
-
                 guests INTEGER NOT NULL,
-
                 table_type VARCHAR(200),
-
                 table_condition VARCHAR(250),
-
-                status VARCHAR(50)
-                    NOT NULL
-                    DEFAULT 'pending',
-
-                created_at TIMESTAMPTZ
-                    NOT NULL
-                    DEFAULT NOW()
-
-            );
+                status VARCHAR(50) NOT NULL DEFAULT 'pending',
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+            )
         `);
 
-        console.log(
-            "NightBook baza je spremna."
-        );
-
+        databaseReady = true;
+        console.log("NightBook baza je spremna.");
     } catch (error) {
-
-        console.error(
-            "Greška pri inicijalizaciji baze:",
-            error
-        );
-
+        console.error("Baza nije spremna:", error.message);
     }
-
 }
 
-
-// =========================================================
-// CLUB SOURCES
-// =========================================================
-
-const CLUBS = {
-
-    lasta: {
-
-        name:
-            "Klub Lasta",
-
-        aliases: [
-            "Klub Lasta",
-            "Lasta"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/klubovi-u-beogradu/klub-lasta/"
-
-    },
-
-    freestyler: {
-
-        name:
-            "Freestyler",
-
-        aliases: [
-            "Freestyler",
-            "Freestyler Winter Stage",
-            "Club Freestyler"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/klubovi-u-beogradu/club-freestyler/"
-
-    },
-
-    remiks: {
-
-        name:
-            "Remiks",
-
-        aliases: [
-            "Remiks",
-            "Klub Remiks"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/klubovi-u-beogradu/remiks/"
-
-    },
-
-    tranzit: {
-
-        name:
-            "Tranzit",
-
-        aliases: [
-            "Tranzit",
-            "Klub Tranzit",
-            "Klub Tranzit Savamala"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/klubovi-u-beogradu/tranzit-bar/"
-
-    },
-
-    bank: {
-
-        name:
-            "The Bank",
-
-        aliases: [
-            "The Bank",
-            "The Bank klub",
-            "The Bank Club",
-            "Klub Bank"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/klubovi-u-beogradu/klub-bank/"
-
-    },
-
-    hype: {
-
-        name:
-            "Klub Hype",
-
-        aliases: [
-            "Klub Hype",
-            "Hype",
-            "Hype Belgrade",
-            "Club Hype"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/klubovi-u-beogradu/klub-hype/"
-
-    },
-
-    gradska: {
-
-        name:
-            "Gradska kafana",
-
-        aliases: [
-            "Gradska kafana",
-            "Gradska Kafana"
-        ],
-
-        url:
-            "https://www.beogradnocu.com/kafane-u-beogradu/gradska-kafana/"
-
+function requireDatabase(req, res, next) {
+    if (!databaseReady) {
+        return res.status(503).json({
+            error: "Baza trenutno nije dostupna. Pokušaj ponovo kasnije."
+        });
     }
 
-};
-
-
-// =========================================================
-// DATE HELPERS
-// =========================================================
-
-const SERBIAN_MONTHS = {
-
-    januar: 0,
-    januara: 0,
-
-    februar: 1,
-    februara: 1,
-
-    mart: 2,
-    marta: 2,
-
-    april: 3,
-    aprila: 3,
-
-    maj: 4,
-    maja: 4,
-
-    jun: 5,
-    juna: 5,
-
-    jul: 6,
-    jula: 6,
-
-    avgust: 7,
-    avgusta: 7,
-
-    septembar: 8,
-    septembra: 8,
-
-    oktobar: 9,
-    oktobra: 9,
-
-    novembar: 10,
-    novembra: 10,
-
-    decembar: 11,
-    decembra: 11
-
-};
-
-
-function parseRequestedDate(value) {
-
-    if (
-        !value ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(value)
-    ) {
-
-        return null;
-
-    }
-
-    const [
-        year,
-        month,
-        day
-    ] = value
-        .split("-")
-        .map(Number);
-
-    const date =
-        new Date(
-            year,
-            month - 1,
-            day,
-            12,
-            0,
-            0,
-            0
-        );
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return null;
-
-    }
-
-    if (
-        date.getFullYear() !== year ||
-        date.getMonth() !== month - 1 ||
-        date.getDate() !== day
-    ) {
-
-        return null;
-
-    }
-
-    return date;
-
+    next();
 }
 
+// PODACI O KLUBOVIMA I STOLOVIMA
 
-function normalizeText(value) {
+app.get("/api/clubs", (req, res) => {
+    res.setHeader("Cache-Control", "no-cache");
 
-    return String(
-        value || ""
-    )
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(
-            /[\u0300-\u036f]/g,
-            ""
-        )
-        .replace(
-            /\s+/g,
-            " "
-        )
-        .trim();
-
-}
-
-
-// =========================================================
-// HTML HELPERS
-// =========================================================
-
-function decodeHTMLEntities(value) {
-
-    return String(
-        value || ""
-    )
-
-        .replace(
-            /&nbsp;/gi,
-            " "
-        )
-
-        .replace(
-            /&amp;/gi,
-            "&"
-        )
-
-        .replace(
-            /&quot;/gi,
-            '"'
-        )
-
-        .replace(
-            /&#039;/gi,
-            "'"
-        )
-
-        .replace(
-            /&apos;/gi,
-            "'"
-        )
-
-        .replace(
-            /&lt;/gi,
-            "<"
-        )
-
-        .replace(
-            /&gt;/gi,
-            ">"
-        )
-
-        .replace(
-            /&#(\d+);/g,
-            (
-                match,
-                code
-            ) => {
-
-                return String.fromCharCode(
-                    Number(code)
-                );
-
-            }
-        );
-
-}
-
-
-function htmlToText(html) {
-
-    return decodeHTMLEntities(
-        String(
-            html || ""
-        )
-
-            .replace(
-                /<script[\s\S]*?<\/script>/gi,
-                " "
-            )
-
-            .replace(
-                /<style[\s\S]*?<\/style>/gi,
-                " "
-            )
-
-            .replace(
-                /<br\s*\/?>/gi,
-                "\n"
-            )
-
-            .replace(
-                /<\/p>/gi,
-                "\n"
-            )
-
-            .replace(
-                /<\/div>/gi,
-                "\n"
-            )
-
-            .replace(
-                /<\/h[1-6]>/gi,
-                "\n"
-            )
-
-            .replace(
-                /<\/li>/gi,
-                "\n"
-            )
-
-            .replace(
-                /<[^>]+>/g,
-                " "
-            )
-    )
-
-        .replace(
-            /\r/g,
-            ""
-        )
-
-        .replace(
-            /[ \t]+/g,
-            " "
-        )
-
-        .replace(
-            /\n[ \t]+/g,
-            "\n"
-        )
-
-        .replace(
-            /\n{3,}/g,
-            "\n\n"
-        )
-
-        .trim();
-
-}
-
-
-// =========================================================
-// FETCH PAGE
-// =========================================================
-
-async function fetchPage(
-    url
-) {
-
-    const controller =
-        new AbortController();
-
-    const timeout =
-        setTimeout(
-            () => {
-
-                controller.abort();
-
-            },
-            9000
-        );
-
-    try {
-
-        const response =
-            await fetch(
-                url,
+    res.json(
+        Object.fromEntries(
+            Object.entries(CLUBS).map(([key, club]) => [
+                key,
                 {
-
-                    headers: {
-
-                        "User-Agent":
-                            "Mozilla/5.0 NightBook/1.0",
-
-                        "Accept":
-                            "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-
-                        "Accept-Language":
-                            "sr-RS,sr;q=0.9,en;q=0.8"
-
-                    },
-
-                    signal:
-                        controller.signal
-
+                    name: club.name,
+                    tables: TABLES[key]
                 }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Source HTTP ${response.status}`
-            );
-
-        }
-
-        return await response.text();
-
-    } finally {
-
-        clearTimeout(
-            timeout
-        );
-
-    }
-
-}
-
-
-// =========================================================
-// PROGRAM PARSING
-// =========================================================
-
-function buildDateMatchers(
-    date
-) {
-
-    const day =
-        date.getDate();
-
-    const month =
-        date.getMonth();
-
-    const year =
-        date.getFullYear();
-
-    const monthNames =
-        Object.entries(
-            SERBIAN_MONTHS
+            ])
         )
-            .filter(
-                (
-                    [
-                        name,
-                        index
-                    ]
-                ) => {
+    );
+});
 
-                    return index === month;
+// ČITANJE PROGRAMA SA BEOGRAD NOĆU
 
-                }
-            )
-            .map(
-                (
-                    [
-                        name
-                    ]
-                ) => name
-            );
-
-    return {
-
-        day,
-        month,
-        year,
-        monthNames
-
+function decodeEntities(value) {
+    const entities = {
+        amp: "&",
+        quot: '"',
+        apos: "'",
+        nbsp: " ",
+        lt: "<",
+        gt: ">"
     };
 
-}
+    return String(value || "")
+        .replace(
+            /&(amp|quot|apos|nbsp|lt|gt);/gi,
+            (match, name) => entities[name.toLowerCase()]
+        )
+        .replace(
+            /&#(x[\da-f]+|\d+);/gi,
+            (match, code) => {
+                const n = code[0].toLowerCase() === "x"
+                    ? parseInt(code.slice(1), 16)
+                    : Number(code);
 
-
-function lineMatchesDate(
-    line,
-    requestedDate
-) {
-
-    const normalized =
-        normalizeText(line);
-
-    const {
-        day,
-        monthNames
-    } =
-        buildDateMatchers(
-            requestedDate
-        );
-
-    const containsDay =
-        new RegExp(
-            `(^|\\D)0?${day}(\\D|$)`
-        ).test(
-            normalized
-        );
-
-    if (!containsDay) {
-
-        return false;
-
-    }
-
-    const containsMonth =
-        monthNames.some(
-            (monthName) => {
-
-                return normalized.includes(
-                    normalizeText(
-                        monthName
-                    )
-                );
-
+                return n >= 0 && n <= 0x10ffff
+                    ? String.fromCodePoint(n)
+                    : match;
             }
         );
-
-    return containsMonth;
-
 }
 
-
-function cleanProgramLine(
-    line
-) {
-
-    return String(
-        line || ""
+function htmlText(value) {
+    return decodeEntities(
+        String(value || "").replace(/<[^>]*>/g, " ")
     )
-
-        .replace(
-            /\s+/g,
-            " "
-        )
-
-        .replace(
-            /^[-–—•]+\s*/,
-            ""
-        )
-
+        .replace(/\s+/g, " ")
         .trim();
-
 }
 
-
-function isNoiseLine(
-    line
-) {
-
-    const normalized =
-        normalizeText(line);
-
-    if (!normalized) {
-
-        return true;
-
-    }
-
-    const noise = [
-
-        "rezervisi online",
-        "online rezervacije",
-        "program kluba",
-        "telefoni za rezervacije",
-        "enterijer",
-        "galerija",
-        "lokacija",
-        "adresa",
-        "radno vreme",
-        "beograd nocu"
-
-    ];
-
-    return noise.some(
-        (item) => {
-
-            return normalized ===
-                normalizeText(item);
-
-        }
+function extractEvents(html, sourceURL) {
+    const accordion = html.match(
+        /<div\b[^>]*id=["']accordion["'][^>]*>([\s\S]*?)<\/div>\s*<\/div>/i
     );
 
-}
+    if (!accordion) return [];
 
+    const content = accordion[1];
 
-function extractProgramFromText(
-    text,
-    requestedDate
-) {
+    const headings = [
+        ...content.matchAll(/<h4\b[^>]*>([\s\S]*?)<\/h4>/gi)
+    ];
 
-    const lines =
-        String(
-            text || ""
-        )
-            .split("\n")
-            .map(
-                cleanProgramLine
-            )
-            .filter(Boolean);
+    const events = [];
 
-    if (!lines.length) {
-
-        return null;
-
-    }
-
-    for (
-        let i = 0;
-        i < lines.length;
-        i++
-    ) {
-
-        if (
-            !lineMatchesDate(
-                lines[i],
-                requestedDate
-            )
-        ) {
-
-            continue;
-
-        }
-
-        const candidates =
-            [];
-
-        for (
-            let offset = 1;
-            offset <= 4;
-            offset++
-        ) {
-
-            const nextLine =
-                lines[
-                    i + offset
-                ];
-
-            if (!nextLine) {
-
-                break;
-
-            }
-
-            if (
-                lineMatchesDate(
-                    nextLine,
-                    requestedDate
-                )
-            ) {
-
-                continue;
-
-            }
-
-            if (
-                isNoiseLine(
-                    nextLine
-                )
-            ) {
-
-                continue;
-
-            }
-
-            const normalized =
-                normalizeText(
-                    nextLine
-                );
-
-            if (
-                normalized.includes(
-                    "rezervisi"
-                )
-            ) {
-
-                break;
-
-            }
-
-            if (
-                normalized.includes(
-                    "program kluba"
-                )
-            ) {
-
-                break;
-
-            }
-
-            candidates.push(
-                nextLine
-            );
-
-            if (
-                candidates.join(" ")
-                    .length >
-                250
-            ) {
-
-                break;
-
-            }
-
-        }
-
-        if (
-            candidates.length
-        ) {
-
-            return candidates
-                .join(" ")
-                .trim();
-
-        }
-
-    }
-
-    return null;
-
-}
-
-
-// =========================================================
-// PROGRAM CACHE
-// =========================================================
-
-const programCache =
-    new Map();
-
-const PROGRAM_CACHE_TIME =
-    5 * 60 * 1000;
-
-
-function getCachedProgram(
-    key
-) {
-
-    const cached =
-        programCache.get(
-            key
+    headings.forEach((heading, index) => {
+        const segment = content.slice(
+            heading.index,
+            headings[index + 1]?.index ?? content.length
         );
 
-    if (!cached) {
+        const title = heading[1].match(
+            /<strong\b[^>]*>([\s\S]*?)<\/strong>/i
+        );
 
-        return null;
+        const program = title ? htmlText(title[1]) : "";
 
+        if (!program) return;
+
+        for (
+            const link of segment.matchAll(
+                /href\s*=\s*["']([^"']+)["']/gi
+            )
+        ) {
+            try {
+                const value = new URL(
+                    decodeEntities(link[1]),
+                    sourceURL
+                ).searchParams.get("date") || "";
+
+                const parts = value.match(
+                    /^(\d{1,2})[-./](\d{1,2})[-./](\d{4})$/
+                );
+
+                if (!parts) continue;
+
+                const date =
+                    `${parts[3]}-` +
+                    `${parts[2].padStart(2, "0")}-` +
+                    `${parts[1].padStart(2, "0")}`;
+
+                if (validDate(date)) {
+                    events.push({ date, program });
+                    break;
+                }
+            } catch {
+                // Preskoči neispravan link iz izvora.
+            }
+        }
+    });
+
+    return events;
+}
+
+// KEŠ PROGRAMA
+
+const programCache = new Map();
+const pendingPrograms = new Map();
+
+async function getClubEvents(key) {
+    const cached = programCache.get(key);
+
+    if (cached && cached.expires > Date.now()) {
+        return cached.events;
+    }
+
+    if (pendingPrograms.has(key)) {
+        return pendingPrograms.get(key);
+    }
+
+    const request = (async () => {
+        const response = await fetch(CLUBS[key].url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 NightBook/1.0",
+                Accept: "text/html"
+            },
+
+            signal: AbortSignal.timeout(12000)
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                `Izvor je vratio HTTP ${response.status}`
+            );
+        }
+
+        const events = extractEvents(
+            await response.text(),
+            CLUBS[key].url
+        );
+
+        programCache.set(key, {
+            events,
+            expires: Date.now() + 180000
+        });
+
+        return events;
+    })();
+
+    pendingPrograms.set(key, request);
+
+    try {
+        return await request;
+    } finally {
+        pendingPrograms.delete(key);
+    }
+}
+
+// PROGRAM API
+
+app.get("/api/program", async (req, res) => {
+    const key = clean(req.query.club).toLowerCase();
+    const date = clean(req.query.date);
+
+    if (!Object.hasOwn(CLUBS, key)) {
+        return res.status(400).json({
+            error: "Nepoznat klub."
+        });
+    }
+
+    if (!validDate(date) || date < todayInBelgrade()) {
+        return res.status(400).json({
+            error: "Izaberi današnji ili budući datum."
+        });
+    }
+
+    try {
+        const events = await getClubEvents(key);
+
+        const programs = [
+            ...new Set(
+                events
+                    .filter(event => event.date === date)
+                    .map(event => event.program)
+            )
+        ];
+
+        res.setHeader("Cache-Control", "no-cache");
+
+        res.json({
+            found: programs.length > 0,
+            club: CLUBS[key].name,
+            date,
+            program: programs.join("\n") || null
+        });
+    } catch (error) {
+        console.error(`Program (${key}):`, error.message);
+
+        res.status(502).json({
+            error: "Program trenutno nije moguće učitati. Pokušaj ponovo."
+        });
+    }
+});
+
+// NOVA REZERVACIJA
+
+app.post("/api/reservations", async (req, res) => {
+    const body = req.body || {};
+
+    const club = clean(body.club).toLowerCase();
+    const date = clean(body.date);
+    const name = clean(body.name);
+    const phone = clean(body.phone);
+    const instagram = clean(body.instagram);
+    const guests = Number(body.guests);
+    const tableType = clean(body.tableType);
+
+    if (!Object.hasOwn(CLUBS, club)) {
+        return res.status(400).json({
+            error: "Izaberi validan klub."
+        });
+    }
+
+    if (!validDate(date) || date < todayInBelgrade()) {
+        return res.status(400).json({
+            error: "Izaberi današnji ili budući datum."
+        });
     }
 
     if (
-        Date.now() -
-        cached.createdAt >
-        PROGRAM_CACHE_TIME
+        name.length < 2 ||
+        name.length > 150 ||
+        !phone ||
+        phone.length > 100 ||
+        instagram.length > 150
     ) {
-
-        programCache.delete(
-            key
-        );
-
-        return null;
-
+        return res.status(400).json({
+            error: "Proveri ime, telefon i Instagram podatke."
+        });
     }
 
-    return cached.data;
+    if (
+        !Number.isInteger(guests) ||
+        guests < 1 ||
+        guests > 30
+    ) {
+        return res.status(400).json({
+            error: "Broj osoba mora biti između 1 i 30."
+        });
+    }
 
-}
-
-
-function setCachedProgram(
-    key,
-    data
-) {
-
-    programCache.set(
-        key,
-        {
-
-            createdAt:
-                Date.now(),
-
-            data
-
-        }
+    const table = TABLES[club].find(
+        item => item.type === tableType
     );
 
-}
-
-
-// =========================================================
-// PROGRAM API
-// =========================================================
-
-app.get(
-    "/api/program",
-    async (
-        req,
-        res
-    ) => {
-
-        const clubKey =
-            String(
-                req.query.club || ""
-            )
-                .toLowerCase()
-                .trim();
-
-        const dateValue =
-            String(
-                req.query.date || ""
-            )
-                .trim();
-
-        const club =
-            CLUBS[
-                clubKey
-            ];
-
-        if (!club) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Nepoznat klub."
-
-                });
-
-        }
-
-        const requestedDate =
-            parseRequestedDate(
-                dateValue
-            );
-
-        if (!requestedDate) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Neispravan datum."
-
-                });
-
-        }
-
-        const cacheKey =
-            `${clubKey}:${dateValue}`;
-
-        const cached =
-            getCachedProgram(
-                cacheKey
-            );
-
-        if (cached) {
-
-            return res.json(
-                cached
-            );
-
-        }
-
-        try {
-
-            const html =
-                await fetchPage(
-                    club.url
-                );
-
-            const text =
-                htmlToText(
-                    html
-                );
-
-            const program =
-                extractProgramFromText(
-                    text,
-                    requestedDate
-                );
-
-            const result =
-                program
-                    ? {
-
-                        found:
-                            true,
-
-                        club:
-                            club.name,
-
-                        date:
-                            dateValue,
-
-                        program
-
-                    }
-                    : {
-
-                        found:
-                            false,
-
-                        club:
-                            club.name,
-
-                        date:
-                            dateValue,
-
-                        program:
-                            null
-
-                    };
-
-            setCachedProgram(
-                cacheKey,
-                result
-            );
-
-            return res.json(
-                result
-            );
-
-        } catch (error) {
-
-            console.error(
-                `Program fetch greška (${clubKey}):`,
-                error
-            );
-
-            return res
-                .status(502)
-                .json({
-
-                    found:
-                        false,
-
-                    error:
-                        "Program trenutno nije moguće učitati."
-
-                });
-
-        }
-
+    if (!table) {
+        return res.status(400).json({
+            error: "Izaberi validan tip stola."
+        });
     }
-);
 
-
-// =========================================================
-// VALID CLUB
-// =========================================================
-
-function isValidClub(
-    club
-) {
-
-    return Boolean(
-        CLUBS[
-            String(
-                club || ""
-            )
-                .toLowerCase()
-                .trim()
-        ]
-    );
-
-}
-
-
-// =========================================================
-// CREATE RESERVATION
-// =========================================================
-
-app.post(
-    "/api/reservations",
-    async (
-        req,
-        res
-    ) => {
-
-        if (!pool) {
-
-            return res
-                .status(503)
-                .json({
-
-                    error:
-                        "Baza trenutno nije dostupna."
-
-                });
-
-        }
-
-        const club =
-            String(
-                req.body.club || ""
-            )
-                .toLowerCase()
-                .trim();
-
-        const date =
-            String(
-                req.body.date || ""
-            )
-                .trim();
-
-        const name =
-            String(
-                req.body.name || ""
-            )
-                .trim();
-
-        const phone =
-            String(
-                req.body.phone || ""
-            )
-                .trim();
-
-        const instagram =
-            String(
-                req.body.instagram || ""
-            )
-                .trim();
-
-        const guests =
-            Number(
-                req.body.guests
-            );
-
-        const tableType =
-            String(
-                req.body.tableType || ""
-            )
-                .trim();
-
-        const tableCondition =
-            String(
-                req.body.tableCondition || ""
-            )
-                .trim();
-
-        if (
-            !club ||
-            !date ||
-            !name ||
-            !phone ||
-            !guests ||
-            !tableType
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Popuni sva obavezna polja."
-
-                });
-
-        }
-
-        if (
-            !isValidClub(
-                club
-            )
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Izabrani klub nije validan."
-
-                });
-
-        }
-
-        const requestedDate =
-            parseRequestedDate(
-                date
-            );
-
-        if (!requestedDate) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Datum nije validan."
-
-                });
-
-        }
-
-        const today =
-            new Date();
-
-        today.setHours(
-            0,
-            0,
-            0,
-            0
-        );
-
-        const reservationDay =
-            new Date(
-                requestedDate
-            );
-
-        reservationDay.setHours(
-            0,
-            0,
-            0,
-            0
-        );
-
-        if (
-            reservationDay <
-            today
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Nije moguće rezervisati datum koji je prošao."
-
-                });
-
-        }
-
-        if (
-            !Number.isInteger(
-                guests
-            ) ||
-            guests < 1 ||
-            guests > 30
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Broj osoba mora biti između 1 i 30."
-
-                });
-
-        }
-
-        if (
-            name.length > 150 ||
-            phone.length > 100 ||
-            instagram.length > 150 ||
-            tableType.length > 200 ||
-            tableCondition.length > 250
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Uneti podaci su predugački."
-
-                });
-
-        }
-
-        try {
-
-            const result =
-                await pool.query(
-                    `
-                    INSERT INTO reservations
-                    (
-                        club,
-                        event_date,
-                        name,
-                        phone,
-                        instagram,
-                        guests,
-                        table_type,
-                        table_condition,
-                        status
-                    )
-
-                    VALUES
-                    (
-                        $1,
-                        $2,
-                        $3,
-                        $4,
-                        $5,
-                        $6,
-                        $7,
-                        $8,
-                        'pending'
-                    )
-
-                    RETURNING
-                        id,
-                        club,
-                        event_date,
-                        name,
-                        phone,
-                        instagram,
-                        guests,
-                        table_type,
-                        table_condition,
-                        status,
-                        created_at
-                    `,
-                    [
-                        club,
-                        date,
-                        name,
-                        phone,
-                        instagram || null,
-                        guests,
-                        tableType,
-                        tableCondition || null
-                    ]
-                );
-
-            return res
-                .status(201)
-                .json({
-
-                    success:
-                        true,
-
-                    reservation:
-                        result.rows[0]
-
-                });
-
-        } catch (error) {
-
-            console.error(
-                "Greška pri čuvanju rezervacije:",
-                error
-            );
-
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Rezervacija trenutno nije mogla da bude sačuvana."
-
-                });
-
-        }
-
+    if (!databaseReady) {
+        return res.status(503).json({
+            error: "Baza trenutno nije dostupna. Pokušaj ponovo kasnije."
+        });
     }
-);
 
+    try {
+        const result = await pool.query(`
+            INSERT INTO reservations
+            (
+                club,
+                event_date,
+                name,
+                phone,
+                instagram,
+                guests,
+                table_type,
+                table_condition,
+                status
+            )
+            VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, 'pending'
+            )
+            RETURNING *
+        `, [
+            club,
+            date,
+            name,
+            phone,
+            instagram || null,
+            guests,
+            table.type,
+            table.condition
+        ]);
 
-// =========================================================
-// ADMIN - GET RESERVATIONS
-// =========================================================
+        res.status(201).json({
+            success: true,
+            reservation: result.rows[0]
+        });
+    } catch (error) {
+        console.error("Čuvanje rezervacije:", error.message);
+
+        res.status(500).json({
+            error: "Rezervacija nije sačuvana. Pokušaj ponovo."
+        });
+    }
+});
+
+// ADMIN — LISTA REZERVACIJA
 
 app.get(
     "/api/reservations",
     adminAuth,
-    async (
-        req,
-        res
-    ) => {
-
-        if (!pool) {
-
-            return res
-                .status(503)
-                .json({
-
-                    error:
-                        "Baza trenutno nije dostupna."
-
-                });
-
-        }
-
+    requireDatabase,
+    async (req, res) => {
         try {
+            const result = await pool.query(`
+                SELECT *
+                FROM reservations
+                ORDER BY event_date ASC, created_at DESC
+            `);
 
-            const result =
-                await pool.query(`
-                    SELECT
-                        id,
-                        club,
-                        event_date,
-                        name,
-                        phone,
-                        instagram,
-                        guests,
-                        table_type,
-                        table_condition,
-                        status,
-                        created_at
-
-                    FROM reservations
-
-                    ORDER BY
-                        event_date ASC,
-                        created_at DESC
-                `);
-
-            return res.json(
-                result.rows
-            );
-
+            res.json(result.rows);
         } catch (error) {
+            console.error("Čitanje rezervacija:", error.message);
 
-            console.error(
-                "Greška pri čitanju rezervacija:",
-                error
-            );
-
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Rezervacije trenutno nije moguće učitati."
-
-                });
-
+            res.status(500).json({
+                error: "Rezervacije trenutno nije moguće učitati."
+            });
         }
-
     }
 );
 
-
-// =========================================================
-// ADMIN - UPDATE RESERVATION
-// =========================================================
+// ADMIN — PROMENA STATUSA
 
 app.patch(
     "/api/reservations/:id",
     adminAuth,
-    async (
-        req,
-        res
-    ) => {
+    requireDatabase,
+    async (req, res) => {
+        const id = Number(req.params.id);
+        const status = clean(req.body?.status).toLowerCase();
 
-        if (!pool) {
-
-            return res
-                .status(503)
-                .json({
-
-                    error:
-                        "Baza trenutno nije dostupna."
-
-                });
-
+        if (!Number.isSafeInteger(id) || id < 1) {
+            return res.status(400).json({
+                error: "Neispravan ID rezervacije."
+            });
         }
 
-        const id =
-            Number(
-                req.params.id
-            );
-
-        const status =
-            String(
-                req.body.status || ""
-            )
-                .toLowerCase()
-                .trim();
-
-        const allowedStatuses = [
-            "pending",
-            "confirmed",
-            "cancelled"
-        ];
-
-        if (
-            !Number.isInteger(
-                id
-            ) ||
-            id < 1
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Neispravan ID rezervacije."
-
-                });
-
-        }
-
-        if (
-            !allowedStatuses.includes(
-                status
-            )
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Neispravan status."
-
-                });
-
+        if (!["pending", "confirmed", "cancelled"].includes(status)) {
+            return res.status(400).json({
+                error: "Neispravan status."
+            });
         }
 
         try {
-
-            const result =
-                await pool.query(
-                    `
-                    UPDATE reservations
-
-                    SET status = $1
-
-                    WHERE id = $2
-
-                    RETURNING *
-                    `,
-                    [
-                        status,
-                        id
-                    ]
-                );
-
-            if (
-                result.rowCount === 0
-            ) {
-
-                return res
-                    .status(404)
-                    .json({
-
-                        error:
-                            "Rezervacija nije pronađena."
-
-                    });
-
-            }
-
-            return res.json({
-
-                success:
-                    true,
-
-                reservation:
-                    result.rows[0]
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Greška pri promeni statusa:",
-                error
+            const result = await pool.query(
+                "UPDATE reservations SET status = $1 WHERE id = $2 RETURNING *",
+                [status, id]
             );
 
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Status trenutno nije moguće promeniti."
-
+            if (!result.rowCount) {
+                return res.status(404).json({
+                    error: "Rezervacija nije pronađena."
                 });
+            }
 
+            res.json({
+                success: true,
+                reservation: result.rows[0]
+            });
+        } catch (error) {
+            console.error("Promena statusa:", error.message);
+
+            res.status(500).json({
+                error: "Status trenutno nije moguće promeniti."
+            });
         }
-
     }
 );
 
-
-// =========================================================
-// ADMIN - DELETE RESERVATION
-// =========================================================
+// ADMIN — BRISANJE REZERVACIJE
 
 app.delete(
     "/api/reservations/:id",
     adminAuth,
-    async (
-        req,
-        res
-    ) => {
+    requireDatabase,
+    async (req, res) => {
+        const id = Number(req.params.id);
 
-        if (!pool) {
-
-            return res
-                .status(503)
-                .json({
-
-                    error:
-                        "Baza trenutno nije dostupna."
-
-                });
-
-        }
-
-        const id =
-            Number(
-                req.params.id
-            );
-
-        if (
-            !Number.isInteger(
-                id
-            ) ||
-            id < 1
-        ) {
-
-            return res
-                .status(400)
-                .json({
-
-                    error:
-                        "Neispravan ID rezervacije."
-
-                });
-
+        if (!Number.isSafeInteger(id) || id < 1) {
+            return res.status(400).json({
+                error: "Neispravan ID rezervacije."
+            });
         }
 
         try {
-
-            const result =
-                await pool.query(
-                    `
-                    DELETE FROM reservations
-
-                    WHERE id = $1
-
-                    RETURNING id
-                    `,
-                    [
-                        id
-                    ]
-                );
-
-            if (
-                result.rowCount === 0
-            ) {
-
-                return res
-                    .status(404)
-                    .json({
-
-                        error:
-                            "Rezervacija nije pronađena."
-
-                    });
-
-            }
-
-            return res.json({
-
-                success:
-                    true
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                "Greška pri brisanju rezervacije:",
-                error
+            const result = await pool.query(
+                "DELETE FROM reservations WHERE id = $1 RETURNING id",
+                [id]
             );
 
-            return res
-                .status(500)
-                .json({
-
-                    error:
-                        "Rezervaciju trenutno nije moguće obrisati."
-
+            if (!result.rowCount) {
+                return res.status(404).json({
+                    error: "Rezervacija nije pronađena."
                 });
+            }
 
-        }
+            res.json({ success: true });
+        } catch (error) {
+            console.error("Brisanje rezervacije:", error.message);
 
-    }
-);
-
-
-// =========================================================
-// API 404
-// =========================================================
-
-app.use(
-    "/api",
-    (
-        req,
-        res
-    ) => {
-
-        return res
-            .status(404)
-            .json({
-
-                error:
-                    "API ruta nije pronađena."
-
+            res.status(500).json({
+                error: "Rezervaciju trenutno nije moguće obrisati."
             });
-
+        }
     }
 );
 
+// NEPOSTOJEĆE API RUTE
 
-// =========================================================
-// FRONTEND FALLBACK
-// =========================================================
+app.use("/api", (req, res) => {
+    res.status(404).json({
+        error: "API ruta nije pronađena."
+    });
+});
 
-app.get(
-    "/{*splat}",
-    (
-        req,
-        res
-    ) => {
+// FRONTEND — EXPRESS 5 KOMPATIBILNA RUTA
 
-        res.sendFile(
-            path.join(
-                __dirname,
-                "public",
-                "index.html"
-            )
-        );
+app.get("/{*splat}", (req, res) => {
+    res.setHeader("Cache-Control", "no-cache");
+    res.sendFile(path.join(PUBLIC_DIR, "index.html"));
+});
 
-    }
-);
+// OBRADA GREŠAKA
 
+app.use((error, req, res, next) => {
+    if (res.headersSent) return next(error);
 
-// =========================================================
-// START SERVER
-// =========================================================
+    console.error("HTTP greška:", error.message);
+
+    const status =
+        error.status === 400 || error.status === 413
+            ? error.status
+            : 500;
+
+    const message =
+        status === 400
+            ? "Neispravan zahtev."
+            : status === 413
+                ? "Zahtev je prevelik."
+                : "Došlo je do greške na serveru.";
+
+    res.status(status).json({ error: message });
+});
+
+// POKRETANJE
 
 async function startServer() {
+    if (!fs.existsSync(path.join(PUBLIC_DIR, "index.html"))) {
+        throw new Error(
+            `Nedostaje public/index.html. Proveri folder: ${PUBLIC_DIR}`
+        );
+    }
 
     await initializeDatabase();
 
-    app.listen(
-        PORT,
-        () => {
-
-            console.log(
-                `NightBook radi na portu ${PORT}`
-            );
-
-            console.log(
-                "NightBook premium verzija je pokrenuta."
-            );
-
+    app.listen(PORT, "0.0.0.0", error => {
+        if (error) {
+            console.error("Pokretanje servera:", error.message);
+            process.exit(1);
         }
-    );
 
+        console.log(`NightBook radi na portu ${PORT}`);
+    });
 }
 
-
-startServer();
+startServer().catch(error => {
+    console.error(error.message);
+    process.exit(1);
+});
