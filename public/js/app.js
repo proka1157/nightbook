@@ -1,182 +1,194 @@
-// ========================================
-// ELEMENTI
-// ========================================
-
-const eventDate = document.getElementById("eventDate");
-const mainQuickDates = document.getElementById("mainQuickDates");
-const otherDateButton = document.getElementById("otherDateButton");
-const customDateWrapper = document.getElementById("customDateWrapper");
-
-const clubCards = document.querySelectorAll(".club-card");
-
-const programResult = document.getElementById("programResult");
-const programClub = document.getElementById("programClub");
-const programDate = document.getElementById("programDate");
-const programContent = document.getElementById("programContent");
-
-const reservationSection = document.getElementById("reservationSection");
-const reservationForm = document.getElementById("reservationForm");
-const reservationMessage = document.getElementById("reservationMessage");
-
-const selectedClub = document.getElementById("selectedClub");
-const selectedDate = document.getElementById("selectedDate");
+/* =========================================================
+   NIGHTBOOK
+   FRONTEND APPLICATION
+   ========================================================= */
 
 
-// ========================================
-// USLOVI ZA STOLOVE
-// ========================================
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const eventDate =
+    document.getElementById("eventDate");
+
+const mainQuickDates =
+    document.getElementById("mainQuickDates");
+
+const otherDateButton =
+    document.getElementById("otherDateButton");
+
+const customDateWrapper =
+    document.getElementById("customDateWrapper");
+
+const clubCards =
+    document.querySelectorAll(".club-card");
+
+const programResult =
+    document.getElementById("programResult");
+
+const programClub =
+    document.getElementById("programClub");
+
+const programDate =
+    document.getElementById("programDate");
+
+const programContent =
+    document.getElementById("programContent");
+
+const reservationSection =
+    document.getElementById("reservationSection");
+
+const reservationForm =
+    document.getElementById("reservationForm");
+
+const reservationMessage =
+    document.getElementById("reservationMessage");
+
+const selectedClub =
+    document.getElementById("selectedClub");
+
+const selectedDate =
+    document.getElementById("selectedDate");
+
+const bottomBar =
+    document.querySelector(".mobile-bottom-bar");
+
+
+/* =========================================================
+   TABLE CONDITIONS
+   ========================================================= */
 
 const TABLES = {
 
-    // LASTA
-
     lasta: [
         {
-            name: "Barski sto",
+            type: "Barski sto",
             condition: "1 obična flaša"
         },
         {
-            name: "Visoko sedenje",
+            type: "Visoko sedenje",
             condition: "1 premium flaša"
         },
         {
-            name: "Separe",
+            type: "Separe",
             condition: "2 premium flaše"
         },
         {
-            name: "Veliki separe",
+            type: "Veliki separe",
             condition: "3 premium flaše"
         }
     ],
-
-
-    // FREESTYLER
 
     freestyler: [
         {
-            name: "Barski sto",
+            type: "Barski sto",
             condition: "1 obična flaša"
         },
         {
-            name: "Mali separe",
+            type: "Mali separe",
             condition: "1 premium flaša"
         },
         {
-            name: "Veliki separe",
+            type: "Veliki separe",
             condition: "2 premium flaše"
         },
         {
-            name: "Centralni separe",
+            type: "Centralni separe",
             condition: "3 premium flaše"
         }
     ],
-
-
-    // REMIKS
 
     remiks: [
         {
-            name: "Barski sto",
+            type: "Barski sto",
             condition: "Bez uslova"
         },
         {
-            name: "Visoko sedenje",
+            type: "Visoko sedenje",
             condition: "1 obična flaša"
         },
         {
-            name: "Separe",
+            type: "Separe",
             condition: "1 premium flaša"
         }
     ],
-
-
-    // TRANZIT
 
     tranzit: [
         {
-            name: "Barski sto",
+            type: "Barski sto",
             condition: "50 €"
         },
         {
-            name: "Visoko sedenje",
+            type: "Visoko sedenje",
             condition: "100 € / 1 obična flaša"
         },
         {
-            name: "Separe",
+            type: "Separe",
             condition: "1 premium flaša"
         }
     ],
-
-
-    // THE BANK
 
     bank: [
         {
-            name: "Barski sto",
-            condition: "1 obicna flaša"
-        },
-        {
-            name: "Visoko sedenje",
-            condition: "1 premium flaša"
-        },
-        {
-            name: "Separe",
-            condition: "2 premium flaše"
-        },
-        {
-            name: "Centralni separe",
-            condition: "3 premium flaše"
-        }
-    ],
-
-
-    // LETO
-
-    leto: [
-        {
-            name: "Barski sto",
+            type: "Barski sto",
             condition: "1 obična flaša"
         },
         {
-            name: "Visoko sedenje",
+            type: "Visoko sedenje",
             condition: "1 premium flaša"
         },
         {
-            name: "Separe",
+            type: "Separe",
             condition: "2 premium flaše"
         },
         {
-            name: "Centralni separe",
+            type: "Centralni separe",
             condition: "3 premium flaše"
         }
     ],
 
-
-    // GRADSKA KAFANA
+    hype: [
+        {
+            type: "Barski sto",
+            condition: "1 obična flaša"
+        },
+        {
+            type: "Visoko sedenje",
+            condition: "1 premium flaša"
+        },
+        {
+            type: "Separe",
+            condition: "2 premium flaše"
+        },
+        {
+            type: "Centralni separe",
+            condition: "3 premium flaše"
+        }
+    ],
 
     gradska: [
         {
-            name: "Barski sto — dalje od bine",
+            type: "Barski sto — dalje od bine",
             condition: "8.000 RSD"
         },
         {
-            name: "Barski sto — bliže bini",
+            type: "Barski sto — bliže bini",
             condition: "1 obična flaša"
         },
         {
-            name: "Nisko sedenje — dalje bini",
+            type: "Nisko sedenje — dalje od bine",
             condition: "1 obična flaša"
         },
         {
-            name: "Nisko sedenje — bliže bini",
+            type: "Nisko sedenje — bliže bini",
             condition: "1 premium flaša"
         },
         {
-            name: "Separe — dalje bini",
+            type: "Separe — dalje od bine",
             condition: "2 obične flaše"
         },
         {
-            name: "Separe — bliže bini",
+            type: "Separe — bliže bini",
             condition: "2 premium flaše"
         }
     ]
@@ -184,9 +196,32 @@ const TABLES = {
 };
 
 
-// ========================================
-// DANI I MESECI
-// ========================================
+/* =========================================================
+   CLUB DISPLAY NAMES
+   ========================================================= */
+
+const CLUB_NAMES = {
+
+    lasta: "LASTA",
+
+    freestyler: "FREESTYLER",
+
+    remiks: "REMIX",
+
+    tranzit: "TRANZIT",
+
+    bank: "BANK",
+
+    hype: "HYPE",
+
+    gradska: "GRADSKA KAFANA"
+
+};
+
+
+/* =========================================================
+   DATE DATA
+   ========================================================= */
 
 const DAY_NAMES = [
     "NED",
@@ -214,23 +249,23 @@ const MONTH_NAMES = [
 ];
 
 
-// ========================================
-// DATUM FUNKCIJE
-// ========================================
+/* =========================================================
+   DATE HELPERS
+   ========================================================= */
 
 function startOfToday() {
 
-    const date = new Date();
+    const now =
+        new Date();
 
-    date.setHours(
+    now.setHours(
         12,
         0,
         0,
         0
     );
 
-    return date;
-
+    return now;
 }
 
 
@@ -256,16 +291,59 @@ function toLocalDateString(date) {
         );
 
     return `${year}-${month}-${day}`;
-
 }
 
 
 function dateFromValue(value) {
 
-    return new Date(
-        value + "T12:00:00"
-    );
+    if (!value) {
+        return null;
+    }
 
+    const parts =
+        value.split("-");
+
+    if (parts.length !== 3) {
+        return null;
+    }
+
+    const year =
+        Number(parts[0]);
+
+    const month =
+        Number(parts[1]);
+
+    const day =
+        Number(parts[2]);
+
+    if (
+        !year ||
+        !month ||
+        !day
+    ) {
+        return null;
+    }
+
+    const date =
+        new Date(
+            year,
+            month - 1,
+            day,
+            12,
+            0,
+            0,
+            0
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return null;
+    }
+
+    return date;
 }
 
 
@@ -274,140 +352,214 @@ function formatDate(value) {
     const date =
         dateFromValue(value);
 
+    if (!date) {
+        return "";
+    }
+
     return date.toLocaleDateString(
         "sr-RS",
         {
-            day: "numeric",
+            weekday: "long",
+            day: "2-digit",
             month: "long",
             year: "numeric"
         }
     );
+}
+
+
+function isPastDate(value) {
+
+    const date =
+        dateFromValue(value);
+
+    if (!date) {
+        return true;
+    }
+
+    return (
+        date <
+        startOfToday()
+    );
+}
+
+
+/* =========================================================
+   DATE INPUT MINIMUM
+   ========================================================= */
+
+if (eventDate) {
+
+    eventDate.min =
+        toLocalDateString(
+            startOfToday()
+        );
 
 }
 
 
-// ========================================
-// MINIMALNI DATUM
-// ========================================
-
-const today =
-    startOfToday();
-
-eventDate.min =
-    toLocalDateString(
-        today
-    );
-
-
-// ========================================
-// RESET
-// ========================================
+/* =========================================================
+   RESET CURRENT SELECTION
+   ========================================================= */
 
 function resetSelection() {
 
-    programResult.classList.add(
-        "hidden"
-    );
-
-    reservationSection.classList.add(
-        "hidden"
-    );
-
     clubCards.forEach(
-        card =>
+        (card) => {
+
             card.classList.remove(
                 "active"
-            )
+            );
+
+        }
     );
 
-    selectedClub.value = "";
-    selectedDate.value = "";
+    if (programResult) {
 
-    const oldSelector =
+        programResult.classList.add(
+            "hidden"
+        );
+
+    }
+
+    if (reservationSection) {
+
+        reservationSection.classList.add(
+            "hidden"
+        );
+
+    }
+
+    if (selectedClub) {
+
+        selectedClub.value =
+            "";
+
+    }
+
+    if (selectedDate) {
+
+        selectedDate.value =
+            "";
+
+    }
+
+    const oldTableSelection =
         document.getElementById(
             "tableSelection"
         );
 
-    if (oldSelector) {
-        oldSelector.remove();
+    if (oldTableSelection) {
+
+        oldTableSelection.remove();
+
     }
 
-    reservationMessage.textContent = "";
+    const selectedTableType =
+        document.getElementById(
+            "selectedTableType"
+        );
+
+    const selectedTableCondition =
+        document.getElementById(
+            "selectedTableCondition"
+        );
+
+    if (selectedTableType) {
+
+        selectedTableType.remove();
+
+    }
+
+    if (selectedTableCondition) {
+
+        selectedTableCondition.remove();
+
+    }
+
+    if (reservationMessage) {
+
+        reservationMessage.textContent =
+            "";
+
+    }
 
 }
 
 
-// ========================================
-// IZBOR DATUMA
-// ========================================
+/* =========================================================
+   SELECT DATE
+   ========================================================= */
 
-function selectDate(value) {
+function selectDate(
+    value,
+    button = null
+) {
 
     if (!value) {
         return;
     }
 
-
-    const chosenDate =
-        dateFromValue(value);
-
-    const minimum =
-        startOfToday();
-
-
-    if (
-        chosenDate <
-        minimum
-    ) {
+    if (isPastDate(value)) {
 
         alert(
-            "Nije moguće izabrati datum koji je prošao."
+            "Možeš izabrati samo današnji ili budući datum."
         );
 
-        eventDate.value =
-            toLocalDateString(
-                minimum
-            );
-
         return;
-
     }
 
+    if (eventDate) {
 
-    eventDate.value =
-        value;
+        eventDate.value =
+            value;
 
+    }
 
     document
         .querySelectorAll(
             ".main-date-button"
         )
         .forEach(
-            button => {
+            (dateButton) => {
 
-                button.classList.toggle(
-                    "active",
-                    button.dataset.date ===
-                    value
-                );
+                dateButton
+                    .classList
+                    .remove(
+                        "active"
+                    );
 
             }
         );
 
+    if (button) {
+
+        button.classList.add(
+            "active"
+        );
+
+    }
 
     resetSelection();
 
 }
 
 
-// ========================================
-// TRI GLAVNA DATUMA
-// ========================================
+/* =========================================================
+   CREATE QUICK DATES
+   ========================================================= */
 
 function renderMainDates() {
 
-    const dates = [];
+    if (!mainQuickDates) {
+        return;
+    }
 
+    mainQuickDates.innerHTML =
+        "";
+
+    const today =
+        startOfToday();
 
     for (
         let i = 0;
@@ -422,263 +574,331 @@ function renderMainDates() {
             today.getDate() + i
         );
 
-        dates.push(date);
+        const value =
+            toLocalDateString(
+                date
+            );
+
+        const button =
+            document.createElement(
+                "button"
+            );
+
+        button.type =
+            "button";
+
+        button.className =
+            "main-date-button";
+
+        button.dataset.date =
+            value;
+
+        let dayLabel =
+            DAY_NAMES[
+                date.getDay()
+            ];
+
+        if (i === 0) {
+
+            dayLabel =
+                "DANAS";
+
+        }
+
+        if (i === 1) {
+
+            dayLabel =
+                "SUTRA";
+
+        }
+
+        button.innerHTML = `
+            <span class="main-date-day">
+                ${dayLabel}
+            </span>
+
+            <span class="main-date-number">
+                ${String(
+                    date.getDate()
+                ).padStart(
+                    2,
+                    "0"
+                )}
+            </span>
+
+            <span class="main-date-month">
+                ${
+                    MONTH_NAMES[
+                        date.getMonth()
+                    ]
+                }
+            </span>
+        `;
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectDate(
+                    value,
+                    button
+                );
+
+                scrollToClubs();
+
+            }
+        );
+
+        mainQuickDates.appendChild(
+            button
+        );
 
     }
 
+}
 
-    mainQuickDates.innerHTML =
-        dates
-            .map(
-                (date, index) => {
 
-                    const value =
-                        toLocalDateString(
-                            date
+/* =========================================================
+   OTHER DATE BUTTON
+   ========================================================= */
+
+if (otherDateButton) {
+
+    otherDateButton.addEventListener(
+        "click",
+        () => {
+
+            if (!customDateWrapper) {
+                return;
+            }
+
+            customDateWrapper
+                .classList
+                .toggle(
+                    "hidden"
+                );
+
+            if (
+                !customDateWrapper
+                    .classList
+                    .contains(
+                        "hidden"
+                    )
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        if (
+                            eventDate &&
+                            typeof eventDate.showPicker ===
+                            "function"
+                        ) {
+
+                            try {
+
+                                eventDate
+                                    .showPicker();
+
+                            } catch (
+                                error
+                            ) {
+
+                                // Browser ne podržava
+                                // automatsko otvaranje.
+
+                            }
+
+                        }
+
+                    },
+                    120
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CUSTOM DATE CHANGE
+   ========================================================= */
+
+if (eventDate) {
+
+    eventDate.addEventListener(
+        "change",
+        () => {
+
+            const value =
+                eventDate.value;
+
+            if (!value) {
+                return;
+            }
+
+            if (isPastDate(value)) {
+
+                eventDate.value =
+                    "";
+
+                alert(
+                    "Nije moguće izabrati datum koji je prošao."
+                );
+
+                return;
+            }
+
+            let matchingButton =
+                null;
+
+            document
+                .querySelectorAll(
+                    ".main-date-button"
+                )
+                .forEach(
+                    (button) => {
+
+                        if (
+                            button.dataset.date ===
+                            value
+                        ) {
+
+                            matchingButton =
+                                button;
+
+                        }
+
+                    }
+                );
+
+            selectDate(
+                value,
+                matchingButton
+            );
+
+            scrollToClubs();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SCROLL TO CLUBS
+   ========================================================= */
+
+function scrollToClubs() {
+
+    const clubsSection =
+        document.querySelector(
+            ".clubs-section"
+        );
+
+    if (!clubsSection) {
+        return;
+    }
+
+    setTimeout(
+        () => {
+
+            clubsSection.scrollIntoView(
+                {
+                    behavior: "smooth",
+                    block: "start"
+                }
+            );
+
+        },
+        180
+    );
+
+}
+
+
+/* =========================================================
+   CLUB SELECTION
+   ========================================================= */
+
+clubCards.forEach(
+    (card) => {
+
+        card.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    !eventDate ||
+                    !eventDate.value
+                ) {
+
+                    alert(
+                        "Prvo izaberi datum izlaska."
+                    );
+
+                    const dateSection =
+                        document.querySelector(
+                            ".date-section"
                         );
 
+                    if (dateSection) {
 
-                    let dayLabel;
+                        dateSection
+                            .scrollIntoView(
+                                {
+                                    behavior:
+                                        "smooth",
 
-
-                    if (index === 0) {
-
-                        dayLabel =
-                            "DANAS";
-
-                    } else if (
-                        index === 1
-                    ) {
-
-                        dayLabel =
-                            "SUTRA";
-
-                    } else {
-
-                        dayLabel =
-                            DAY_NAMES[
-                                date.getDay()
-                            ];
+                                    block:
+                                        "center"
+                                }
+                            );
 
                     }
 
-
-                    return `
-                        <button
-                            type="button"
-                            class="main-date-button"
-                            data-date="${value}"
-                        >
-
-                            <span class="main-date-day">
-                                ${dayLabel}
-                            </span>
-
-                            <span class="main-date-number">
-                                ${date.getDate()}
-                            </span>
-
-                            <span class="main-date-month">
-                                ${MONTH_NAMES[date.getMonth()]}
-                            </span>
-
-                        </button>
-                    `;
-
+                    return;
                 }
-            )
-            .join("");
 
+                const club =
+                    card.dataset.club;
 
-    document
-        .querySelectorAll(
-            ".main-date-button"
-        )
-        .forEach(
-            button => {
+                if (!club) {
+                    return;
+                }
 
-                button.addEventListener(
-                    "click",
-                    () => {
+                clubCards.forEach(
+                    (otherCard) => {
 
-                        selectDate(
-                            button.dataset.date
-                        );
-
-                        customDateWrapper
+                        otherCard
                             .classList
-                            .add(
-                                "hidden"
+                            .remove(
+                                "active"
                             );
 
                     }
                 );
 
-            }
-        );
-
-}
-
-
-renderMainDates();
-
-
-// ========================================
-// DRUGI DATUM
-// ========================================
-
-otherDateButton.addEventListener(
-    "click",
-    () => {
-
-        customDateWrapper
-            .classList
-            .toggle(
-                "hidden"
-            );
-
-
-        if (
-            !customDateWrapper
-                .classList
-                .contains(
-                    "hidden"
-                )
-        ) {
-
-            setTimeout(
-                () => {
-
-                    eventDate.focus();
-
-
-                    if (
-                        typeof eventDate.showPicker ===
-                        "function"
-                    ) {
-
-                        try {
-
-                            eventDate.showPicker();
-
-                        } catch (error) {
-
-                            // Safari može blokirati showPicker.
-                            // Input će i dalje normalno raditi.
-
-                        }
-
-                    }
-
-                },
-                100
-            );
-
-        }
-
-    }
-);
-
-
-// ========================================
-// RUČNO IZABRAN DATUM
-// ========================================
-
-eventDate.addEventListener(
-    "change",
-    () => {
-
-        if (
-            !eventDate.value
-        ) {
-            return;
-        }
-
-
-        const chosen =
-            dateFromValue(
-                eventDate.value
-            );
-
-
-        if (
-            chosen <
-            startOfToday()
-        ) {
-
-            alert(
-                "Nije moguće izabrati datum koji je prošao."
-            );
-
-            eventDate.value = "";
-
-            return;
-
-        }
-
-
-        selectDate(
-            eventDate.value
-        );
-
-    }
-);
-
-
-// ========================================
-// IZBOR KLUBA
-// ========================================
-
-clubCards.forEach(
-    card => {
-
-        card.addEventListener(
-            "click",
-            async () => {
-
-                const date =
-                    eventDate.value;
-
-
-                if (!date) {
-
-                    alert(
-                        "Prvo izaberi datum."
-                    );
-
-                    document
-                        .getElementById(
-                            "booking"
-                        )
-                        .scrollIntoView({
-                            behavior: "smooth"
-                        });
-
-                    return;
-
-                }
-
-
-                clubCards.forEach(
-                    item =>
-                        item.classList.remove(
-                            "active"
-                        )
-                );
-
-
                 card.classList.add(
                     "active"
                 );
 
+                if (reservationSection) {
 
-                const club =
-                    card.dataset.club;
+                    reservationSection
+                        .classList
+                        .add(
+                            "hidden"
+                        );
 
+                }
 
-                await loadProgram(
+                loadProgram(
                     club,
-                    date
+                    eventDate.value
                 );
 
             }
@@ -688,182 +908,204 @@ clubCards.forEach(
 );
 
 
-// ========================================
-// UČITAVANJE PROGRAMA
-// ========================================
+/* =========================================================
+   LOAD PROGRAM
+   ========================================================= */
 
 async function loadProgram(
     club,
     date
 ) {
 
+    if (
+        !programResult ||
+        !programClub ||
+        !programDate ||
+        !programContent
+    ) {
+        return;
+    }
+
     programResult.classList.remove(
         "hidden"
     );
 
-    reservationSection.classList.add(
-        "hidden"
-    );
-
-
     programClub.textContent =
-        "Učitavanje...";
+        CLUB_NAMES[club] ||
+        club.toUpperCase();
 
     programDate.textContent =
         formatDate(date);
 
-    programContent.innerHTML =
-        `
-            <p>
-                Proveravamo program...
-            </p>
-        `;
+    programContent.innerHTML = `
+        <div class="program-loading">
+            UČITAVANJE PROGRAMA...
+        </div>
+    `;
 
+    programResult.scrollIntoView(
+        {
+            behavior:
+                "smooth",
 
-    const oldSelector =
-        document.getElementById(
-            "tableSelection"
-        );
-
-    if (oldSelector) {
-        oldSelector.remove();
-    }
-
+            block:
+                "center"
+        }
+    );
 
     try {
 
         const response =
             await fetch(
-                `/api/program?club=${encodeURIComponent(club)}&date=${encodeURIComponent(date)}`
+                `/api/program?club=${
+                    encodeURIComponent(
+                        club
+                    )
+                }&date=${
+                    encodeURIComponent(
+                        date
+                    )
+                }`
             );
-
-
-        const data =
-            await response.json();
-
 
         if (!response.ok) {
 
             throw new Error(
-                data.error ||
-                "Greška pri učitavanju programa."
+                "Program trenutno nije dostupan."
             );
 
         }
 
-
-        programClub.textContent =
-            data.club;
-
-        programDate.textContent =
-            formatDate(date);
-
-
-        // PROGRAM NIJE OBJAVLJEN
+        const data =
+            await response.json();
 
         if (!data.found) {
 
-            programContent.innerHTML =
-                `
-                    <p style="
-                        font-weight:900;
-                        color:#ffffff;
-                    ">
-                        Program još nije objavljen
-                    </p>
+            programContent.innerHTML = `
+                <div class="program-empty">
+                    <strong>
+                        PROGRAM JOŠ NIJE OBJAVLJEN
+                    </strong>
 
-                    <p style="
-                        margin-top:8px;
-                        color:#888888;
-                        font-size:14px;
-                    ">
-                        Program za ${formatDate(date)}
-                        trenutno nije dostupan.
+                    <p>
+                        Program za ovaj datum još uvek
+                        nije dostupan.
+                        Proveri ponovo uskoro.
                     </p>
-                `;
+                </div>
+            `;
 
             return;
-
         }
 
+        const safeProgram =
+            escapeHTML(
+                data.program ||
+                "Program je objavljen."
+            );
 
-        // PROGRAM POSTOJI
-
-        programContent.innerHTML =
-            `
-                <div
-                    style="
-                        font-size:19px;
-                        font-weight:900;
-                        line-height:1.45;
-                    "
-                >
-                    ${escapeHTML(data.program)}
+        programContent.innerHTML = `
+            <div class="program-event">
+                <div class="program-event-copy">
+                    ${safeProgram}
                 </div>
 
                 <button
                     type="button"
-                    id="openReservationButton"
                     class="reserve-table-button"
+                    id="openReservationButton"
                 >
-                    REZERVIŠI STO
+                    REZERVIŠI STO →
                 </button>
-            `;
+            </div>
+        `;
 
+        if (selectedClub) {
 
-        selectedClub.value =
-            club;
+            selectedClub.value =
+                club;
 
-        selectedDate.value =
-            date;
+        }
 
+        if (selectedDate) {
+
+            selectedDate.value =
+                date;
+
+        }
 
         const openReservationButton =
             document.getElementById(
                 "openReservationButton"
             );
 
+        if (openReservationButton) {
 
-        openReservationButton
-            .addEventListener(
-                "click",
-                () => {
+            openReservationButton
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    showReservation(
-                        club
-                    );
+                        showReservation(
+                            club,
+                            date
+                        );
 
-                }
-            );
+                    }
+                );
 
+        }
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Greška pri učitavanju programa:",
+            error
+        );
 
+        programContent.innerHTML = `
+            <div class="program-error">
+                <strong>
+                    PROGRAM TRENUTNO NIJE DOSTUPAN
+                </strong>
 
-        programClub.textContent =
-            "Greška";
-
-
-        programContent.innerHTML =
-            `
                 <p>
-                    Trenutno nije moguće učitati program.
-                    Pokušaj ponovo.
+                    Pokušaj ponovo za nekoliko trenutaka.
                 </p>
-            `;
+            </div>
+        `;
 
     }
 
 }
 
 
-// ========================================
-// PRIKAŽI REZERVACIJU
-// ========================================
+/* =========================================================
+   SHOW RESERVATION
+   ========================================================= */
 
-function showReservation(club) {
+function showReservation(
+    club,
+    date
+) {
+
+    if (!reservationSection) {
+        return;
+    }
+
+    if (selectedClub) {
+
+        selectedClub.value =
+            club;
+
+    }
+
+    if (selectedDate) {
+
+        selectedDate.value =
+            date;
+
+    }
 
     reservationSection
         .classList
@@ -871,158 +1113,235 @@ function showReservation(club) {
             "hidden"
         );
 
-
     createTableSelection(
         club
     );
 
+    setTimeout(
+        () => {
 
-    reservationSection
-        .scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+            reservationSection
+                .scrollIntoView(
+                    {
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "start"
+                    }
+                );
+
+        },
+        100
+    );
 
 }
 
 
-// ========================================
-// KREIRANJE IZBORA STOLOVA
-// ========================================
+/* =========================================================
+   CREATE TABLE SELECTION
+   ========================================================= */
 
 function createTableSelection(
     club
 ) {
 
-    const oldSelector =
+    const existing =
         document.getElementById(
             "tableSelection"
         );
 
+    if (existing) {
 
-    if (oldSelector) {
-        oldSelector.remove();
+        existing.remove();
+
     }
 
+    const oldType =
+        document.getElementById(
+            "selectedTableType"
+        );
+
+    const oldCondition =
+        document.getElementById(
+            "selectedTableCondition"
+        );
+
+    if (oldType) {
+
+        oldType.remove();
+
+    }
+
+    if (oldCondition) {
+
+        oldCondition.remove();
+
+    }
 
     const tables =
-        TABLES[club] || [];
+        TABLES[club];
 
+    if (
+        !tables ||
+        !reservationForm
+    ) {
+        return;
+    }
+
+    const guestsInput =
+        document.getElementById(
+            "guests"
+        );
+
+    if (!guestsInput) {
+        return;
+    }
+
+    const guestsGroup =
+        guestsInput.closest(
+            ".form-group"
+        );
+
+    if (!guestsGroup) {
+        return;
+    }
 
     const wrapper =
         document.createElement(
             "div"
         );
 
-
     wrapper.id =
         "tableSelection";
 
+    wrapper.innerHTML = `
+        <div class="table-selection-title">
+            IZABERI TIP STOLA
+        </div>
 
-    wrapper.innerHTML =
-        `
-            <p class="table-selection-title">
-                IZABERI TIP STOLA
-            </p>
-
-            <div class="table-options">
-
-                ${tables
-                    .map(
-                        (table, index) => `
-                            <button
-                                type="button"
-                                class="table-option"
-                                data-index="${index}"
-                                data-name="${escapeAttribute(table.name)}"
-                                data-condition="${escapeAttribute(table.condition)}"
-                            >
-
-                                <span class="table-option-name">
-                                    ${escapeHTML(table.name)}
-                                </span>
-
-                                <span class="table-option-condition">
-                                    ${escapeHTML(table.condition)}
-                                </span>
-
-                            </button>
-                        `
-                    )
-                    .join("")}
-
-            </div>
-
-            <input
-                type="hidden"
-                id="selectedTableType"
-            >
-
-            <input
-                type="hidden"
-                id="selectedTableCondition"
-            >
-        `;
-
-
-    const guestsGroup =
-        document
-            .getElementById(
-                "guests"
-            )
-            .closest(
-                ".form-group"
-            );
-
+        <div
+            class="table-options"
+            id="tableOptions"
+        ></div>
+    `;
 
     guestsGroup.insertAdjacentElement(
         "afterend",
         wrapper
     );
 
-
-    const tableButtons =
-        wrapper.querySelectorAll(
-            ".table-option"
+    const tableOptions =
+        wrapper.querySelector(
+            "#tableOptions"
         );
 
+    const hiddenType =
+        document.createElement(
+            "input"
+        );
 
-    tableButtons.forEach(
-        button => {
+    hiddenType.type =
+        "hidden";
+
+    hiddenType.name =
+        "tableType";
+
+    hiddenType.id =
+        "selectedTableType";
+
+    hiddenType.required =
+        true;
+
+    const hiddenCondition =
+        document.createElement(
+            "input"
+        );
+
+    hiddenCondition.type =
+        "hidden";
+
+    hiddenCondition.name =
+        "tableCondition";
+
+    hiddenCondition.id =
+        "selectedTableCondition";
+
+    reservationForm.appendChild(
+        hiddenType
+    );
+
+    reservationForm.appendChild(
+        hiddenCondition
+    );
+
+    tables.forEach(
+        (table) => {
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.type =
+                "button";
+
+            button.className =
+                "table-option";
+
+            button.innerHTML = `
+                <span class="table-option-name">
+                    ${escapeHTML(
+                        table.type
+                    )}
+                </span>
+
+                <span class="table-option-condition">
+                    ${escapeHTML(
+                        table.condition
+                    )}
+                </span>
+            `;
 
             button.addEventListener(
                 "click",
                 () => {
 
-                    tableButtons.forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
-
-
-                    button.classList.add(
-                        "active"
-                    );
-
-
-                    document
-                        .getElementById(
-                            "selectedTableType"
+                    tableOptions
+                        .querySelectorAll(
+                            ".table-option"
                         )
-                        .value =
-                        button.dataset.name;
+                        .forEach(
+                            (
+                                option
+                            ) => {
 
+                                option
+                                    .classList
+                                    .remove(
+                                        "active"
+                                    );
 
-                    document
-                        .getElementById(
-                            "selectedTableCondition"
-                        )
-                        .value =
-                        button.dataset.condition;
+                            }
+                        );
+
+                    button
+                        .classList
+                        .add(
+                            "active"
+                        );
+
+                    hiddenType.value =
+                        table.type;
+
+                    hiddenCondition.value =
+                        table.condition;
 
                 }
+            );
+
+            tableOptions.appendChild(
+                button
             );
 
         }
@@ -1031,239 +1350,342 @@ function createTableSelection(
 }
 
 
-// ========================================
-// SLANJE REZERVACIJE
-// ========================================
+/* =========================================================
+   RESERVATION FORM
+   ========================================================= */
 
-reservationForm.addEventListener(
-    "submit",
-    async event => {
+if (reservationForm) {
 
-        event.preventDefault();
+    reservationForm.addEventListener(
+        "submit",
+        async (
+            event
+        ) => {
 
+            event.preventDefault();
 
-        reservationMessage.textContent =
-            "";
+            if (reservationMessage) {
 
+                reservationMessage.textContent =
+                    "";
 
-        const tableTypeElement =
-            document.getElementById(
-                "selectedTableType"
-            );
+            }
 
+            const tableTypeInput =
+                document.getElementById(
+                    "selectedTableType"
+                );
 
-        const tableConditionElement =
-            document.getElementById(
-                "selectedTableCondition"
-            );
+            const tableConditionInput =
+                document.getElementById(
+                    "selectedTableCondition"
+                );
 
+            if (
+                !tableTypeInput ||
+                !tableTypeInput.value
+            ) {
 
-        if (
-            !tableTypeElement ||
-            !tableTypeElement.value
-        ) {
+                if (reservationMessage) {
 
-            alert(
-                "Izaberi tip stola."
-            );
+                    reservationMessage.textContent =
+                        "Izaberi tip stola.";
 
-            return;
+                }
 
-        }
+                const tableSelection =
+                    document.getElementById(
+                        "tableSelection"
+                    );
 
+                if (tableSelection) {
 
-        const payload = {
+                    tableSelection
+                        .scrollIntoView(
+                            {
+                                behavior:
+                                    "smooth",
 
-            club:
-                selectedClub.value,
+                                block:
+                                    "center"
+                            }
+                        );
 
-            date:
-                selectedDate.value,
+                }
 
-            name:
-                document
-                    .getElementById(
-                        "name"
-                    )
-                    .value
-                    .trim(),
+                return;
+            }
 
-            phone:
-                document
-                    .getElementById(
-                        "phone"
-                    )
-                    .value
-                    .trim(),
+            const currentClub =
+                selectedClub
+                    ? selectedClub.value
+                    : "";
 
-            instagram:
-                document
-                    .getElementById(
-                        "instagram"
-                    )
-                    .value
-                    .trim(),
+            const currentDate =
+                selectedDate
+                    ? selectedDate.value
+                    : "";
 
-            guests:
-                Number(
-                    document
-                        .getElementById(
+            if (
+                !currentClub ||
+                !currentDate
+            ) {
+
+                if (reservationMessage) {
+
+                    reservationMessage.textContent =
+                        "Izaberi datum i klub pre rezervacije.";
+
+                }
+
+                return;
+            }
+
+            const submitButton =
+                reservationForm.querySelector(
+                    ".submit-button"
+                );
+
+            const originalButtonHTML =
+                submitButton
+                    ? submitButton.innerHTML
+                    : "";
+
+            const formData =
+                new FormData(
+                    reservationForm
+                );
+
+            const payload = {
+
+                club:
+                    currentClub,
+
+                date:
+                    currentDate,
+
+                name:
+                    String(
+                        formData.get(
+                            "name"
+                        ) || ""
+                    ).trim(),
+
+                phone:
+                    String(
+                        formData.get(
+                            "phone"
+                        ) || ""
+                    ).trim(),
+
+                instagram:
+                    String(
+                        formData.get(
+                            "instagram"
+                        ) || ""
+                    ).trim(),
+
+                guests:
+                    Number(
+                        formData.get(
                             "guests"
                         )
-                        .value
-                ),
+                    ),
 
-            tableType:
-                tableTypeElement.value,
+                tableType:
+                    tableTypeInput.value,
 
-            condition:
-                tableConditionElement
-                    ? tableConditionElement.value
-                    : ""
+                tableCondition:
+                    tableConditionInput
+                        ? tableConditionInput.value
+                        : ""
 
-        };
+            };
 
+            if (
+                !payload.name ||
+                !payload.phone ||
+                !payload.guests
+            ) {
 
-        try {
+                if (reservationMessage) {
 
-            const submitButton =
-                reservationForm.querySelector(
-                    ".submit-button"
-                );
+                    reservationMessage.textContent =
+                        "Popuni sva obavezna polja.";
 
+                }
 
-            submitButton.disabled =
-                true;
+                return;
+            }
 
-            submitButton.textContent =
-                "SLANJE...";
+            if (
+                payload.guests < 1 ||
+                payload.guests > 30
+            ) {
 
+                if (reservationMessage) {
 
-            const response =
-                await fetch(
-                    "/api/reservations",
-                    {
+                    reservationMessage.textContent =
+                        "Broj osoba mora biti između 1 i 30.";
 
-                        method:
-                            "POST",
+                }
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
+                return;
+            }
 
-                        body:
-                            JSON.stringify(
-                                payload
-                            )
+            if (submitButton) {
 
-                    }
-                );
+                submitButton.disabled =
+                    true;
 
+                submitButton.innerHTML = `
+                    <span>
+                        ŠALJEMO REZERVACIJU...
+                    </span>
 
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.error ||
-                    "Rezervacija nije poslata."
-                );
+                    <span>
+                        ···
+                    </span>
+                `;
 
             }
 
+            if (reservationMessage) {
 
-            reservationMessage.textContent =
-                "Rezervacija je uspešno poslata!";
+                reservationMessage.textContent =
+                    "Rezervacija se šalje...";
 
-
-            reservationForm.reset();
-
-
-            eventDate.value =
-                selectedDate.value;
-
-
-            document
-                .querySelectorAll(
-                    ".table-option"
-                )
-                .forEach(
-                    button =>
-                        button.classList.remove(
-                            "active"
-                        )
-                );
-
-
-            if (tableTypeElement) {
-                tableTypeElement.value = "";
             }
 
+            try {
 
-            if (tableConditionElement) {
-                tableConditionElement.value = "";
-            }
+                const response =
+                    await fetch(
+                        "/api/reservations",
+                        {
+                            method:
+                                "POST",
 
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-        } catch (error) {
+                            body:
+                                JSON.stringify(
+                                    payload
+                                )
+                        }
+                    );
 
-            console.error(error);
+                const data =
+                    await response.json();
 
+                if (!response.ok) {
 
-            reservationMessage.textContent =
-                error.message;
+                    throw new Error(
+                        data.error ||
+                        "Rezervacija nije poslata."
+                    );
 
-        } finally {
+                }
 
-            const submitButton =
-                reservationForm.querySelector(
-                    ".submit-button"
+                if (reservationMessage) {
+
+                    reservationMessage.textContent =
+                        "Rezervacija je uspešno poslata. Kontaktiraćemo te radi potvrde.";
+
+                }
+
+                reservationForm.reset();
+
+                if (selectedClub) {
+
+                    selectedClub.value =
+                        currentClub;
+
+                }
+
+                if (selectedDate) {
+
+                    selectedDate.value =
+                        currentDate;
+
+                }
+
+                if (eventDate) {
+
+                    eventDate.value =
+                        currentDate;
+
+                }
+
+                createTableSelection(
+                    currentClub
                 );
 
+            } catch (error) {
 
-            submitButton.disabled =
-                false;
+                console.error(
+                    "Greška pri rezervaciji:",
+                    error
+                );
 
-            submitButton.textContent =
-                "POŠALJI REZERVACIJU";
+                if (reservationMessage) {
+
+                    reservationMessage.textContent =
+                        error.message ||
+                        "Došlo je do greške. Pokušaj ponovo.";
+
+                }
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.innerHTML =
+                        originalButtonHTML;
+
+                }
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
-// ========================================
-// ZAŠTITA TEKSTA
-// ========================================
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
-    return String(value)
-
+    return String(
+        value ?? ""
+    )
         .replace(
             /&/g,
             "&amp;"
         )
-
         .replace(
             /</g,
             "&lt;"
         )
-
         .replace(
             />/g,
             "&gt;"
         )
-
         .replace(
             /"/g,
             "&quot;"
         )
-
         .replace(
             /'/g,
             "&#039;"
@@ -1272,220 +1694,9 @@ function escapeHTML(value) {
 }
 
 
-function escapeAttribute(value) {
-
-    return escapeHTML(value);
-
-}
-
-// ========================================
-// NIGHTBOOK - AUTO SCROLL DO KLUBOVA
-// ========================================
-
-function scrollToClubs() {
-
-    const clubsSection =
-        document.querySelector(".clubs-section");
-
-    if (!clubsSection) {
-        return;
-    }
-
-    // Malo čekanje da se završi promena datuma
-    setTimeout(() => {
-
-        const navbar =
-            document.querySelector(".navbar");
-
-        const navbarHeight =
-            navbar
-                ? navbar.offsetHeight
-                : 70;
-
-        const position =
-            clubsSection.getBoundingClientRect().top +
-            window.pageYOffset -
-            navbarHeight -
-            18;
-
-        window.scrollTo({
-            top: position,
-            behavior: "smooth"
-        });
-
-    }, 180);
-}
-
-
-// Klik na DANAS / SUTRA / TREĆI DATUM
-
-document.addEventListener(
-    "click",
-    event => {
-
-        const dateButton =
-            event.target.closest(
-                ".main-date-button"
-            );
-
-        if (!dateButton) {
-            return;
-        }
-
-        scrollToClubs();
-
-    }
-);
-
-
-// Datum iz kalendara
-
-eventDate.addEventListener(
-    "change",
-    () => {
-
-        if (!eventDate.value) {
-            return;
-        }
-
-        scrollToClubs();
-
-    }
-);
-
-
-// ========================================
-// NIGHTBOOK - BOTTOM BAR SCROLL
-// ========================================
-
-const bottomBar =
-    document.querySelector(
-        ".mobile-bottom-bar"
-    );
-
-let lastScrollY =
-    window.scrollY;
-
-let ticking =
-    false;
-
-
-function updateBottomBar() {
-
-    if (!bottomBar) {
-        return;
-    }
-
-
-    const currentScrollY =
-        window.scrollY;
-
-
-    const scrollDifference =
-        currentScrollY -
-        lastScrollY;
-
-
-    /*
-    Na samom vrhu:
-    bar je potpuno vidljiv.
-    */
-
-    if (currentScrollY < 80) {
-
-        bottomBar.classList.remove(
-            "bottom-bar-hidden"
-        );
-
-        bottomBar.classList.remove(
-            "bottom-bar-soft"
-        );
-
-    }
-
-
-    /*
-    Korisnik skroluje DOLE.
-    Prvo lagano nestaje.
-    */
-
-    else if (scrollDifference > 3) {
-
-        bottomBar.classList.add(
-            "bottom-bar-soft"
-        );
-
-
-        /*
-        Kada ode malo dalje,
-        potpuno ga sklanjamo.
-        */
-
-        if (currentScrollY > 350) {
-
-            bottomBar.classList.add(
-                "bottom-bar-hidden"
-            );
-
-        }
-
-    }
-
-
-    /*
-    Korisnik skroluje GORE.
-    Bar se vraća.
-    */
-
-    else if (scrollDifference < -3) {
-
-        bottomBar.classList.remove(
-            "bottom-bar-hidden"
-        );
-
-        bottomBar.classList.remove(
-            "bottom-bar-soft"
-        );
-
-    }
-
-
-    lastScrollY =
-        Math.max(
-            currentScrollY,
-            0
-        );
-
-
-    ticking =
-        false;
-
-}
-
-
-window.addEventListener(
-    "scroll",
-    () => {
-
-        if (!ticking) {
-
-            window.requestAnimationFrame(
-                updateBottomBar
-            );
-
-            ticking = true;
-
-        }
-
-    },
-    {
-        passive: true
-    }
-);
-
-// ========================================
-// SPECIAL EVENT WHATSAPP REZERVACIJE
-// ========================================
+/* =========================================================
+   SPECIAL EVENTS
+   ========================================================= */
 
 const SPECIAL_EVENTS = {
 
@@ -1498,24 +1709,9 @@ const SPECIAL_EVENTS = {
             "Lasta",
 
         date:
-            "04.10.2026."
+            "04.10.2026"
 
     },
-
-
-    dejavu: {
-
-        name:
-            "Deja Vu",
-
-        club:
-            "Lasta",
-
-        date:
-            "24.09.2026."
-
-    },
-
 
     makeitrain: {
 
@@ -1526,81 +1722,159 @@ const SPECIAL_EVENTS = {
             "XO Premium Nightclub",
 
         date:
-            "10.10.2026."
+            "10.10.2026"
 
     }
 
 };
 
 
-// Tvoj WhatsApp broj
-const SPECIAL_EVENTS_WHATSAPP =
-    "381641418710";
-
+/* =========================================================
+   SPECIAL EVENT WHATSAPP
+   ========================================================= */
 
 document
     .querySelectorAll(
         "[data-special-event]"
     )
-    .forEach(button => {
+    .forEach(
+        (button) => {
 
-        button.addEventListener(
-            "click",
-            event => {
+            button.addEventListener(
+                "click",
+                (
+                    event
+                ) => {
 
-                event.preventDefault();
+                    const eventKey =
+                        button.dataset
+                            .specialEvent;
 
+                    const specialEvent =
+                        SPECIAL_EVENTS[
+                            eventKey
+                        ];
 
-                const eventKey =
-                    button.dataset
-                        .specialEvent;
+                    if (!specialEvent) {
+                        return;
+                    }
 
+                    event.preventDefault();
 
-                const selectedEvent =
-                    SPECIAL_EVENTS[
-                        eventKey
-                    ];
+                    const message =
+                        `Zdravo, želim rezervaciju za ${specialEvent.name} — ${specialEvent.club}, ${specialEvent.date}.`;
 
+                    const whatsappURL =
+                        `https://wa.me/381641418710?text=${
+                            encodeURIComponent(
+                                message
+                            )
+                        }`;
 
-                if (
-                    !selectedEvent
-                ) {
-                    return;
-                }
-
-
-                const message =
-`Zdravo! 👋
-
-Želim da pošaljem rezervaciju za:
-
-🎉 ${selectedEvent.name}
-📍 ${selectedEvent.club}
-📅 ${selectedEvent.date}
-
-Ime i prezime:
-Broj osoba:
-Željeni sto:
-
-Hvala!`;
-
-
-                const whatsappURL =
-                    "https://wa.me/" +
-                    SPECIAL_EVENTS_WHATSAPP +
-                    "?text=" +
-                    encodeURIComponent(
-                        message
+                    window.open(
+                        whatsappURL,
+                        "_blank",
+                        "noopener,noreferrer"
                     );
 
+                }
+            );
 
-                window.open(
-                    whatsappURL,
-                    "_blank",
-                    "noopener,noreferrer"
-                );
+        }
+    );
+
+
+/* =========================================================
+   BOTTOM BAR SCROLL BEHAVIOUR
+   ========================================================= */
+
+let lastScrollY =
+    window.scrollY;
+
+let scrollTimer =
+    null;
+
+if (bottomBar) {
+
+    window.addEventListener(
+        "scroll",
+        () => {
+
+            const currentScrollY =
+                window.scrollY;
+
+            const difference =
+                currentScrollY -
+                lastScrollY;
+
+            if (
+                currentScrollY <
+                120
+            ) {
+
+                bottomBar
+                    .classList
+                    .remove(
+                        "bottom-bar-hidden",
+                        "bottom-bar-soft"
+                    );
+
+            } else if (
+                difference > 8
+            ) {
+
+                bottomBar
+                    .classList
+                    .add(
+                        "bottom-bar-soft"
+                    );
+
+            } else if (
+                difference < -8
+            ) {
+
+                bottomBar
+                    .classList
+                    .remove(
+                        "bottom-bar-hidden",
+                        "bottom-bar-soft"
+                    );
 
             }
-        );
 
-    });
+            clearTimeout(
+                scrollTimer
+            );
+
+            scrollTimer =
+                setTimeout(
+                    () => {
+
+                        bottomBar
+                            .classList
+                            .remove(
+                                "bottom-bar-soft"
+                            );
+
+                    },
+                    650
+                );
+
+            lastScrollY =
+                currentScrollY;
+
+        },
+        {
+            passive:
+                true
+        }
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+renderMainDates();
