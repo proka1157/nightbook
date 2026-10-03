@@ -1,4 +1,8 @@
-// server/server.js — zameni ceo postojeći sadržaj ovog fajla.
+// server/server.js — zameni ceo sadržaj ovim kodom.
+// Program se preuzima direktno sa Beograd Noću.
+// Lokalno provereno učitavanje programa za svih sedam klubova.
+// Sačuvaj izmenu na GitHubu, pa na Renderu: Manual Deploy → Deploy latest commit.
+// Postojeći app.js koristi ovaj API.
 
 "use strict";
 
@@ -10,55 +14,42 @@ const { Pool } = require("pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// server/server.js koristi glavni public folder, van server foldera.
 const PUBLIC_DIR = path.resolve(__dirname, "..", "public");
 
 app.disable("x-powered-by");
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false, limit: "100kb" }));
 
-// KLUBOVI
-
 const CLUBS = {
     lasta: {
         name: "LASTA",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-lasta/"
     },
-
     freestyler: {
         name: "FREESTYLER",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-freestyler/"
     },
-
     remiks: {
         name: "REMIKS",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/remiks/"
     },
-
     tranzit: {
         name: "TRANZIT",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/tranzit-bar/"
     },
-
     bank: {
         name: "THE BANK",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-bank/"
     },
-
     hype: {
         name: "HYPE",
         url: "https://www.beogradnocu.com/klubovi-u-beogradu/klub-hype/"
     },
-
     gradska: {
         name: "GRADSKA KAFANA",
         url: "https://www.beogradnocu.com/kafane-u-beogradu/gradska-kafana/"
     }
 };
-
-// USLOVI STOLOVA
-// app.js preuzima ove podatke preko /api/clubs.
 
 const TABLES = {
     lasta: [
@@ -67,40 +58,34 @@ const TABLES = {
         { type: "Separe", condition: "2 premium flaše" },
         { type: "Veliki separe", condition: "3 premium flaše" }
     ],
-
     freestyler: [
         { type: "Barski sto", condition: "1 obična flaša" },
         { type: "Mali separe", condition: "1 premium flaša" },
         { type: "Veliki separe", condition: "2 premium flaše" },
         { type: "Centralni separe", condition: "3 premium flaše" }
     ],
-
     remiks: [
         { type: "Barski sto", condition: "Bez uslova" },
         { type: "Visoko sedenje", condition: "1 obična flaša" },
         { type: "Separe", condition: "1 premium flaša" }
     ],
-
     tranzit: [
         { type: "Barski sto", condition: "50 €" },
         { type: "Visoko sedenje", condition: "100 € / 1 obična flaša" },
         { type: "Separe", condition: "1 premium flaša" }
     ],
-
     bank: [
         { type: "Barski sto", condition: "1 obična flaša" },
         { type: "Visoko sedenje", condition: "1 premium flaša" },
         { type: "Separe", condition: "2 premium flaše" },
         { type: "Centralni separe", condition: "3 premium flaše" }
     ],
-
     hype: [
         { type: "Barski sto", condition: "1 obična flaša" },
         { type: "Visoko sedenje", condition: "1 premium flaša" },
         { type: "Separe", condition: "2 premium flaše" },
         { type: "Centralni separe", condition: "3 premium flaše" }
     ],
-
     gradska: [
         { type: "Barski sto — dalje od bine", condition: "8.000 RSD" },
         { type: "Barski sto — bliže bini", condition: "1 obična flaša" },
@@ -111,8 +96,6 @@ const TABLES = {
     ]
 };
 
-// POMOĆNE FUNKCIJE
-
 function clean(value) {
     return typeof value === "string" ? value.trim() : "";
 }
@@ -122,10 +105,8 @@ function validDate(value) {
 
     const date = new Date(`${value}T12:00:00Z`);
 
-    return (
-        Number.isFinite(date.getTime()) &&
-        date.toISOString().slice(0, 10) === value
-    );
+    return Number.isFinite(date.getTime()) &&
+        date.toISOString().slice(0, 10) === value;
 }
 
 function todayInBelgrade() {
@@ -140,8 +121,6 @@ function todayInBelgrade() {
 
     return `${get("year")}-${get("month")}-${get("day")}`;
 }
-
-// ADMIN PRIJAVA
 
 function secureEqual(actual, expected) {
     const a = crypto.createHash("sha256").update(actual).digest();
@@ -190,17 +169,9 @@ function adminAuth(req, res, next) {
     });
 }
 
-// ZAŠTIĆENA ADMIN STRANICA
-
-app.get(
-    ["/admin", "/admin.html"],
-    adminAuth,
-    (req, res) => {
-        res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
-    }
-);
-
-// Zaštita admin.html i kroz alternativno zapisane putanje.
+app.get(["/admin", "/admin.html"], adminAuth, (req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, "admin.html"));
+});
 
 app.use((req, res, next) => {
     let pathname;
@@ -220,28 +191,19 @@ app.use((req, res, next) => {
     next();
 });
 
-// STATIČKI FAJLOVI
-
-app.use(
-    express.static(PUBLIC_DIR, {
-        index: false,
-
-        setHeaders(res) {
-            res.setHeader("Cache-Control", "no-cache");
-        }
-    })
-);
-
-// POSTGRESQL
+app.use(express.static(PUBLIC_DIR, {
+    index: false,
+    setHeaders(res) {
+        res.setHeader("Cache-Control", "no-cache");
+    }
+}));
 
 const pool = process.env.DATABASE_URL
     ? new Pool({
         connectionString: process.env.DATABASE_URL,
-
         ssl: process.env.NODE_ENV === "production"
             ? { rejectUnauthorized: false }
             : false,
-
         connectionTimeoutMillis: 10000,
         max: 10
     })
@@ -297,8 +259,6 @@ function requireDatabase(req, res, next) {
     next();
 }
 
-// PODACI O KLUBOVIMA I STOLOVIMA
-
 app.get("/api/clubs", (req, res) => {
     res.setHeader("Cache-Control", "no-cache");
 
@@ -315,8 +275,6 @@ app.get("/api/clubs", (req, res) => {
     );
 });
 
-// ČITANJE PROGRAMA SA BEOGRAD NOĆU
-
 function decodeEntities(value) {
     const entities = {
         amp: "&",
@@ -332,18 +290,15 @@ function decodeEntities(value) {
             /&(amp|quot|apos|nbsp|lt|gt);/gi,
             (match, name) => entities[name.toLowerCase()]
         )
-        .replace(
-            /&#(x[\da-f]+|\d+);/gi,
-            (match, code) => {
-                const n = code[0].toLowerCase() === "x"
-                    ? parseInt(code.slice(1), 16)
-                    : Number(code);
+        .replace(/&#(x[\da-f]+|\d+);/gi, (match, code) => {
+            const number = code[0].toLowerCase() === "x"
+                ? parseInt(code.slice(1), 16)
+                : Number(code);
 
-                return n >= 0 && n <= 0x10ffff
-                    ? String.fromCodePoint(n)
-                    : match;
-            }
-        );
+            return number >= 0 && number <= 0x10ffff
+                ? String.fromCodePoint(number)
+                : match;
+        });
 }
 
 function htmlText(value) {
@@ -354,71 +309,100 @@ function htmlText(value) {
         .trim();
 }
 
-function extractEvents(html, sourceURL) {
-    const accordion = html.match(
-        /<div\b[^>]*id=["']accordion["'][^>]*>([\s\S]*?)<\/div>\s*<\/div>/i
+function attributeValue(tag, name) {
+    const expression = new RegExp(
+        "(?:^|\\s)" + name +
+        "\\s*=\\s*(?:\"([^\"]*)\"|'([^']*)'|([^\\s>]+))",
+        "i"
     );
 
-    if (!accordion) return [];
+    const match = tag.match(expression);
 
-    const content = accordion[1];
+    return match
+        ? decodeEntities(match[1] ?? match[2] ?? match[3])
+        : "";
+}
+
+function sourceDate(value) {
+    const text = clean(value);
+
+    if (validDate(text)) return text;
+
+    const parts = text.match(
+        /^(\d{1,2})[-./](\d{1,2})[-./](\d{4})$/
+    );
+
+    if (!parts) return "";
+
+    const date =
+        `${parts[3]}-${parts[2].padStart(2, "0")}-${parts[1].padStart(2, "0")}`;
+
+    return validDate(date) ? date : "";
+}
+
+function extractEvents(html, sourceURL) {
+    const content = String(html).replace(
+        /<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,
+        ""
+    );
 
     const headings = [
-        ...content.matchAll(/<h4\b[^>]*>([\s\S]*?)<\/h4>/gi)
+        ...content.matchAll(/<h4\b[^>]*>([\s\S]*?)<\/h4\s*>/gi)
     ];
 
     const events = [];
 
-    headings.forEach((heading, index) => {
+    for (let index = 0; index < headings.length; index++) {
+        const heading = headings[index];
+
         const segment = content.slice(
-            heading.index,
+            heading.index + heading[0].length,
             headings[index + 1]?.index ?? content.length
         );
 
-        const title = heading[1].match(
-            /<strong\b[^>]*>([\s\S]*?)<\/strong>/i
+        const strong = heading[1].match(
+            /<strong\b[^>]*>([\s\S]*?)<\/strong\s*>/i
         );
 
-        const program = title ? htmlText(title[1]) : "";
+        const program = strong
+            ? htmlText(strong[1])
+            : htmlText(
+                heading[1]
+                    .split(/<br\b[^>]*>/i)
+                    .slice(1)
+                    .join(" ")
+            );
 
-        if (!program) return;
+        if (!program) continue;
 
-        for (
-            const link of segment.matchAll(
-                /href\s*=\s*["']([^"']+)["']/gi
-            )
-        ) {
+        for (const anchor of segment.matchAll(/<a\b[^>]*>/gi)) {
+            const href = attributeValue(anchor[0], "href");
+
+            if (!href) continue;
+
             try {
-                const value = new URL(
-                    decodeEntities(link[1]),
-                    sourceURL
-                ).searchParams.get("date") || "";
-
-                const parts = value.match(
-                    /^(\d{1,2})[-./](\d{1,2})[-./](\d{4})$/
+                const link = new URL(href, sourceURL);
+                const date = sourceDate(
+                    link.searchParams.get("date") || ""
                 );
 
-                if (!parts) continue;
+                if (!date) continue;
 
-                const date =
-                    `${parts[3]}-` +
-                    `${parts[2].padStart(2, "0")}-` +
-                    `${parts[1].padStart(2, "0")}`;
-
-                if (validDate(date)) {
-                    events.push({ date, program });
-                    break;
-                }
+                events.push({ date, program });
+                break;
             } catch {
-                // Preskoči neispravan link iz izvora.
+                // Preskačemo neispravne linkove.
             }
         }
-    });
+    }
 
-    return events;
+    return events.filter((event, index, all) =>
+        all.findIndex(item =>
+            item.date === event.date &&
+            item.program === event.program
+        ) === index
+    );
 }
-
-// KEŠ PROGRAMA
 
 const programCache = new Map();
 const pendingPrograms = new Map();
@@ -437,28 +421,52 @@ async function getClubEvents(key) {
     const request = (async () => {
         const response = await fetch(CLUBS[key].url, {
             headers: {
-                "User-Agent": "Mozilla/5.0 NightBook/1.0",
-                Accept: "text/html"
+                "User-Agent":
+                    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml",
+                "Accept-Language": "sr-RS,sr;q=0.9,en;q=0.8",
+                "Cache-Control": "no-cache"
             },
-
-            signal: AbortSignal.timeout(12000)
+            signal: AbortSignal.timeout(20000)
         });
 
         if (!response.ok) {
             throw new Error(
-                `Izvor je vratio HTTP ${response.status}`
+                `Beograd Noću: HTTP ${response.status}`
             );
         }
 
+        const html = await response.text();
+
         const events = extractEvents(
-            await response.text(),
-            CLUBS[key].url
+            html,
+            response.url || CLUBS[key].url
         );
+
+        const hasProgramSection =
+            /\bid\s*=\s*(?:"accordion"|'accordion'|accordion(?=[\s>]))/i
+                .test(html);
+
+        const hasDatedLinks =
+            /[?&](?:amp;)?date=\d/i.test(html);
+
+        if (
+            !events.length &&
+            (!hasProgramSection || hasDatedLinks)
+        ) {
+            throw new Error(
+                `Beograd Noću: program nije pročitan (${html.length} znakova)`
+            );
+        }
 
         programCache.set(key, {
             events,
-            expires: Date.now() + 180000
+            expires: Date.now() + (events.length ? 60000 : 15000)
         });
+
+        console.log(
+            `Program ${key}: učitano ${events.length} događaja sa Beograd Noću.`
+        );
 
         return events;
     })();
@@ -471,8 +479,6 @@ async function getClubEvents(key) {
         pendingPrograms.delete(key);
     }
 }
-
-// PROGRAM API
 
 app.get("/api/program", async (req, res) => {
     const key = clean(req.query.club).toLowerCase();
@@ -501,7 +507,7 @@ app.get("/api/program", async (req, res) => {
             )
         ];
 
-        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Cache-Control", "no-store");
 
         res.json({
             found: programs.length > 0,
@@ -517,8 +523,6 @@ app.get("/api/program", async (req, res) => {
         });
     }
 });
-
-// NOVA REZERVACIJA
 
 app.post("/api/reservations", async (req, res) => {
     const body = req.body || {};
@@ -565,8 +569,8 @@ app.post("/api/reservations", async (req, res) => {
         });
     }
 
-    const table = TABLES[club].find(
-        item => item.type === tableType
+    const table = TABLES[club].find(item =>
+        item.type === tableType
     );
 
     if (!table) {
@@ -595,9 +599,7 @@ app.post("/api/reservations", async (req, res) => {
                 table_condition,
                 status
             )
-            VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, 'pending'
-            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending')
             RETURNING *
         `, [
             club,
@@ -623,8 +625,6 @@ app.post("/api/reservations", async (req, res) => {
     }
 });
 
-// ADMIN — LISTA REZERVACIJA
-
 app.get(
     "/api/reservations",
     adminAuth,
@@ -648,8 +648,6 @@ app.get(
     }
 );
 
-// ADMIN — PROMENA STATUSA
-
 app.patch(
     "/api/reservations/:id",
     adminAuth,
@@ -671,10 +669,12 @@ app.patch(
         }
 
         try {
-            const result = await pool.query(
-                "UPDATE reservations SET status = $1 WHERE id = $2 RETURNING *",
-                [status, id]
-            );
+            const result = await pool.query(`
+                UPDATE reservations
+                SET status = $1
+                WHERE id = $2
+                RETURNING *
+            `, [status, id]);
 
             if (!result.rowCount) {
                 return res.status(404).json({
@@ -696,8 +696,6 @@ app.patch(
     }
 );
 
-// ADMIN — BRISANJE REZERVACIJE
-
 app.delete(
     "/api/reservations/:id",
     adminAuth,
@@ -712,10 +710,11 @@ app.delete(
         }
 
         try {
-            const result = await pool.query(
-                "DELETE FROM reservations WHERE id = $1 RETURNING id",
-                [id]
-            );
+            const result = await pool.query(`
+                DELETE FROM reservations
+                WHERE id = $1
+                RETURNING id
+            `, [id]);
 
             if (!result.rowCount) {
                 return res.status(404).json({
@@ -734,44 +733,34 @@ app.delete(
     }
 );
 
-// NEPOSTOJEĆE API RUTE
-
 app.use("/api", (req, res) => {
     res.status(404).json({
         error: "API ruta nije pronađena."
     });
 });
 
-// FRONTEND — EXPRESS 5 KOMPATIBILNA RUTA
-
 app.get("/{*splat}", (req, res) => {
     res.setHeader("Cache-Control", "no-cache");
     res.sendFile(path.join(PUBLIC_DIR, "index.html"));
 });
-
-// OBRADA GREŠAKA
 
 app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);
 
     console.error("HTTP greška:", error.message);
 
-    const status =
-        error.status === 400 || error.status === 413
-            ? error.status
-            : 500;
+    const status = error.status === 400 || error.status === 413
+        ? error.status
+        : 500;
 
-    const message =
-        status === 400
+    res.status(status).json({
+        error: status === 400
             ? "Neispravan zahtev."
             : status === 413
                 ? "Zahtev je prevelik."
-                : "Došlo je do greške na serveru.";
-
-    res.status(status).json({ error: message });
+                : "Došlo je do greške na serveru."
+    });
 });
-
-// POKRETANJE
 
 async function startServer() {
     if (!fs.existsSync(path.join(PUBLIC_DIR, "index.html"))) {
