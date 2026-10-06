@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" role="img" aria-label="The Bank">
+  <rect width="600" height="220" fill="none"/>
+  <path d="M300 48l62 34h-124Z" fill="#c8a967"/>
+  <path d="M252 92v50M284 92v50M316 92v50M348 92v50M230 151h140" stroke="#c8a967" stroke-width="7"/>
+  <text x="300" y="191" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="900" letter-spacing="9" fill="#f4f1e9">THE BANK</text>
+</svg>

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" role="img" aria-label="Tranzit">
+  <rect width="600" height="220" fill="none"/>
+  <path d="M105 70h110l-55 80Z" fill="none" stroke="#c8a967" stroke-width="7"/>
+  <text x="360" y="128" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="72" font-weight="800" letter-spacing="8" fill="#f4f1e9">TRANZIT</text>
+</svg>
