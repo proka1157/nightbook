@@ -39,6 +39,16 @@
         gradska: "GRADSKA KAFANA"
     };
 
+    const clubLogos = {
+        lasta: "images/clubs/lasta.svg",
+        freestyler: "images/clubs/freestyler.svg",
+        remiks: "images/clubs/remiks.svg",
+        tranzit: "images/clubs/tranzit.svg",
+        bank: "images/clubs/bank.svg",
+        hype: "images/clubs/hype.svg",
+        gradska: "images/clubs/gradska.svg"
+    };
+
     const dayShort = ["NED", "PON", "UTO", "SRE", "ČET", "PET", "SUB"];
 
     const state = {
@@ -177,15 +187,17 @@
         setMessage();
     }
 
-    function showCover(image, club) {
+    function showCover(club) {
         if (!weekendCover || !weekendCoverFallback) return;
+
+        const logo = clubLogos[club] || "";
 
         weekendCover.classList.add("hidden");
         weekendCover.removeAttribute("src");
         weekendCover.alt = "";
         weekendCoverFallback.classList.remove("hidden");
 
-        if (!image) return;
+        if (!logo) return;
 
         weekendCover.onload = () => {
             weekendCoverFallback.classList.add("hidden");
@@ -198,8 +210,8 @@
             weekendCoverFallback.classList.remove("hidden");
         };
 
-        weekendCover.alt = `${names[club] || club} — fotografija kluba`;
-        weekendCover.src = image;
+        weekendCover.alt = `${names[club] || club} logo`;
+        weekendCover.src = logo;
     }
 
     function renderLoading(club) {
@@ -208,10 +220,10 @@
         if (weekendClub) weekendClub.textContent = names[club] || club.toUpperCase();
         if (weekendDates) weekendDates.textContent = "TRAŽIMO NAJBLIŽI VIKEND";
         if (weekendSummaryText) {
-            weekendSummaryText.textContent = "Učitavamo aktuelni program direktno sa Beograd Noću.";
+            weekendSummaryText.textContent = "Učitavamo aktuelne događaje za najbliži vikend.";
         }
 
-        showCover("", club);
+        showCover(club);
 
         const box = create("div", "weekend-loading");
         box.append(
@@ -229,7 +241,7 @@
             create(
                 "p",
                 "",
-                "Za najbliži vikend trenutno nema objavljenog programa. Čim Beograd Noću objavi događaj, pojaviće se ovde."
+                "Za najbliži vikend trenutno nema objavljenog programa. Proveri ponovo malo kasnije."
             )
         );
         weekendEvents?.replaceChildren(box);
@@ -238,25 +250,9 @@
             weekendDates.textContent = data?.windowLabel || "SLEDEĆI VIKEND";
         }
         if (weekendSummaryText) {
-            weekendSummaryText.textContent = "Program za ovaj vikend još nije dostupan na izvoru.";
+            weekendSummaryText.textContent = "Program za ovaj vikend još nije objavljen.";
         }
-        showCover(data?.clubImage || "", club);
-    }
-
-    function createEventArt(event, fallbackImage) {
-        const imageUrl = event?.image || fallbackImage;
-        if (!imageUrl) return null;
-
-        const wrap = create("div", "event-art");
-        const img = document.createElement("img");
-        img.alt = "";
-        img.loading = "lazy";
-        img.decoding = "async";
-        img.referrerPolicy = "no-referrer";
-        img.src = imageUrl;
-        img.addEventListener("error", () => wrap.remove(), { once: true });
-        wrap.append(img);
-        return wrap;
+        showCover(club);
     }
 
     function renderEvents(data, club) {
@@ -267,11 +263,10 @@
         if (weekendSummaryText) {
             weekendSummaryText.textContent = events.length
                 ? `${events.length} ${events.length === 1 ? "događaj" : "događaja"} za najbliži vikend. Izaberi žurku i nastavi na rezervaciju.`
-                : "Program za ovaj vikend još nije dostupan na izvoru.";
+                : "Program za ovaj vikend još nije objavljen.";
         }
 
-        const cover = data?.clubImage || events.find(event => event.image)?.image || "";
-        showCover(cover, club);
+        showCover(club);
 
         if (!events.length) {
             renderEmpty(data, club);
@@ -282,8 +277,6 @@
 
         events.forEach((event, index) => {
             const card = create("article", "event-card");
-            const art = createEventArt(event, cover);
-            if (art) card.append(art);
 
             const dayRow = create("div", "event-day-row");
             const day = create("div", "event-day");
