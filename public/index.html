@@ -6,16 +6,14 @@
     <meta name="description" content="NightBook — izaberi klub, pogledaj sledeći vikend i rezerviši sto u Beogradu.">
     <meta name="theme-color" content="#070707">
     <title>NightBook | Beograd Nightlife</title>
-    <link rel="stylesheet" href="css/style.css?v=30">
+    <link rel="stylesheet" href="css/style.css?v=31">
 </head>
 <body>
     <a href="#clubs" class="skip-link">Pređi na klubove</a>
 
     <header class="navbar">
         <div class="navbar-inner">
-            <a href="#top" class="logo" aria-label="NightBook početna">
-                NIGHT<span>BOOK</span>
-            </a>
+            <a href="#top" class="logo" aria-label="NightBook početna">NIGHT<span>BOOK</span></a>
 
             <nav class="desktop-nav" aria-label="Glavna navigacija">
                 <a href="#clubs">KLUBOVI</a>
@@ -29,119 +27,154 @@
 
     <main id="top">
         <section class="hero" aria-labelledby="heroTitle">
-            <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
-            <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+            <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+            <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
 
-            <div class="hero-content">
-                <p class="eyebrow"><span class="live-dot"></span> BEOGRAD · WEEKEND LINEUP</p>
+            <div class="hero-content hero-layout">
+                <div class="hero-copy">
+                    <p class="eyebrow">NIGHTBOOK · BELGRADE</p>
 
-                <h1 id="heroTitle">
-                    TVOJ VIKEND.<br>
-                    <span>TVOJ STO.</span>
-                </h1>
+                    <h1 id="heroTitle">
+                        IZABERI KLUB.<br>
+                        <span>REZERVIŠI NOĆ.</span>
+                    </h1>
 
-                <p class="hero-description">
-                    Izaberi klub i odmah pogledaj šta je sledeće u petak, subotu
-                    i nedelju. Bez traženja datuma, bez komplikovanja.
-                </p>
+                    <p class="hero-description">
+                        Otvori klub i odmah vidi šta je sledeće ovog vikenda.
+                        Petak, subota i nedelja — bez kalendara i traženja datuma.
+                    </p>
 
-                <div class="hero-actions">
-                    <a href="#clubs" class="hero-button hero-button-primary">
-                        POGLEDAJ SLEDEĆI VIKEND
-                        <span aria-hidden="true">↘</span>
-                    </a>
-                </div>
-
-                <div class="hero-meta" aria-label="NightBook informacije">
-                    <div>
-                        <strong>LIVE</strong>
-                        <span>program sa Beograd Noću</span>
+                    <div class="hero-actions">
+                        <a href="#clubs" class="hero-button hero-button-primary">
+                            POGLEDAJ KLUBOVE
+                            <span aria-hidden="true">↘</span>
+                        </a>
                     </div>
-                    <div>
-                        <strong>3 KLIKA</strong>
-                        <span>do zahteva za sto</span>
-                    </div>
-                    <div>
-                        <strong>7 MESTA</strong>
-                        <span>u jednom izboru</span>
+
+                    <div class="hero-days" aria-label="Dani vikenda">
+                        <span>PETAK</span>
+                        <i></i>
+                        <span>SUBOTA</span>
+                        <i></i>
+                        <span>NEDELJA</span>
                     </div>
                 </div>
+
+                <aside class="hero-preview" aria-label="Kako izgleda izbor vikenda">
+                    <div class="preview-top">
+                        <span>SLEDEĆI VIKEND</span>
+                        <small>AKTUELNI PROGRAM</small>
+                    </div>
+
+                    <div class="preview-card preview-card-primary">
+                        <div>
+                            <small>PETAK</small>
+                            <strong>IZABERI KLUB</strong>
+                        </div>
+                        <span>→</span>
+                    </div>
+
+                    <div class="preview-card">
+                        <div>
+                            <small>SUBOTA</small>
+                            <strong>VIDI ŽURKU</strong>
+                        </div>
+                        <span>→</span>
+                    </div>
+
+                    <div class="preview-card">
+                        <div>
+                            <small>NEDELJA</small>
+                            <strong>AKO IMA PROGRAMA</strong>
+                        </div>
+                        <span>→</span>
+                    </div>
+
+                    <p class="preview-foot">Jedan izbor. Sve što ti treba za rezervaciju.</p>
+                </aside>
             </div>
         </section>
 
         <section class="clubs-section" id="clubs" aria-labelledby="clubsTitle">
             <div class="section-head">
                 <div>
-                    <p class="section-kicker">01 · IZABERI MESTO</p>
+                    <p class="section-kicker">IZABERI KLUB</p>
                     <h2 id="clubsTitle">GDE IZLAZIŠ <span>OVOG VIKENDA?</span></h2>
                 </div>
                 <p class="section-copy">
-                    Klikni na klub. NightBook će automatski pronaći najbliži vikend
-                    i prikazati samo aktuelne događaje za petak, subotu i nedelju.
+                    Klikni na klub i odmah dobijaš najbliži vikend.
+                    Prikazujemo petak i subotu, a nedelju samo kada postoji program.
                 </p>
             </div>
 
             <div class="clubs-grid" role="group" aria-label="Izaberi klub">
-                <button type="button" class="club-card club-card-featured" data-club="lasta" aria-pressed="false">
-                    <span class="club-number">01</span>
+                <button type="button" class="club-card" data-club="lasta" aria-pressed="false">
+                    <span class="club-visual">
+                        <img src="images/clubs/lasta.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">BETON HALA</span>
                         <strong>LASTA</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
 
                 <button type="button" class="club-card" data-club="freestyler" aria-pressed="false">
-                    <span class="club-number">02</span>
+                    <span class="club-visual">
+                        <img src="images/clubs/freestyler.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">WINTER STAGE</span>
                         <strong>FREESTYLER</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
 
                 <button type="button" class="club-card" data-club="remiks" aria-pressed="false">
-                    <span class="club-number">03</span>
+                    <span class="club-visual">
+                        <img src="images/clubs/remiks.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">SAVAMALA</span>
                         <strong>REMIKS</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
 
                 <button type="button" class="club-card" data-club="tranzit" aria-pressed="false">
-                    <span class="club-number">04</span>
+                    <span class="club-visual">
+                        <img src="images/clubs/tranzit.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">SAVAMALA</span>
                         <strong>TRANZIT</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
 
                 <button type="button" class="club-card" data-club="bank" aria-pressed="false">
-                    <span class="club-number">05</span>
+                    <span class="club-visual">
+                        <img src="images/clubs/bank.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">RNB</span>
                         <strong>THE BANK</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
 
                 <button type="button" class="club-card" data-club="hype" aria-pressed="false">
-                    <span class="club-number">06</span>
+                    <span class="club-visual">
+                        <img src="images/clubs/hype.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">KARAĐORĐEVA</span>
                         <strong>HYPE</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
 
-                <button type="button" class="club-card club-card-wide" data-club="gradska" aria-pressed="false">
-                    <span class="club-number">07</span>
+                <button type="button" class="club-card" data-club="gradska" aria-pressed="false">
+                    <span class="club-visual">
+                        <img src="images/clubs/gradska.svg" alt="" loading="lazy" decoding="async">
+                    </span>
                     <span class="club-card-body">
-                        <span class="club-tag">NOVI BEOGRAD</span>
                         <strong>GRADSKA KAFANA</strong>
-                        <span class="club-action">SLEDEĆI VIKEND <b>↗</b></span>
+                        <span class="club-action">POGLEDAJ VIKEND <b>↗</b></span>
                     </span>
                 </button>
             </div>
@@ -151,7 +184,7 @@
             <div class="weekend-shell">
                 <div class="weekend-topbar">
                     <div>
-                        <p class="section-kicker">02 · SLEDEĆI VIKEND</p>
+                        <p class="section-kicker">SLEDEĆI VIKEND</p>
                         <h2 id="weekendClub">KLUB</h2>
                     </div>
                     <button type="button" id="closeWeekend" class="icon-button" aria-label="Zatvori program">×</button>
@@ -159,23 +192,22 @@
 
                 <div class="weekend-hero">
                     <div class="weekend-cover-wrap">
-                        <img id="weekendCover" class="weekend-cover hidden" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
-                        <div id="weekendCoverFallback" class="weekend-cover-fallback" aria-hidden="true">
+                        <img id="weekendCover" class="weekend-cover" alt="" loading="lazy" decoding="async">
+                        <div id="weekendCoverFallback" class="weekend-cover-fallback hidden" aria-hidden="true">
                             <span>NIGHT</span>
                             <strong>BOOK</strong>
                         </div>
-                        <div class="weekend-cover-overlay"></div>
                     </div>
 
                     <div class="weekend-summary">
                         <p id="weekendDates" class="weekend-dates"></p>
                         <h3>VIKEND PROGRAM</h3>
                         <p id="weekendSummaryText">
-                            Aktuelni program učitava se direktno sa Beograd Noću.
+                            Izaberi događaj i nastavi direktno na rezervaciju.
                         </p>
-                        <div class="source-badge">
-                            <span class="live-dot"></span>
-                            <span>LIVE IZVOR · BEOGRAD NOĆU</span>
+                        <div class="program-badge">
+                            <span></span>
+                            AKTUELAN PROGRAM
                         </div>
                     </div>
                 </div>
@@ -187,8 +219,8 @@
         <section class="how-section" id="howItWorks" aria-labelledby="howTitle">
             <div class="section-head compact">
                 <div>
-                    <p class="section-kicker">03 · JEDNOSTAVNO</p>
-                    <h2 id="howTitle">OD KLUBA DO STOLA <span>ZA MINUT.</span></h2>
+                    <p class="section-kicker">KAKO RADI</p>
+                    <h2 id="howTitle">OD KLUBA DO STOLA <span>BEZ KOMPLIKOVANJA.</span></h2>
                 </div>
             </div>
 
@@ -196,17 +228,17 @@
                 <article class="step-card">
                     <span>01</span>
                     <h3>IZABERI KLUB</h3>
-                    <p>Nema biranja datuma. Klikneš mesto koje želiš.</p>
+                    <p>Ne biraš datum. Samo mesto na kojem želiš da izađeš.</p>
                 </article>
                 <article class="step-card">
                     <span>02</span>
                     <h3>IZABERI ŽURKU</h3>
-                    <p>Vidiš samo sledeći petak, subotu i nedelju ako postoji program.</p>
+                    <p>Dobijaš najbliži petak, subotu i nedelju kada postoji događaj.</p>
                 </article>
                 <article class="step-card">
                     <span>03</span>
-                    <h3>POŠALJI REZERVACIJU</h3>
-                    <p>Uneseš podatke, izabereš sto i NightBook preuzima dalje.</p>
+                    <h3>REZERVIŠI STO</h3>
+                    <p>Uneseš podatke, odabereš sto i pošalješ zahtev za rezervaciju.</p>
                 </article>
             </div>
         </section>
@@ -214,7 +246,7 @@
         <section id="reservationSection" class="reservation-section hidden" aria-labelledby="reservationTitle">
             <div class="reservation-layout">
                 <div class="reservation-intro">
-                    <p class="section-kicker">04 · REZERVACIJA</p>
+                    <p class="section-kicker">REZERVACIJA</p>
                     <h2 id="reservationTitle">TVOJ STO <span>ČEKA.</span></h2>
                     <p class="reservation-description">
                         Rezervišeš za tačno izabranu žurku. Zahtev se smatra potvrđenim
@@ -280,8 +312,8 @@
 
         <section class="statement-section" aria-label="NightBook poruka">
             <p>
-                NE TRAŽIŠ DATUM.<br>
-                <span>TRAŽIŠ DOBRU NOĆ.</span>
+                DOBRA NOĆ POČINJE<br>
+                <span>DOBRIM IZBOROM.</span>
             </p>
         </section>
 
@@ -289,9 +321,7 @@
             <div class="contact-header">
                 <p class="section-kicker">KONTAKT</p>
                 <h2 id="contactTitle">TREBA TI <span>POMOĆ?</span></h2>
-                <p>
-                    Za dodatne informacije ili dogovor javi se NightBook timu direktno.
-                </p>
+                <p>Za dodatne informacije ili dogovor javi se NightBook timu direktno.</p>
             </div>
 
             <div class="contact-links">
@@ -317,7 +347,7 @@
     <footer class="footer">
         <div class="footer-inner">
             <a href="#top" class="footer-logo">NIGHT<span>BOOK</span></a>
-            <p>BEOGRAD NOĆU POČINJE IZBOROM.</p>
+            <p>TVOJA NOĆ POČINJE IZBOROM.</p>
             <span>© <span id="year"></span> NIGHTBOOK</span>
         </div>
     </footer>
@@ -327,6 +357,6 @@
         <a href="#contact">KONTAKT</a>
     </nav>
 
-    <script src="js/app.js?v=30"></script>
+    <script src="js/app.js?v=31"></script>
 </body>
 </html>
