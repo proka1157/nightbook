@@ -2135,3 +2135,114 @@ img {
         min-height: 220px;
     }
 }
+
+/* =========================================================
+   NIGHTBOOK V33 — MOBILE CLUB PROGRAM FIX
+   ========================================================= */
+
+@media (max-width: 620px) {
+
+    .weekend-result {
+        padding-top: 0;
+        padding-bottom: 90px;
+    }
+
+    .weekend-shell {
+        width: 100%;
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        box-shadow: none;
+    }
+
+    .weekend-topbar {
+        padding: 24px 20px 22px;
+        align-items: center;
+    }
+
+    .weekend-topbar .section-kicker {
+        font-size: 9px;
+        margin-bottom: 8px;
+    }
+
+    .weekend-topbar h2 {
+        margin-top: 0;
+        font-size: 42px;
+        line-height: .95;
+        letter-spacing: -.055em;
+    }
+
+    .icon-button {
+        width: 42px;
+        height: 42px;
+        font-size: 26px;
+    }
+
+    .weekend-hero {
+        display: block;
+        min-height: 0;
+    }
+
+    .weekend-cover-wrap {
+        display: none !important;
+    }
+
+    .weekend-summary {
+        padding: 30px 20px 32px;
+        min-height: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .weekend-dates {
+        font-size: 10px;
+        letter-spacing: .14em;
+    }
+
+    .weekend-summary h3 {
+        margin-top: 14px;
+        font-size: 38px;
+        line-height: .94;
+        letter-spacing: -.055em;
+    }
+
+    .weekend-summary > p:not(.weekend-dates) {
+        margin-top: 18px;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .program-badge {
+        margin-top: 22px;
+        font-size: 8px;
+        padding: 8px 11px;
+    }
+
+    .weekend-events {
+        grid-template-columns: 1fr;
+    }
+
+    .event-card {
+        min-height: 0;
+        padding: 24px 20px;
+    }
+
+    .event-card + .event-card {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+
+    .event-card h4 {
+        margin-top: 28px;
+        font-size: 25px;
+        line-height: 1.08;
+    }
+
+    .event-card-footer {
+        padding-top: 28px;
+    }
+
+    .reserve-event-button {
+        min-height: 52px;
+        border-radius: 12px;
+    }
+}
