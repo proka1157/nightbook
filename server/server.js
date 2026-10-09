@@ -248,11 +248,16 @@ if (pool) {
     });
 }
 
+
 async function initializeDatabase() {
     if (!pool) {
-        console.warn("DATABASE_URL nije podešen. Rezervacije trenutno nisu dostupne.");
+        console.warn(
+            "DATABASE_URL nije podešen. Rezervacije trenutno nisu dostupne."
+        );
         return;
     }
+
+    databaseReady = false;
 
     try {
         await pool.query(`
@@ -272,17 +277,75 @@ async function initializeDatabase() {
             )
         `);
 
+        // Automatski dodaje kolone koje nedostaju
+        // u već postojećoj bazi podataka.
+
         await pool.query(`
             ALTER TABLE reservations
-            ADD COLUMN IF NOT EXISTS event_program VARCHAR(500)
+                ADD COLUMN IF NOT EXISTS event_date DATE,
+                ADD COLUMN IF NOT EXISTS event_program VARCHAR(500),
+                ADD COLUMN IF NOT EXISTS club VARCHAR(100),
+                ADD COLUMN IF NOT EXISTS name VARCHAR(150),
+                ADD COLUMN IF NOT EXISTS phone VARCHAR(100),
+                ADD COLUMN IF NOT EXISTS instagram VARCHAR(150),
+                ADD COLUMN IF NOT EXISTS guests INTEGER,
+                ADD COLUMN IF NOT EXISTS table_type VARCHAR(200),
+                ADD COLUMN IF NOT EXISTS table_condition VARCHAR(250),
+                ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'pending',
+                ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW()
         `);
 
+        // Proverava da li postoje potrebne kolone.
+
+        const requiredColumns = [
+            "id",
+            "club",
+            "event_date",
+            "event_program",
+            "name",
+            "phone",
+            "instagram",
+            "guests",
+            "table_type",
+            "table_condition",
+            "status",
+            "created_at"
+        ];
+
+        const result = await pool.query(`
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = current_schema()
+              AND table_name = 'reservations'
+        `);
+
+        const existingColumns = new Set(
+            result.rows.map(row => row.column_name)
+        );
+
+        const missingColumns = requiredColumns.filter(
+            column => !existingColumns.has(column)
+        );
+
+        if (missingColumns.length > 0) {
+            throw new Error(
+                "Nedostaju kolone: " + missingColumns.join(", ")
+            );
+        }
+
         databaseReady = true;
+
         console.log("NightBook baza je spremna.");
+        console.log(
+            "Sve potrebne kolone za rezervacije postoje."
+        );
+
     } catch (error) {
+        databaseReady = false;
         console.error("Baza nije spremna:", error.message);
     }
 }
+
 
 function requireDatabase(req, res, next) {
     if (!databaseReady) {
